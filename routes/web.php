@@ -8,6 +8,7 @@ use App\Http\Controllers\FareController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\WelcomeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,6 +41,8 @@ Route::middleware(['auth', 'isSuperAdmin'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('trips', TripController::class);
 });
+
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 require __DIR__.'/auth.php';
 

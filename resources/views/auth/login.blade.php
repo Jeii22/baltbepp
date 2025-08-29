@@ -62,18 +62,23 @@
                 <label for="remember_me" class="ml-2 text-sm text-gray-600">Remember me</label>
             </div>
 
-            <!-- Actions -->
+             <!-- Actions -->
             <div class="flex items-center justify-between">
                 @if (Route::has('password.request'))
                     <a class="text-sm text-blue-600 hover:underline"
-                       href="{{ route('password.request') }}">
+                    href="{{ route('password.request') }}">
                         Forgot your password?
                     </a>
+                    <a class="text-sm text-blue-600 hover:underline"
+                    href="{{ route('register') }}">
+                        Register
+                    </a>
                 @endif
-
-                <x-primary-button>
-                    {{ __('Log in') }}
-                </x-primary-button>
+                <div class="flex items-center space-x-4">                 
+                    <x-primary-button>
+                        {{ __('Log in') }}
+                    </x-primary-button>                 
+                </div>
             </div>
         </form>
     </div>

@@ -34,19 +34,131 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative h-[90vh] flex items-center justify-center text-center text-white"
-             style="background: url('{{ asset('images/barko.png') }}') center/cover no-repeat;">
-        <div class="absolute inset-0 bg-blue-700 bg-opacity-60"></div>
-        <div class="relative z-10 max-w-3xl">
-            <h1 class="text-5xl font-bold mb-4">Balt-Bep Ticket</h1>
-            <p class="text-lg mb-6">Smart Online Booking for Ferry Passengers</p>
-            <p class="mb-6">Experience seamless ferry travel between Bantayan Island and Cadiz with our intelligent booking platform. 
-               Book tickets, track schedules, and manage your journey all in one place.</p>
-            <a href="#book" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-cyan-100 transition">
-                Book Your Ferry Now →
-            </a>
+        <div class="relative bg-cover bg-center h-[80vh]" style="background-image: url('/images/barko.png');">
+            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <div class="text-center text-white px-6">
+                    <h1 class="text-4xl md:text-5xl font-bold">Taking you to your favorite destinations,</h1>
+                    <p class="mt-2 text-2xl italic">fast and easy!</p>
+                </div>
+            </div>
         </div>
-    </section>
+
+        <!-- Trip Search Box -->
+<div class="relative -mt-16 max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+    <h2 class="text-2xl font-bold mb-2 text-gray-800">Where’s your next adventure?</h2>
+    <p class="text-gray-600 mb-6">Let’s make your next trip one to remember, book now!</p>
+
+    <!-- Trip Type -->
+    <div class="flex space-x-6 mb-6">
+        <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="radio" name="tripType" value="round" class="tripType" checked>
+            <span class="font-medium">Round Trip</span>
+        </label>
+        <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="radio" name="tripType" value="oneway" class="tripType">
+            <span class="font-medium">One-way</span>
+        </label>
+    </div>
+
+    <!-- Grid for Inputs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
+
+        <!-- From / To -->
+        <div class="col-span-2 flex items-center space-x-3">
+            <input type="text" placeholder="From" class="border rounded-lg px-4 py-3 w-1/2 focus:ring-2 focus:ring-blue-500">
+            
+            <span id="tripArrow" class="text-xl bg-blue-100 text-blue-600 px-3 py-2 rounded-full">⇆</span>
+
+            <input type="text" placeholder="To" class="border rounded-lg px-4 py-3 w-1/2 focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Date -->
+        <div>
+            <label for="departure_date" class="text-sm font-semibold mb-1 block">Departure</label>
+            <input type="date" id="departure_date" name="departure_date" 
+                   class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Passengers -->
+        <div class="relative">
+            <label class="text-sm font-semibold mb-1 block">Passengers</label>
+            <button type="button" id="passengerDropdownBtn" 
+                class="border rounded-lg px-4 py-3 w-full text-left focus:ring-2 focus:ring-blue-500">
+                <span id="totalPassengers">1 Adult</span>
+            </button>
+
+            <!-- Dropdown -->
+            <div id="passengerDropdown" 
+                 class="hidden absolute z-20 mt-2 w-72 bg-white border rounded-xl shadow-lg p-4">
+
+                <!-- Adult -->
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <p class="font-semibold">Adult</p>
+                        <p class="text-xs text-gray-500">Ages 12+ years old</p>
+                    </div>
+                    <div class="flex items-center">
+                        <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l" data-type="adult">-</button>
+                        <span id="adultCount" class="px-3 font-semibold">1</span>
+                        <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r" data-type="adult">+</button>
+                    </div>
+                </div>
+
+                <!-- Child -->
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <p class="font-semibold">Child</p>
+                        <p class="text-xs text-gray-500">Ages 2-11</p>
+                    </div>
+                    <div class="flex items-center">
+                        <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l" data-type="child">-</button>
+                        <span id="childCount" class="px-3 font-semibold">0</span>
+                        <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r" data-type="child">+</button>
+                    </div>
+                </div>
+
+                <!-- Infant -->
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <p class="font-semibold">Infant</p>
+                        <p class="text-xs text-gray-500">Under 2</p>
+                    </div>
+                    <div class="flex items-center">
+                        <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l" data-type="infant">-</button>
+                        <span id="infantCount" class="px-3 font-semibold">0</span>
+                        <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r" data-type="infant">+</button>
+                    </div>
+                </div>
+
+                <!-- PWD -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold">PWD</p>
+                        <p class="text-xs text-gray-500">Persons With Disability</p>
+                    </div>
+                    <div class="flex items-center">
+                        <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l" data-type="pwd">-</button>
+                        <span id="pwdCount" class="px-3 font-semibold">0</span>
+                        <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r" data-type="pwd">+</button>
+                    </div>
+                </div>
+
+                <p class="text-xs text-gray-500 mt-3">
+                    ⚠ Max 10 passengers only (adults, children & PWD).
+                </p>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div>
+            <button class="mt-6 md:mt-0 bg-red-600 text-white font-semibold rounded-lg px-6 py-3 w-full hover:bg-red-700 transition">
+                Search Trips
+            </button>
+        </div>
+    </div>
+</div>
+
+
 
     <!-- Stats Section -->
     <section class="py-12 bg-white">
@@ -91,6 +203,75 @@
             </div>
         </div>
     </section>
+
+    
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tripTypes = document.querySelectorAll(".tripType");
+        const arrow = document.getElementById("tripArrow");
+
+        tripTypes.forEach(type => {
+            type.addEventListener("change", () => {
+                if (type.value === "oneway") {
+                    arrow.textContent = "→"; // One-way
+                } else {
+                    arrow.textContent = "⇆"; // Round Trip
+                }
+            });
+        });
+    });
+
+    document.addEventListener("click", function (e) {
+    if (!dropdown.contains(e.target) && !dropdownBtn.contains(e.target)) {
+        dropdown.classList.add("hidden");
+    }
+});
+
+</script>
+
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropdownBtn = document.getElementById("passengerDropdownBtn");
+        const dropdown = document.getElementById("passengerDropdown");
+        const totalDisplay = document.getElementById("totalPassengers");
+
+        let counts = { adult: 1, child: 0, infant: 0, pwd: 0 };
+
+        // Toggle dropdown
+        dropdownBtn.addEventListener("click", () => {
+            dropdown.classList.toggle("hidden");
+        });
+
+        // Increment / Decrement buttons
+        document.querySelectorAll(".increment, .decrement").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const type = btn.getAttribute("data-type");
+                if (btn.classList.contains("increment")) {
+                    if (counts.adult + counts.child + counts.pwd < 10) counts[type]++;
+                } else {
+                    if (counts[type] > 0 && !(type === "adult" && counts.adult === 1)) {
+                        counts[type]--;
+                    }
+                }
+
+                // Update UI
+                document.getElementById(type + "Count").textContent = counts[type];
+                updateTotal();
+            });
+        });
+
+        function updateTotal() {
+            let total = counts.adult + counts.child + counts.infant + counts.pwd;
+            totalDisplay.textContent = 
+                `${counts.adult} Adult, ${counts.child} Child, ${counts.infant} Infant, ${counts.pwd} PWD`;
+        }
+
+        updateTotal();
+    });
+</script>
+
 
 </body>
 </html>
