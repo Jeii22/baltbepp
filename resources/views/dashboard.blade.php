@@ -10,7 +10,7 @@
             <p class="text-3xl font-bold text-blue-600">120</p>
         </div>
         <div class="bg-white shadow rounded-xl p-6">
-            <h2 class="text-lg font-semibold text-gray-600">Total Bookingsdsdsdsd</h2>
+            <h2 class="text-lg font-semibold text-gray-600">Total Booking</h2>
             <p class="text-3xl font-bold text-green-600">350</p>
         </div>
         <div class="bg-white shadow rounded-xl p-6">
