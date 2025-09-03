@@ -35,6 +35,7 @@
         <li><a href="{{ route('bookings.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Booking Management</a></li>
         <li><a href="{{ route('reports.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Reports</a></li>
         <li><a href="{{ route('settings.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Settings</a></li>
+        <li><a href="{{ route('users.create') }}" class="block px-4 py-2 rounded hover:bg-white/20">Add Admin</a></li>
     </ul>
 </div>
 

@@ -24,11 +24,21 @@
                 <a href="#updates" class="hover:text-cyan-200">Latest Updates</a>
                 <a href="#contact" class="hover:text-cyan-200">Contact Us</a>
             </div>
-            <!-- Sign In -->
+            <!-- Auth area: show user name if logged in, otherwise Sign In -->
             <div>
-                <a href="{{ route('login') }}" class="border border-white px-4 py-2 rounded-lg text-white hover:bg-white hover:text-blue-600 transition">
-                    Sign In
-                </a>
+                @auth
+                    <div class="flex items-center space-x-3 text-white">
+                        <span>Hi, {{ Auth::user()->name }}</span>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="border border-white px-3 py-1 rounded-lg hover:bg-white hover:text-blue-600 transition">Log out</button>
+                        </form>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="border border-white px-4 py-2 rounded-lg text-white hover:bg-white hover:text-blue-600 transition">
+                        Sign In
+                    </a>
+                @endauth
             </div>
         </div>
     </nav>
@@ -37,8 +47,8 @@
         <div class="relative bg-cover bg-center h-[80vh]" style="background-image: url('/images/barko.png');">
             <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <div class="text-center text-white px-6">
-                    <h1 class="text-4xl md:text-5xl font-bold">Taking you to your favorite destinations,</h1>
-                    <p class="mt-2 text-2xl italic">fast and easy!</p>
+                    <h1 class="text-4xl md:text-5xl font-bold">Take you where the sea takes your destination</h1>
+                    <p class="mt-2 text-2xl italic">Adventures await!</p>
                 </div>
             </div>
         </div>
