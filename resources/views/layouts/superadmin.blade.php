@@ -50,7 +50,7 @@
                 <!-- Dropdown -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" class="flex items-center text-gray-700 hover:text-blue-600 focus:outline-none">
-                        <span class="mr-2">{{ Auth::user()->name }}</span>
+                        <span class="mr-2">{{ auth()->user()->name ?? 'Guest' }}</span>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                   d="M19 9l-7 7-7-7" />

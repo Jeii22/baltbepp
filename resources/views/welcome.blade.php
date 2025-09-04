@@ -54,38 +54,66 @@
         </div>
 
         <!-- Trip Search Box -->
-<div class="relative -mt-16 max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+<div id="book" class="relative -mt-16 max-w-5xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 md:p-8">
     <h2 class="text-2xl font-bold mb-2 text-gray-800">Where’s your next adventure?</h2>
     <p class="text-gray-600 mb-6">Let’s make your next trip one to remember, book now!</p>
 
     <!-- Trip Type -->
-    <div class="flex space-x-6 mb-6">
-        <label class="flex items-center space-x-2 cursor-pointer">
-            <input type="radio" name="tripType" value="round" class="tripType" checked>
-            <span class="font-medium">Round Trip</span>
-        </label>
-        <label class="flex items-center space-x-2 cursor-pointer">
-            <input type="radio" name="tripType" value="oneway" class="tripType">
-            <span class="font-medium">One-way</span>
-        </label>
+    <div class="flex flex-wrap items-center gap-4 mb-6">
+        <div class="inline-flex rounded-lg bg-gray-100 p-1">
+            <label class="flex items-center px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow" data-checked="true">
+                <input type="radio" name="tripType" value="round" class="tripType hidden" checked>
+                Round Trip
+            </label>
+            <label class="flex items-center px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow">
+                <input type="radio" name="tripType" value="oneway" class="tripType hidden">
+                One-way
+            </label>
+        </div>
+        <p class="text-xs text-gray-500">Swap ports with the arrow. Return Date appears for round trips.</p>
     </div>
 
     <!-- Grid for Inputs -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
 
         <!-- From / To -->
-        <div class="col-span-2 flex items-center space-x-3">
-            <input type="text" placeholder="From" class="border rounded-lg px-4 py-3 w-1/2 focus:ring-2 focus:ring-blue-500">
-            
-            <span id="tripArrow" class="text-xl bg-blue-100 text-blue-600 px-3 py-2 rounded-full">⇆</span>
-
-            <input type="text" placeholder="To" class="border rounded-lg px-4 py-3 w-1/2 focus:ring-2 focus:ring-blue-500">
+        <div class="col-span-2 grid grid-cols-7 gap-3 items-center">
+            <div class="col-span-3">
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">From</label>
+                <div class="relative">
+                    <select id="fromSelect" class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                        <option value="Bantayan" selected>Bantayan</option>
+                        <option value="Cadiz">Cadiz</option>
+                    </select>
+                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▾</span>
+                </div>
+            </div>
+            <div class="col-span-1 flex justify-center items-end pb-1">
+                <button type="button" id="tripArrow" class="cursor-pointer text-xl bg-blue-100 text-blue-600 px-3 py-2 rounded-full shadow hover:bg-blue-200" title="Swap" aria-label="Swap origin and destination">⇆</button>
+            </div>
+            <div class="col-span-3">
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">To</label>
+                <div class="relative">
+                    <select id="toSelect" class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                        <option value="Bantayan">Bantayan</option>
+                        <option value="Cadiz" selected>Cadiz</option>
+                    </select>
+                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▾</span>
+                </div>
+            </div>
         </div>
 
         <!-- Date -->
         <div>
-            <label for="departure_date" class="text-sm font-semibold mb-1 block">Departure</label>
+            <label for="departure_date" class="text-sm font-semibold mb-1 block">Departure Date</label>
             <input type="date" id="departure_date" name="departure_date" 
+                   class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Return Date (only for Round Trip) -->
+        <div id="returnDateContainer" class="hidden">
+            <label for="return_date" class="text-sm font-semibold mb-1 block">Return Date</label>
+            <input type="date" id="return_date" name="return_date" 
                    class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500">
         </div>
 
@@ -161,9 +189,22 @@
 
         <!-- Search -->
         <div>
-            <button class="mt-6 md:mt-0 bg-red-600 text-white font-semibold rounded-lg px-6 py-3 w-full hover:bg-red-700 transition">
-                Search Trips
-            </button>
+            <form action="{{ route('booking.schedule') }}" method="GET" class="mt-6 md:mt-0">
+                <input type="hidden" name="origin" id="originField">
+                <input type="hidden" name="destination" id="destinationField">
+                <input type="hidden" name="tripType" id="tripTypeField" value="round">
+                <input type="hidden" name="departure_date" id="departureField">
+                <input type="hidden" name="return_date" id="returnField">
+                <input type="hidden" name="adult" id="adultField" value="1">
+                <input type="hidden" name="child" id="childField" value="0">
+                <input type="hidden" name="infant" id="infantField" value="0">
+                <input type="hidden" name="pwd" id="pwdField" value="0">
+
+                <button class="bg-blue-600 text-white font-medium rounded-lg px-6 py-3 w-full hover:bg-blue-700 active:bg-blue-800 transition shadow">
+                    Search Trips
+                </button>
+                <p class="mt-2 text-xs text-gray-400 text-center">By continuing, you agree to our terms.</p>
+            </form>
         </div>
     </div>
 </div>
@@ -220,25 +261,94 @@
     document.addEventListener("DOMContentLoaded", function () {
         const tripTypes = document.querySelectorAll(".tripType");
         const arrow = document.getElementById("tripArrow");
+        const fromSelect = document.getElementById("fromSelect");
+        const toSelect = document.getElementById("toSelect");
+        const returnDateContainer = document.getElementById("returnDateContainer");
 
+        const departureInput = document.getElementById("departure_date");
+        const returnInput = document.getElementById("return_date");
+
+        // Hidden fields to submit
+        const originField = document.getElementById("originField");
+        const destinationField = document.getElementById("destinationField");
+        const tripTypeField = document.getElementById("tripTypeField");
+        const departureField = document.getElementById("departureField");
+        const returnField = document.getElementById("returnField");
+
+        function updateHiddenBasics() {
+            originField.value = fromSelect.value;
+            destinationField.value = toSelect.value;
+            const checked = Array.from(tripTypes).find(t => t.checked)?.value || 'round';
+            tripTypeField.value = checked;
+            departureField.value = departureInput.value;
+            returnField.value = returnInput ? returnInput.value : '';
+        }
+
+        function syncReturnMin() {
+            if (!returnInput) return;
+            if (departureInput && departureInput.value) {
+                returnInput.min = departureInput.value;
+                if (returnInput.value && returnInput.value < departureInput.value) {
+                    returnInput.value = departureInput.value;
+                }
+                returnInput.disabled = false;
+            } else {
+                returnInput.value = "";
+                returnInput.disabled = true;
+            }
+        }
+
+        function setRoundTripUI(isRound) {
+            if (isRound) {
+                arrow.textContent = "⇆";
+                returnDateContainer.classList.remove("hidden");
+                syncReturnMin();
+            } else {
+                arrow.textContent = "→";
+                returnDateContainer.classList.add("hidden");
+                if (returnInput) {
+                    returnInput.value = "";
+                    returnInput.disabled = true;
+                }
+            }
+            updateHiddenBasics();
+        }
+
+        // Initialize
+        setRoundTripUI(Array.from(tripTypes).find(t => t.checked)?.value === 'round');
+        updateHiddenBasics();
+
+        // React to trip type changes
         tripTypes.forEach(type => {
             type.addEventListener("change", () => {
-                if (type.value === "oneway") {
-                    arrow.textContent = "→"; // One-way
-                } else {
-                    arrow.textContent = "⇆"; // Round Trip
-                }
+                setRoundTripUI(type.value === "round");
             });
         });
+
+        // Keep return date in range when departure changes
+        if (departureInput) {
+            departureInput.addEventListener("change", () => {
+                syncReturnMin();
+                updateHiddenBasics();
+            });
+        }
+        if (returnInput) {
+            returnInput.addEventListener("change", updateHiddenBasics);
+        }
+
+        // Swap From/To on arrow click
+        arrow.addEventListener("click", () => {
+            const tmp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = tmp;
+            updateHiddenBasics();
+        });
+
+        // Keep hidden fields updated on dropdown changes
+        fromSelect.addEventListener("change", updateHiddenBasics);
+        toSelect.addEventListener("change", updateHiddenBasics);
     });
-
-    document.addEventListener("click", function (e) {
-    if (!dropdown.contains(e.target) && !dropdownBtn.contains(e.target)) {
-        dropdown.classList.add("hidden");
-    }
-});
-
-</script>
+    </script>
 
 
     <script>

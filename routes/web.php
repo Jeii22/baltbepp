@@ -14,6 +14,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Public search and booking
+
+Route::get('/trips/search', [TripController::class, 'search'])->name('trips.search');
+Route::get('/booking/schedule', [TripController::class, 'search'])->name('booking.schedule');
+Route::get('/booking/available-dates', [TripController::class, 'availableDates'])->name('booking.availableDates');
+Route::get('/trips/{trip}/book', [BookingController::class, 'create'])->name('bookings.create');
+Route::post('/bookings/summary', [BookingController::class, 'summary'])->name('bookings.summary');
+Route::post('/bookings/checkout', [BookingController::class, 'checkout'])->name('bookings.checkout');
+Route::post('/bookings/process', [BookingController::class, 'process'])->name('bookings.process');
+Route::get('/bookings/{booking}/confirmation', [BookingController::class, 'confirmation'])->name('bookings.confirmation');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -40,10 +51,20 @@ Route::middleware(['auth', 'isSuperAdmin'])->group(function () {
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    // Existing
+    // Trips
     Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
+
+    // Fares
     Route::get('/fares', [FareController::class, 'index'])->name('fares.index');
+    Route::get('/fares/create', [FareController::class, 'create'])->name('fares.create');
+    Route::post('/fares', [FareController::class, 'store'])->name('fares.store');
+    Route::get('/fares/{fare}/edit', [FareController::class, 'edit'])->name('fares.edit');
+    Route::put('/fares/{fare}', [FareController::class, 'update'])->name('fares.update');
+    Route::delete('/fares/{fare}', [FareController::class, 'destroy'])->name('fares.destroy');
+
+    // Other
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::patch('/bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.updateStatus');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 });
