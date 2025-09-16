@@ -10,7 +10,7 @@
 <body class="antialiased bg-white text-gray-800">
 
     <!-- Navbar -->
-    <nav class="absolute top-0 left-0 w-full z-20 bg-transparent">
+    <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm">
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
             <!-- Logo -->
             <a href="/" class="flex items-center space-x-2">
@@ -18,17 +18,31 @@
             </a>
             <!-- Nav Links -->
             <div class="hidden md:flex space-x-8 text-white font-medium">
-                <a href="#book" class="hover:text-cyan-200">Book</a>
-                <a href="#refund" class="hover:text-cyan-200">Refund & Rebooking</a>
-                <a href="#info" class="hover:text-cyan-200">Travel Info</a>
-                <a href="#updates" class="hover:text-cyan-200">Latest Updates</a>
-                <a href="#contact" class="hover:text-cyan-200">Contact Us</a>
+                <a href="#book" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200">Book</a>
+                <a href="#refund" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200">Refund & Rebooking</a>
+                <a href="#info" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200">Travel Info</a>
+                <a href="#updates" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200">Latest Updates</a>
+                <a href="#contact" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200">Contact Us</a>
             </div>
             <!-- Auth area: show user name if logged in, otherwise Sign In -->
             <div>
                 @auth
                     <div class="flex items-center space-x-3 text-white">
-                        <span>Hi, {{ Auth::user()->name }}</span>
+                        <div class="flex items-center space-x-2">
+                            <span>Hi, {{ Auth::user()->name }}</span>
+                            <span class="text-xs bg-white/20 px-2 py-1 rounded-full">{{ Auth::user()->getRoleDisplayName() }}</span>
+                        </div>
+                        
+                        @if(Auth::user()->isSuperAdmin())
+                            <a href="{{ route('dashboard') }}" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg transition">
+                                Super Admin Dashboard
+                            </a>
+                        @elseif(Auth::user()->isAdmin())
+                            <span class="bg-green-600 px-3 py-1 rounded-lg">
+                                Admin Panel
+                            </span>
+                        @endif
+                        
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="border border-white px-3 py-1 rounded-lg hover:bg-white hover:text-blue-600 transition">Log out</button>
@@ -54,20 +68,20 @@
         </div>
 
         <!-- Trip Search Box -->
-<div id="book" class="relative -mt-16 max-w-5xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 md:p-8">
+<div id="book" class="relative -mt-64 max-w-5xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 md:p-8">
     <h2 class="text-2xl font-bold mb-2 text-gray-800">Where’s your next adventure?</h2>
     <p class="text-gray-600 mb-6">Let’s make your next trip one to remember, book now!</p>
 
     <!-- Trip Type -->
     <div class="flex flex-wrap items-center gap-4 mb-6">
         <div class="inline-flex rounded-lg bg-gray-100 p-1">
-            <label class="flex items-center px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow" data-checked="true">
-                <input type="radio" name="tripType" value="round" class="tripType hidden" checked>
-                Round Trip
-            </label>
             <label class="flex items-center px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow">
-                <input type="radio" name="tripType" value="oneway" class="tripType hidden">
+                <input type="radio" name="tripType" value="oneway" class="tripType hidden" checked>
                 One-way
+            </label>
+            <label class="flex items-center px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow" data-checked="true">
+                <input type="radio" name="tripType" value="round" class="tripType hidden" >
+                Round Trip
             </label>
         </div>
         <p class="text-xs text-gray-500">Swap ports with the arrow. Return Date appears for round trips.</p>
@@ -127,91 +141,74 @@
 
             <!-- Dropdown -->
             <div id="passengerDropdown" 
-                 class="hidden absolute z-20 mt-2 w-72 bg-white border rounded-xl shadow-lg p-4">
+                 class="hidden absolute z-20 mt-2 w-80 bg-white border rounded-xl shadow-lg p-4">
 
-                <!-- Adult -->
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <p class="font-semibold">Adult</p>
-                        <p class="text-xs text-gray-500">Ages 12+ years old</p>
-                    </div>
-                    <div class="flex items-center">
-                        <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l" data-type="adult">-</button>
-                        <span id="adultCount" class="px-3 font-semibold">1</span>
-                        <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r" data-type="adult">+</button>
-                    </div>
+                @php
+                    // Map database passenger types to our form fields
+                    $passengerTypeMap = [
+                        'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 1],
+                        'Child (2-11)' => ['key' => 'child', 'label' => 'Child', 'description' => 'Ages 2-11', 'default' => 0],
+                        'Infant' => ['key' => 'infant', 'label' => 'Infant', 'description' => 'Under 2', 'default' => 0],
+                        'Senior Citizen / PWD' => ['key' => 'pwd', 'label' => 'PWD/Senior', 'description' => 'Persons With Disability / Senior Citizens', 'default' => 0],
+                        'Student' => ['key' => 'student', 'label' => 'Student', 'description' => 'With valid student ID', 'default' => 0],
+                    ];
+                @endphp
+
+                @foreach($fares as $index => $fare)
+                    @if(isset($passengerTypeMap[$fare->passenger_type]))
+                        @php $typeInfo = $passengerTypeMap[$fare->passenger_type]; @endphp
+                        <div class="flex items-center justify-between {{ $index < count($fares) - 1 ? 'mb-3' : '' }}">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <p class="font-semibold">{{ $typeInfo['label'] }}</p>
+                                    <p class="text-sm font-medium text-green-600">₱{{ number_format($fare->price, 0) }}</p>
+                                </div>
+                                <p class="text-xs text-gray-500">{{ $typeInfo['description'] }}</p>
+                            </div>
+                            <div class="flex items-center ml-4">
+                                <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l hover:bg-gray-300" data-type="{{ $typeInfo['key'] }}">-</button>
+                                <span id="{{ $typeInfo['key'] }}Count" class="px-3 font-semibold min-w-[2rem] text-center">{{ $typeInfo['default'] }}</span>
+                                <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r hover:bg-blue-700" data-type="{{ $typeInfo['key'] }}">+</button>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+
+                <div class="border-t pt-3 mt-3">
+                    <p class="text-xs text-gray-500">
+                        ⚠ Max 10 passengers only (adults, children & PWD).
+                    </p>
+                    <p class="text-xs text-gray-400 mt-1">
+                        💡 Prices shown are base fares per person.
+                    </p>
                 </div>
-
-                <!-- Child -->
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <p class="font-semibold">Child</p>
-                        <p class="text-xs text-gray-500">Ages 2-11</p>
-                    </div>
-                    <div class="flex items-center">
-                        <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l" data-type="child">-</button>
-                        <span id="childCount" class="px-3 font-semibold">0</span>
-                        <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r" data-type="child">+</button>
-                    </div>
-                </div>
-
-                <!-- Infant -->
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <p class="font-semibold">Infant</p>
-                        <p class="text-xs text-gray-500">Under 2</p>
-                    </div>
-                    <div class="flex items-center">
-                        <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l" data-type="infant">-</button>
-                        <span id="infantCount" class="px-3 font-semibold">0</span>
-                        <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r" data-type="infant">+</button>
-                    </div>
-                </div>
-
-                <!-- PWD -->
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="font-semibold">PWD</p>
-                        <p class="text-xs text-gray-500">Persons With Disability</p>
-                    </div>
-                    <div class="flex items-center">
-                        <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l" data-type="pwd">-</button>
-                        <span id="pwdCount" class="px-3 font-semibold">0</span>
-                        <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r" data-type="pwd">+</button>
-                    </div>
-                </div>
-
-                <p class="text-xs text-gray-500 mt-3">
-                    ⚠ Max 10 passengers only (adults, children & PWD).
-                </p>
             </div>
         </div>
-
-        <!-- Search -->
-        <div>
-            <form action="{{ route('booking.schedule') }}" method="GET" class="mt-6 md:mt-0">
-                <input type="hidden" name="origin" id="originField">
-                <input type="hidden" name="destination" id="destinationField">
-                <input type="hidden" name="tripType" id="tripTypeField" value="round">
-                <input type="hidden" name="departure_date" id="departureField">
-                <input type="hidden" name="return_date" id="returnField">
-                <input type="hidden" name="adult" id="adultField" value="1">
-                <input type="hidden" name="child" id="childField" value="0">
-                <input type="hidden" name="infant" id="infantField" value="0">
-                <input type="hidden" name="pwd" id="pwdField" value="0">
-
-                <button class="bg-blue-600 text-white font-medium rounded-lg px-6 py-3 w-full hover:bg-blue-700 active:bg-blue-800 transition shadow">
-                    Search Trips
-                </button>
-                <p class="mt-2 text-xs text-gray-400 text-center">By continuing, you agree to our terms.</p>
-            </form>
-        </div>
     </div>
+
+    <!-- Search Button - Outside Grid -->
+    <form action="{{ route('booking.schedule') }}" method="GET" class="mt-6">
+        <input type="hidden" name="origin" id="originField">
+        <input type="hidden" name="destination" id="destinationField">
+        <input type="hidden" name="tripType" id="tripTypeField" value="round">
+        <input type="hidden" name="departure_date" id="departureField">
+        <input type="hidden" name="return_date" id="returnField">
+        <input type="hidden" name="adult" id="adultField" value="1">
+        <input type="hidden" name="child" id="childField" value="0">
+        <input type="hidden" name="infant" id="infantField" value="0">
+        <input type="hidden" name="pwd" id="pwdField" value="0">
+        <input type="hidden" name="student" id="studentField" value="0">
+
+        <button class="bg-blue-600 text-white font-medium rounded-lg px-6 py-3 w-full hover:bg-blue-700 active:bg-blue-800 transition shadow">
+            Search Trips
+        </button>
+        <p class="mt-2 text-xs text-gray-400 text-center">By continuing, you agree to our terms.</p>
+    </form>
 </div>
 
 
 
-    <!-- Stats Section -->
+    <!-- Stats Section 
     <section class="py-12 bg-white">
         <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
@@ -231,7 +228,7 @@
                 <p class="text-gray-600">Travel Time</p>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- Why Choose BaltBep -->
     <section class="py-16 bg-gray-100">
@@ -357,41 +354,133 @@
         const dropdown = document.getElementById("passengerDropdown");
         const totalDisplay = document.getElementById("totalPassengers");
 
-        let counts = { adult: 1, child: 0, infant: 0, pwd: 0 };
+        // Initialize counts dynamically based on available passenger types
+        let counts = {};
+        @foreach($fares as $fare)
+            @if(isset($passengerTypeMap[$fare->passenger_type]))
+                @php $typeInfo = $passengerTypeMap[$fare->passenger_type]; @endphp
+                counts['{{ $typeInfo['key'] }}'] = {{ $typeInfo['default'] }};
+            @endif
+        @endforeach
 
         // Toggle dropdown
         dropdownBtn.addEventListener("click", () => {
             dropdown.classList.toggle("hidden");
         });
 
+        // Close dropdown when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!dropdownBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add("hidden");
+            }
+        });
+
         // Increment / Decrement buttons
         document.querySelectorAll(".increment, .decrement").forEach(btn => {
             btn.addEventListener("click", () => {
                 const type = btn.getAttribute("data-type");
-                if (btn.classList.contains("increment")) {
-                    if (counts.adult + counts.child + counts.pwd < 10) counts[type]++;
+                const isIncrement = btn.classList.contains("increment");
+                
+                if (isIncrement) {
+                    // Check total passenger limit (excluding infants from count)
+                    const totalCountablePassengers = Object.keys(counts)
+                        .filter(key => key !== 'infant')
+                        .reduce((sum, key) => sum + counts[key], 0);
+                    
+                    if (totalCountablePassengers < 10) {
+                        counts[type]++;
+                    }
                 } else {
+                    // Prevent decrementing below 0, and keep at least 1 adult
                     if (counts[type] > 0 && !(type === "adult" && counts.adult === 1)) {
                         counts[type]--;
                     }
                 }
 
                 // Update UI
-                document.getElementById(type + "Count").textContent = counts[type];
+                const countElement = document.getElementById(type + "Count");
+                if (countElement) {
+                    countElement.textContent = counts[type];
+                }
                 updateTotal();
+                updateHiddenFields();
             });
         });
 
         function updateTotal() {
-            let total = counts.adult + counts.child + counts.infant + counts.pwd;
-            totalDisplay.textContent = 
-                `${counts.adult} Adult, ${counts.child} Child, ${counts.infant} Infant, ${counts.pwd} PWD`;
+            let displayParts = [];
+            
+            @foreach($fares as $fare)
+                @if(isset($passengerTypeMap[$fare->passenger_type]))
+                    @php $typeInfo = $passengerTypeMap[$fare->passenger_type]; @endphp
+                    if (counts['{{ $typeInfo['key'] }}'] > 0) {
+                        displayParts.push(`${counts['{{ $typeInfo['key'] }}']} {{ $typeInfo['label'] }}`);
+                    }
+                @endif
+            @endforeach
+            
+            totalDisplay.textContent = displayParts.length > 0 ? displayParts.join(', ') : '1 Adult';
         }
 
+        function updateHiddenFields() {
+            // Update hidden form fields
+            Object.keys(counts).forEach(type => {
+                const field = document.getElementById(type + "Field");
+                if (field) {
+                    field.value = counts[type];
+                }
+            });
+        }
+
+        // Initialize display and hidden fields
         updateTotal();
+        updateHiddenFields();
     });
 </script>
 
+@auth
+<!-- Role-Based Access Test Section (for demonstration) -->
+<div class="bg-gray-100 py-8">
+    <div class="max-w-4xl mx-auto px-6">
+        <h3 class="text-2xl font-bold text-center mb-6">Role-Based Access Test</h3>
+        <div class="grid md:grid-cols-3 gap-4">
+            <!-- Super Admin Test -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="font-semibold text-blue-600 mb-2">Super Admin Area</h4>
+                <p class="text-sm text-gray-600 mb-4">Only Super Admins can access this.</p>
+                <a href="{{ route('dashboard') }}" class="block w-full text-center bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+                    Super Admin Dashboard
+                </a>
+            </div>
+            
+            <!-- Admin Test -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="font-semibold text-green-600 mb-2">Admin Area</h4>
+                <p class="text-sm text-gray-600 mb-4">Only Admins can access this.</p>
+                <a href="{{ route('admin.test') }}" class="block w-full text-center bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
+                    Admin Test Page
+                </a>
+            </div>
+            
+            <!-- Customer Test -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="font-semibold text-cyan-600 mb-2">Customer Area</h4>
+                <p class="text-sm text-gray-600 mb-4">Only Customers can access this.</p>
+                <a href="{{ route('customer.test') }}" class="block w-full text-center bg-cyan-600 text-white py-2 rounded hover:bg-cyan-700 transition">
+                    Customer Test Page
+                </a>
+            </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                Current Role: <strong class="text-blue-600">{{ auth()->user()->getRoleDisplayName() }}</strong>
+                | Try accessing different areas to test role-based restrictions.
+            </p>
+        </div>
+    </div>
+</div>
+@endauth
 
 </body>
 </html>

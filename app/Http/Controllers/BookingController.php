@@ -8,6 +8,30 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
+    public function passenger(Request $request)
+    {
+        // Simplified validation - just check the essentials
+        $request->validate([
+            'origin' => 'required|string',
+            'destination' => 'required|string', 
+            'outbound_trip_id' => 'required|exists:trips,id',
+        ]);
+
+        $criteria = $request->only(['origin', 'destination', 'departure_date', 'return_date', 'tripType', 'adult', 'child', 'infant', 'pwd', 'student']);
+        
+        // Get the selected trips
+        $outboundTrip = Trip::findOrFail($request->outbound_trip_id);
+        $inboundTrip = $request->inbound_trip_id ? Trip::findOrFail($request->inbound_trip_id) : null;
+
+        // Get fares for pricing calculation (with fallback)
+        $fares = Fare::where('active', true)->pluck('price', 'passenger_type');
+        if ($fares->isEmpty()) {
+            $fares = collect(['adult' => 100, 'child' => 80, 'infant' => 0, 'pwd' => 80]);
+        }
+
+        return view('bookings.passenger', compact('criteria', 'outboundTrip', 'inboundTrip', 'fares'));
+    }
+
     public function create(Trip $trip)
     {
         // Base fares by passenger type
@@ -17,77 +41,93 @@ class BookingController extends Controller
 
     public function summary(Request $request)
     {
+        // Validate the passenger and contact data
         $validated = $request->validate([
             'trip_id' => 'required|exists:trips,id',
-            'adult' => 'required|integer|min:1',
+            'return_trip_id' => 'sometimes|nullable|exists:trips,id',
+            'adult' => 'required|integer|min:0',
             'child' => 'required|integer|min:0',
             'infant' => 'required|integer|min:0',
             'pwd' => 'required|integer|min:0',
-            'full_name' => 'required|string|max:120',
-            'email' => 'required|email',
-            'phone' => 'nullable|string|max:50',
+            'student' => 'required|integer|min:0',
+            
+            // Individual passenger data
+            'passengers' => 'required|array|min:1',
+            'passengers.*.first_name' => 'required|string|max:100',
+            'passengers.*.last_name' => 'required|string|max:100',
+            'passengers.*.gender' => 'required|in:male,female',
+            'passengers.*.birth_date' => 'required|date',
+            'passengers.*.type' => 'required|in:adult,child,infant,pwd,student',
+            'passengers.*.fare' => 'required|numeric|min:0',
+            
+            // Optional fields for specific passenger types
+            'passengers.*.student_id' => 'sometimes|nullable|string|max:50',
+            'passengers.*.school' => 'sometimes|nullable|string|max:200',
+            'passengers.*.id_number' => 'sometimes|nullable|string|max:50',
+            
+            // Contact information
+            'contact_name' => 'required|string|max:120',
+            'contact_email' => 'required|email|max:120',
+            'contact_phone' => 'required|string|max:20',
+            'contact_phone_alt' => 'sometimes|nullable|string|max:20',
+            'contact_address' => 'sometimes|nullable|string|max:500',
+            'special_requests' => 'sometimes|nullable|string|max:1000',
+            'contact_preferences' => 'sometimes|nullable|array',
+            'contact_preferences.*' => 'in:email,sms,call',
         ]);
 
-        $trip = Trip::findOrFail($validated['trip_id']);
+        // Get trips
+        $outboundTrip = Trip::findOrFail($validated['trip_id']);
+        $inboundTrip = isset($validated['return_trip_id']) && !empty($validated['return_trip_id']) ? Trip::findOrFail($validated['return_trip_id']) : null;
 
-        // Read fares and normalize keys to expected types (adult, child, infant, pwd)
-        $fareRows = Fare::where('active', true)->get();
-        $fareMap = [ 'adult' => 0.0, 'child' => 0.0, 'infant' => 0.0, 'pwd' => 0.0 ];
-        foreach ($fareRows as $f) {
-            $name = strtolower($f->passenger_type);
-            $price = (float) $f->price;
-            if (str_contains($name, 'adult') || str_contains($name, 'regular')) {
-                $fareMap['adult'] = $price;
-            } elseif (str_contains($name, 'child')) {
-                $fareMap['child'] = $price;
-            } elseif (str_contains($name, 'infant') || str_contains($name, 'baby')) {
-                $fareMap['infant'] = $price;
-            } elseif (str_contains($name, 'pwd') || str_contains($name, 'senior')) {
-                $fareMap['pwd'] = $price;
-            }
+        // Process passengers data
+        $passengers = $validated['passengers'];
+        $contactInfo = [
+            'contact_name' => $validated['contact_name'],
+            'contact_email' => $validated['contact_email'],
+            'contact_phone' => $validated['contact_phone'],
+            'contact_phone_alt' => $validated['contact_phone_alt'] ?? null,
+            'contact_address' => $validated['contact_address'] ?? null,
+            'special_requests' => $validated['special_requests'] ?? null,
+            'contact_preferences' => $validated['contact_preferences'] ?? [],
+        ];
+
+        // Calculate totals from individual passenger fares
+        $totalFare = 0;
+        foreach ($passengers as $passenger) {
+            $totalFare += floatval($passenger['fare']);
         }
 
+        // Count passengers by type
         $counts = [
             'adult' => (int) $validated['adult'],
             'child' => (int) $validated['child'],
             'infant' => (int) $validated['infant'],
             'pwd' => (int) $validated['pwd'],
+            'student' => (int) $validated['student'],
         ];
-        $allPax = $counts['adult'] + $counts['child'] + $counts['infant'] + $counts['pwd'];
-
-        // Pricing model 3: base trip price × all passengers + per-type fares × counts
-        $baseTotal = (float) $trip->price * $allPax;
-        $fareTotal = ($counts['adult'] * $fareMap['adult'])
-                   + ($counts['child'] * $fareMap['child'])
-                   + ($counts['infant'] * $fareMap['infant'])
-                   + ($counts['pwd']   * $fareMap['pwd']);
-        $subtotal = $baseTotal + $fareTotal;
 
         // Store this step in session for checkout
         session([
             'booking.summary' => [
-                'trip_id' => $trip->id,
+                'outbound_trip_id' => $outboundTrip->id,
+                'inbound_trip_id' => $inboundTrip ? $inboundTrip->id : null,
+                'passengers' => $passengers,
+                'contact_info' => $contactInfo,
                 'counts' => $counts,
-                'customer' => [
-                    'full_name' => $validated['full_name'],
-                    'email' => $validated['email'],
-                    'phone' => $validated['phone'] ?? '',
-                ],
-                'fares' => $fareMap,
-                'subtotal' => $subtotal,
+                'total_fare' => $totalFare,
+                'grand_total' => $totalFare * ($inboundTrip ? 2 : 1),
             ],
         ]);
 
         return view('bookings.summary', [
-            'trip' => $trip,
+            'outboundTrip' => $outboundTrip,
+            'inboundTrip' => $inboundTrip,
+            'passengers' => $passengers,
+            'contactInfo' => $contactInfo,
             'counts' => $counts,
-            'fares' => $fareMap,
-            'customer' => [
-                'full_name' => $validated['full_name'],
-                'email' => $validated['email'],
-                'phone' => $validated['phone'] ?? '',
-            ],
-            'subtotal' => $subtotal,
+            'totalFare' => $totalFare,
+            'grandTotal' => $totalFare * ($inboundTrip ? 2 : 1),
         ]);
     }
 
@@ -105,11 +145,26 @@ class BookingController extends Controller
         $data = session('booking.summary');
         abort_if(!$data, 404);
 
-        $request->validate([
-            'payment_method' => 'required|in:cod,card',
-        ]);
+        $validationRules = [
+            'payment_method' => 'required|in:cod,card,gcash,paymaya',
+            'terms' => 'required|accepted',
+        ];
 
-        $trip = Trip::findOrFail($data['trip_id']);
+        // Add card validation if card payment is selected
+        if ($request->payment_method === 'card') {
+            $validationRules = array_merge($validationRules, [
+                'card_number' => 'required|string|min:13|max:19',
+                'card_expiry' => 'required|string|regex:/^(0[1-9]|1[0-2])\/([0-9]{2})$/',
+                'card_cvv' => 'required|string|min:3|max:4',
+                'card_name' => 'required|string|max:100',
+            ]);
+        }
+
+        $request->validate($validationRules);
+
+        // Get trip data - handle both old and new data structures
+        $tripId = $data['trip_id'] ?? $data['outbound_trip_id'];
+        $trip = Trip::findOrFail($tripId);
 
         $booking = \App\Models\Booking::create([
             'trip_id' => $trip->id,
@@ -120,22 +175,35 @@ class BookingController extends Controller
             'child' => $data['counts']['child'],
             'infant' => $data['counts']['infant'],
             'pwd' => $data['counts']['pwd'],
-            'full_name' => $data['customer']['full_name'],
-            'email' => $data['customer']['email'],
-            'phone' => $data['customer']['phone'] ?? null,
-            'total_amount' => $data['subtotal'],
+            'full_name' => $data['contact_info']['contact_name'] ?? $data['customer']['full_name'] ?? 'Guest',
+            'email' => $data['contact_info']['contact_email'] ?? $data['customer']['email'] ?? '',
+            'phone' => $data['contact_info']['contact_phone'] ?? $data['customer']['phone'] ?? null,
+            'total_amount' => $data['grand_total'] ?? $data['subtotal'] ?? 0,
+            'payment_method' => $request->payment_method,
             'status' => 'pending',
         ]);
 
         // Here you’d integrate real payment. For now, mark confirmed for COD.
-        if ($request->payment_method === 'cod') {
-            $booking->update(['status' => 'confirmed']);
+        // Process payment based on method
+        $paymentStatus = $this->processPayment($request, $booking);
+
+        if ($paymentStatus['success']) {
+            $booking->update([
+                'status' => $paymentStatus['status'],
+            ]);
+        } else {
+            // Payment failed
+            $booking->update(['status' => 'failed']);
+            
+            return back()->withErrors(['payment' => $paymentStatus['message']])
+                ->withInput();
         }
 
         // Clear session step data
         session()->forget('booking.summary');
 
-        return redirect()->route('bookings.confirmation', $booking);
+        return redirect()->route('bookings.confirmation', $booking)
+            ->with('success', $paymentStatus['message'] ?? 'Booking processed successfully!');
     }
 
     public function confirmation(\App\Models\Booking $booking)
@@ -173,5 +241,90 @@ class BookingController extends Controller
         $booking->update(['status' => $validated['status']]);
 
         return redirect()->back()->with('success', 'Booking status updated.');
+    }
+
+    private function processPayment(Request $request, $booking)
+    {
+        $paymentMethod = $request->payment_method;
+
+        switch ($paymentMethod) {
+            case 'cod':
+                return [
+                    'success' => true,
+                    'status' => 'confirmed',
+                    'message' => 'Booking confirmed! Please pay at the terminal before departure.',
+                ];
+
+            case 'gcash':
+                // In a real implementation, you'd integrate with GCash API
+                return $this->simulateDigitalWalletPayment('GCash', $booking);
+
+            case 'paymaya':
+                // In a real implementation, you'd integrate with PayMaya API
+                return $this->simulateDigitalWalletPayment('PayMaya', $booking);
+
+            case 'card':
+                // In a real implementation, you'd integrate with Stripe, PayPal, or local payment processor
+                return $this->simulateCardPayment($request, $booking);
+
+            default:
+                return [
+                    'success' => false,
+                    'status' => 'failed',
+                    'message' => 'Invalid payment method selected.'
+                ];
+        }
+    }
+
+    private function simulateDigitalWalletPayment($walletType, $booking)
+    {
+        // Simulate API call - in production, replace with actual API integration
+        $success = rand(1, 10) > 1; // 90% success rate for simulation
+        
+        if ($success) {
+            return [
+                'success' => true,
+                'status' => 'confirmed',
+                'message' => "Payment successful via {$walletType}! Your booking is confirmed.",
+            ];
+        } else {
+            return [
+                'success' => false,
+                'status' => 'failed',
+                'message' => "{$walletType} payment failed. Please try again or use a different payment method."
+            ];
+        }
+    }
+
+    private function simulateCardPayment(Request $request, $booking)
+    {
+        // Simulate card processing - in production, integrate with actual payment processor
+        $cardNumber = str_replace(' ', '', $request->card_number);
+        
+        // Basic validation
+        if (strlen($cardNumber) < 13 || strlen($cardNumber) > 19) {
+            return [
+                'success' => false,
+                'status' => 'failed',
+                'message' => 'Invalid card number. Please check and try again.'
+            ];
+        }
+
+        // Simulate processing
+        $success = rand(1, 10) > 2; // 80% success rate for simulation
+        
+        if ($success) {
+            return [
+                'success' => true,
+                'status' => 'confirmed',
+                'message' => 'Card payment successful! Your booking is confirmed.',
+            ];
+        } else {
+            return [
+                'success' => false,
+                'status' => 'failed',
+                'message' => 'Card payment failed. Please check your card details and try again.'
+            ];
+        }
     }
 }

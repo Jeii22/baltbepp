@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\IsSuperAdmin;
+use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsUser;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'isSuperAdmin' => IsSuperAdmin::class,
+            'isAdmin' => IsAdmin::class,
+            'isUser' => IsUser::class,
             'trackLastActive' => App\Http\Middleware\TrackLastActive::class,
         ]);
         // Apply to web group globally

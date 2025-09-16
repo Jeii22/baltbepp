@@ -37,6 +37,7 @@ class TripController extends Controller
             'child' => 'nullable|integer|min:0',
             'infant' => 'nullable|integer|min:0',
             'pwd' => 'nullable|integer|min:0',
+            'student' => 'nullable|integer|min:0',
         ]);
 
         $departureStart = \Carbon\Carbon::parse($validated['departure_date'])->startOfDay();
@@ -59,20 +60,30 @@ class TripController extends Controller
                 ->get();
         }
 
-        // Load active fares and map by type
-        $fares = Fare::where('active', true)->get()->keyBy(fn($f) => strtolower($f->passenger_type));
-        $fareMap = [
-            'adult' => (float)($fares['adult']->price ?? 0),
-            'child' => (float)($fares['child']->price ?? 0),
-            'infant' => (float)($fares['infant']->price ?? 0),
-            'pwd'   => (float)($fares['pwd']->price ?? 0),
+        // Load active fares and map passenger types
+        $fareRows = Fare::where('active', true)->get();
+        $fareMap = [];
+        
+        // Create a direct mapping from database passenger types to their prices
+        foreach ($fareRows as $fare) {
+            $fareMap[$fare->passenger_type] = (float) $fare->price;
+        }
+        
+        // Also create aliases for easier access in templates
+        $fareAliases = [
+            'adult' => $fareMap['Regular'] ?? 900,
+            'child' => $fareMap['Child (2-11)'] ?? 450,
+            'infant' => $fareMap['Infant'] ?? 0,
+            'pwd' => $fareMap['Senior Citizen / PWD'] ?? 720,
+            'student' => $fareMap['Student'] ?? 765,
         ];
 
         return view('bookings.search', [
             'criteria' => $validated,
             'outbound' => $outbound,
             'inbound' => $inbound,
-            'fares'    => $fareMap,
+            'fares' => $fareMap,
+            'fareAliases' => $fareAliases,
         ]);
     }
 

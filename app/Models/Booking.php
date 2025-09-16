@@ -23,6 +23,7 @@ class Booking extends Model
         'phone',
         'status',
         'total_amount',
+        'payment_method',
     ];
 
     protected $casts = [

@@ -55,4 +55,49 @@ class User extends Authenticatable
     {
         return trim($this->first_name . ' ' . $this->last_name) ?: $this->name ?: $this->email;
     }
+
+    /**
+     * Check if user is a super admin
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    /**
+     * Check if user is an admin
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if user is a regular user/customer
+     */
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
+    }
+
+    /**
+     * Check if user has admin privileges (super_admin or admin)
+     */
+    public function hasAdminPrivileges(): bool
+    {
+        return in_array($this->role, ['super_admin', 'admin']);
+    }
+
+    /**
+     * Get user role display name
+     */
+    public function getRoleDisplayName(): string
+    {
+        return match($this->role) {
+            'super_admin' => 'Super Administrator',
+            'admin' => 'Administrator',
+            'user' => 'Customer',
+            default => 'Unknown'
+        };
+    }
 }

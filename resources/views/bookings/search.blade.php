@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Balt-Bep — Schedule</title>
+    <title>Balt-Bep</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="antialiased bg-white text-gray-800">
@@ -47,7 +47,7 @@
     <div class="relative bg-cover bg-center h-[45vh] md:h-[55vh]" style="background-image: url('/images/barko.png');">
         <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
             <div class="text-center text-white px-6">
-                <h1 class="text-3xl md:text-5xl font-bold">Choose your schedule</h1>
+                <h1 class="text-3xl md:text-5xl font-bold">Book your Ticket</h1>
                 <p class="mt-2 text-lg md:text-2xl italic">
                     {{ $criteria['origin'] }} → {{ $criteria['destination'] }} on
                     {{ \Carbon\Carbon::parse($criteria['departure_date'])->format('M d, Y') }}
@@ -63,7 +63,7 @@
     </div>
 
     <!-- Content Card (mirrors Trip Search Box style) -->
-    <div class="relative -mt-16 max-w-6xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 md:p-8">
+    <div id="schedule" class="relative -mt-16 max-w-6xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 md:p-8">
         @include('bookings.partials.progress', ['current' => 'schedule'])
 
         <div class="flex items-center justify-between mt-4">
@@ -99,15 +99,16 @@
             <div class="md:col-span-2">
                 <h3 class="font-semibold text-gray-800 mb-2">Outbound</h3>
                 @forelse($outbound as $trip)
-                    <div class="border rounded-xl p-4 mb-3 flex items-center justify-between bg-white/80" data-card="outbound" data-id="{{ $trip->id }}" data-price="{{ $trip->price }}" data-origin="{{ $trip->origin }}" data-destination="{{ $trip->destination }}" data-departure="{{ \Carbon\Carbon::parse($trip->departure_time)->toIso8601String() }}" data-arrival="{{ \Carbon\Carbon::parse($trip->arrival_time)->toIso8601String() }}">
+                    <div class="border rounded-xl p-4 mb-3 flex items-center justify-between bg-white/80 transition ring-0" data-card="outbound" data-id="{{ $trip->id }}" data-price="{{ $trip->price }}" data-origin="{{ $trip->origin }}" data-destination="{{ $trip->destination }}" data-departure="{{ \Carbon\Carbon::parse($trip->departure_time)->toIso8601String() }}" data-arrival="{{ \Carbon\Carbon::parse($trip->arrival_time)->toIso8601String() }}">
                         <div>
                             <p class="font-medium">{{ $trip->origin }} → {{ $trip->destination }}</p>
                             <p class="text-sm text-gray-600">Depart: {{ \Carbon\Carbon::parse($trip->departure_time)->format('M d, Y h:i A') }}</p>
                             <p class="text-sm text-gray-600">Arrive: {{ \Carbon\Carbon::parse($trip->arrival_time)->format('M d, Y h:i A') }}</p>
                         </div>
-                        <div class="text-right">
+                        <div class="relative text-right">
                             <p class="text-lg font-bold">₱{{ number_format($trip->price, 2) }}</p>
-                            <button type="button" class="selectTrip inline-block mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700" data-type="outbound" data-id="{{ $trip->id }}">Select</button>
+                            <button type="button" class="selectTrip inline-block mt-2 bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700" data-type="outbound" data-id="{{ $trip->id }}">Select</button>
+                            <span class="selected-badge hidden absolute -top-2 -left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">Selected</span>
                         </div>
                     </div>
                 @empty
@@ -131,9 +132,10 @@
                                 <p class="text-sm text-gray-600">Depart: {{ \Carbon\Carbon::parse($trip->departure_time)->format('M d, Y h:i A') }}</p>
                                 <p class="text-sm text-gray-600">Arrive: {{ \Carbon\Carbon::parse($trip->arrival_time)->format('M d, Y h:i A') }}</p>
                             </div>
-                            <div class="text-right">
+                            <div class="relative text-right">
                                 <p class="text-lg font-bold">₱{{ number_format($trip->price, 2) }}</p>
-                                <button type="button" class="selectTrip inline-block mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700" data-type="inbound" data-id="{{ $trip->id }}">Select</button>
+                                <button type="button" class="selectTrip inline-block mt-2 bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700" data-type="inbound" data-id="{{ $trip->id }}">Select</button>
+                                <span class="selected-badge hidden absolute -top-2 -left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">Selected</span>
                             </div>
                         </div>
                     @empty
@@ -162,12 +164,35 @@
                             </div>
                             @endif
                             <div class="pt-2">
-                                <span class="font-medium">Passengers</span>
-                                <div class="text-gray-600">
-                                    Adult x {{ $criteria['adult'] ?? 1 }},
-                                    Child x {{ $criteria['child'] ?? 0 }},
-                                    Infant x {{ $criteria['infant'] ?? 0 }},
-                                    PWD x {{ $criteria['pwd'] ?? 0 }}
+                                <span class="font-medium">Passengers & Fares</span>
+                                <div class="text-gray-600 space-y-1 mt-1">
+                                    @php
+                                        $passengerTypes = [
+                                            'adult' => ['count' => $criteria['adult'] ?? 1, 'label' => 'Adult', 'fare' => $fareAliases['adult'] ?? 900],
+                                            'child' => ['count' => $criteria['child'] ?? 0, 'label' => 'Child', 'fare' => $fareAliases['child'] ?? 450],
+                                            'infant' => ['count' => $criteria['infant'] ?? 0, 'label' => 'Infant', 'fare' => $fareAliases['infant'] ?? 0],
+                                            'pwd' => ['count' => $criteria['pwd'] ?? 0, 'label' => 'PWD/Senior', 'fare' => $fareAliases['pwd'] ?? 720],
+                                            'student' => ['count' => $criteria['student'] ?? 0, 'label' => 'Student', 'fare' => $fareAliases['student'] ?? 765],
+                                        ];
+                                        $totalPassengerFare = 0;
+                                    @endphp
+                                    
+                                    @foreach($passengerTypes as $type => $info)
+                                        @if($info['count'] > 0)
+                                            <div class="flex justify-between text-xs">
+                                                <span>{{ $info['label'] }} × {{ $info['count'] }}</span>
+                                                <span class="font-medium">₱{{ number_format($info['fare'] * $info['count'], 0) }}</span>
+                                                @php $totalPassengerFare += $info['fare'] * $info['count']; @endphp
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                    
+                                    <div class="border-t pt-1 mt-2">
+                                        <div class="flex justify-between text-xs font-semibold">
+                                            <span>Subtotal per trip:</span>
+                                            <span>₱{{ number_format($totalPassengerFare, 0) }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -184,17 +209,17 @@
                         </div>
                         <p class="text-xs text-gray-500 mt-1">Prices may change. Booking fee and discounts will be applied after adding passenger details.</p>
 
-                        <button id="proceedBtn" type="button" class="mt-3 w-full px-4 py-2 bg-green-600 text-white rounded-lg opacity-50 cursor-not-allowed" disabled>Proceed</button>
-
                         <div class="mt-3 grid grid-cols-2 gap-2">
                             <button id="openEditTrip" type="button" class="inline-block w-full text-center px-4 py-2 border rounded-lg hover:bg-gray-50">Edit Trip</button>
-                            <a href="{{ url()->previous() }}" class="inline-block w-full text-center px-4 py-2 border rounded-lg hover:bg-gray-50">Back</a>
+                            <button id="toPassenger" type="button" class="inline-block w-full text-center px-4 py-2 bg-green-600 text-white rounded-lg opacity-50 pointer-events-none">Proceed</button>
                         </div>
                     </div>
                 </div>
             </aside>
         </div>
     </div>
+
+
 
     <!-- Edit Trip Modal -->
     <div id="editTripModal" class="hidden fixed inset-0 z-50">
@@ -248,7 +273,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
                     <div>
                         <label class="text-xs font-semibold text-gray-600">Adult</label>
                         <input type="number" min="1" id="edit_adult" name="adult" class="border rounded-lg px-3 py-2 w-full" value="1">
@@ -264,6 +289,10 @@
                     <div>
                         <label class="text-xs font-semibold text-gray-600">PWD</label>
                         <input type="number" min="0" id="edit_pwd" name="pwd" class="border rounded-lg px-3 py-2 w-full" value="0">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Student</label>
+                        <input type="number" min="0" id="edit_student" name="student" class="border rounded-lg px-3 py-2 w-full" value="0">
                     </div>
                 </div>
 
@@ -293,10 +322,13 @@
             origin: @json($criteria['origin']),
             destination: @json($criteria['destination']),
             tripType: @json($criteria['tripType']),
+            departure_date: @json($criteria['departure_date']),
+            return_date: @json($criteria['return_date'] ?? ''),
             adult: @json($criteria['adult'] ?? 1),
             child: @json($criteria['child'] ?? 0),
             infant: @json($criteria['infant'] ?? 0),
             pwd: @json($criteria['pwd'] ?? 0),
+            student: @json($criteria['student'] ?? 0),
         };
 
         // Use local time, not UTC, to avoid off-by-one day shift
@@ -329,6 +361,7 @@
             document.getElementById('edit_child').value = params.child;
             document.getElementById('edit_infant').value = params.infant;
             document.getElementById('edit_pwd').value = params.pwd;
+            document.getElementById('edit_student').value = params.student;
             toggleEdit(true);
         });
         closeEdit?.addEventListener('click', () => toggleEdit(false));
@@ -384,6 +417,7 @@
                         child: params.child,
                         infant: params.infant,
                         pwd: params.pwd,
+                        student: params.student,
                     });
                     a.href = `/booking/schedule?${q.toString()}`;
                 } else {
@@ -404,6 +438,7 @@
             child: Number(params.child) || 0,
             infant: Number(params.infant) || 0,
             pwd: Number(params.pwd) || 0,
+            student: Number(params.student) || 0,
         };
         const selectionSummary = document.getElementById('selectionSummary');
         const subtotalEl = document.getElementById('subtotal');
@@ -413,13 +448,14 @@
         function renderSummary() {
             const lines = [];
             let subtotal = 0;
-            const fares = @json($fares);
+            const fareAliases = @json($fareAliases);
             const breakdownLines = [];
             const payingBreakdown = [
-                ['Adult', counts.adult, fares.adult || 0],
-                ['Child', counts.child, fares.child || 0],
-                ['PWD', counts.pwd, fares.pwd || 0],
-                ['Infant', counts.infant, fares.infant || 0],
+                ['Adult', counts.adult, fareAliases.adult || 900],
+                ['Child', counts.child, fareAliases.child || 450],
+                ['PWD/Senior', counts.pwd, fareAliases.pwd || 720],
+                ['Student', counts.student, fareAliases.student || 765],
+                ['Infant', counts.infant, fareAliases.infant || 0],
             ];
 
             // Show a short fare breakdown under outbound (and inbound if selected)
@@ -434,16 +470,12 @@
             }
 
             function totalPerTrip(basePrice) {
-                // Base trip price + passenger-type fare add-ons
+                // Pricing model: ONLY per-type fares × counts (no base trip price)
                 let total = 0;
                 payingBreakdown.forEach(([label, qty, fare]) => {
                     if (!qty) return;
                     total += qty * (fare);
                 });
-                // If your business logic is: total price = trip base price + per-passenger fares
-                // add base price multiplied by all passengers (including infants if applicable)
-                const allPax = counts.adult + counts.child + counts.pwd + counts.infant;
-                total += basePrice * allPax;
                 return total;
             }
 
@@ -452,8 +484,6 @@
                 lines.push(`<div class="flex justify-between"><span>Selected Outbound</span><span>${s.origin} → ${s.destination}</span></div>`);
                 lines.push(`<div class="flex justify-between text-xs text-gray-600"><span>Depart</span><span>${s.departure}</span></div>`);
                 const tripTotal = totalPerTrip(s.price);
-                const allPaxOutbound = counts.adult + counts.child + counts.infant + counts.pwd;
-                lines.push(`<div class="flex justify-between text-xs text-gray-600"><span>Base</span><span>${formatCurrency(s.price)} × ${allPaxOutbound}</span></div>`);
                 appendFareLines();
                 lines.push(`<div class="flex justify-between text-xs text-gray-600"><span>Trip total</span><span>${formatCurrency(tripTotal)}</span></div>`);
                 subtotal += tripTotal;
@@ -463,8 +493,6 @@
                 lines.push(`<div class="flex justify-between mt-2"><span>Selected Return</span><span>${s.origin} → ${s.destination}</span></div>`);
                 lines.push(`<div class="flex justify-between text-xs text-gray-600"><span>Depart</span><span>${s.departure}</span></div>`);
                 const tripTotal = totalPerTrip(s.price);
-                const allPaxInbound = counts.adult + counts.child + counts.infant + counts.pwd;
-                lines.push(`<div class="flex justify-between text-xs text-gray-600"><span>Base</span><span>${formatCurrency(s.price)} × ${allPaxInbound}</span></div>`);
                 appendFareLines();
                 lines.push(`<div class="flex justify-between text-xs text-gray-600"><span>Trip total</span><span>${formatCurrency(tripTotal)}</span></div>`);
                 subtotal += tripTotal;
@@ -493,22 +521,32 @@
         }
 
         function capture(cardEl) {
+            const id = cardEl.dataset.id;
             const price = Number(cardEl.dataset.price);
             const origin = cardEl.dataset.origin;
             const destination = cardEl.dataset.destination;
             const departureISO = cardEl.dataset.departure;
             const departure = new Date(departureISO);
             const formatted = departure.toLocaleString('en-PH', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            return { price, origin, destination, departure: formatted };
+            return { id, price, origin, destination, departure: formatted };
         }
 
         function updateProceedState() {
             const needInbound = params.tripType === 'round' && @json(!empty($criteria['return_date']));
             const ok = !!selection.outbound && (!needInbound || !!selection.inbound);
-            const btn = document.getElementById('proceedBtn');
-            btn.disabled = !ok;
-            btn.classList.toggle('opacity-50', !ok);
-            btn.classList.toggle('cursor-not-allowed', !ok);
+            
+            const toPassenger = document.getElementById('toPassenger');
+            if (toPassenger) {
+                toPassenger.classList.toggle('pointer-events-none', !ok);
+                toPassenger.classList.toggle('opacity-50', !ok);
+                if (ok) {
+                    toPassenger.classList.remove('opacity-50', 'pointer-events-none');
+                    toPassenger.classList.add('hover:bg-green-700');
+                } else {
+                    toPassenger.classList.add('opacity-50', 'pointer-events-none');
+                    toPassenger.classList.remove('hover:bg-green-700');
+                }
+            }
         }
 
         document.querySelectorAll('.selectTrip').forEach(btn => {
@@ -518,12 +556,13 @@
                 if (!card) return;
 
                 // Clear previous selection styles for this group
-                document.querySelectorAll(`[data-card="${type}"]`).forEach(c => c.classList.remove('ring-2','ring-blue-500','bg-blue-50'));
+                document.querySelectorAll(`[data-card="${type}"]`).forEach(c => { c.classList.remove('ring-2','ring-blue-500','bg-blue-50','shadow'); c.querySelectorAll('.selected-badge').forEach(b=>b.classList.add('hidden')); });
                 document.querySelectorAll(`.selectTrip[data-type="${type}"]`).forEach(b => { b.textContent = 'Select'; b.classList.remove('bg-green-600'); b.classList.add('bg-blue-600'); });
 
                 // Set this one as selected
                 selection[type] = capture(card);
-                card.classList.add('ring-2','ring-blue-500','bg-blue-50');
+                card.classList.add('ring-2','ring-blue-500','bg-blue-50','shadow');
+                const badge = card.querySelector('.selected-badge'); if (badge) badge.classList.remove('hidden');
                 btn.textContent = 'Selected';
                 btn.classList.remove('bg-blue-600');
                 btn.classList.add('bg-green-600');
@@ -535,6 +574,43 @@
 
         // Proceed gating
         updateProceedState();
+
+        // In-page navigation by hash
+
+
+        // Enable Next buttons only when selection ok
+        document.getElementById('toPassenger')?.addEventListener('click', (e) => {
+            const needInbound = params.tripType === 'round' && @json(!empty($criteria['return_date']));
+            
+            if (!selection.outbound || (needInbound && !selection.inbound)) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Build URL with all parameters
+            const url = new URL('/booking/schedule/passenger', window.location.origin);
+            url.searchParams.set('origin', params.origin);
+            url.searchParams.set('destination', params.destination);
+            url.searchParams.set('departure_date', params.departure_date);
+            url.searchParams.set('tripType', params.tripType);
+            url.searchParams.set('adult', params.adult);
+            url.searchParams.set('child', params.child);
+            url.searchParams.set('infant', params.infant);
+            url.searchParams.set('pwd', params.pwd);
+            url.searchParams.set('student', params.student);
+            url.searchParams.set('outbound_trip_id', selection.outbound.id);
+            
+            if (params.return_date) {
+                url.searchParams.set('return_date', params.return_date);
+            }
+            if (selection.inbound) {
+                url.searchParams.set('inbound_trip_id', selection.inbound.id);
+            }
+            
+            console.log('Redirecting to:', url.toString());
+            window.location.href = url.toString();
+        });
+
 
         load();
     });

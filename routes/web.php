@@ -18,6 +18,7 @@ Route::get('/', function () {
 
 Route::get('/trips/search', [TripController::class, 'search'])->name('trips.search');
 Route::get('/booking/schedule', [TripController::class, 'search'])->name('booking.schedule');
+Route::get('/booking/schedule/passenger', [BookingController::class, 'passenger'])->name('booking.passenger');
 Route::get('/booking/available-dates', [TripController::class, 'availableDates'])->name('booking.availableDates');
 Route::get('/trips/{trip}/book', [BookingController::class, 'create'])->name('bookings.create');
 Route::post('/bookings/summary', [BookingController::class, 'summary'])->name('bookings.summary');
@@ -66,6 +67,7 @@ Route::middleware(['auth', 'isSuperAdmin'])->group(function () {
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::patch('/bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.updateStatus');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 });
 
@@ -74,6 +76,19 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+
+// Test routes for role-based access (for demonstration)
+Route::middleware(['auth', 'isAdmin'])->group(function () {
+    Route::get('/admin-test', function () {
+        return view('test.admin-access');
+    })->name('admin.test');
+});
+
+Route::middleware(['auth', 'isUser'])->group(function () {
+    Route::get('/customer-test', function () {
+        return view('test.customer-access');
+    })->name('customer.test');
+});
 
 require __DIR__.'/auth.php';
 
