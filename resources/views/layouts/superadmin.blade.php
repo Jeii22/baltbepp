@@ -35,6 +35,12 @@
                     <li><a href="{{ route('trips.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Trip Management</a></li>
                     <li><a href="{{ route('fares.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Fare Management</a></li>
                     <li><a href="{{ route('bookings.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Booking Management</a></li>
+                    <li>
+                        <a href="{{ route('admin.payment-methods.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">
+                            Payment Management
+                            <span class="block text-xs opacity-80">Digital Wallets, Cards & COD</span>
+                        </a>
+                    </li>
                     <li><a href="{{ route('reports.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Reports</a></li>
                     <li><a href="{{ route('settings.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Settings</a></li>
                 </ul>

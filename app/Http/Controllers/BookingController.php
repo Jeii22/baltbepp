@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Trip;
 use App\Models\Fare;
 use Illuminate\Http\Request;
+use App\Services\PaymentService;
+use Illuminate\Support\Facades\Schema;
 
 class BookingController extends Controller
 {
@@ -136,31 +138,47 @@ class BookingController extends Controller
         $data = session('booking.summary');
         abort_if(!$data, 404);
 
-        $trip = Trip::findOrFail($data['trip_id']);
-        return view('bookings.checkout', compact('trip') + $data);
+        // Determine trips from session data
+        $outboundTrip = Trip::findOrFail($data['outbound_trip_id'] ?? $data['trip_id']);
+        $inboundTrip = isset($data['inbound_trip_id']) && !empty($data['inbound_trip_id'])
+            ? Trip::find($data['inbound_trip_id'])
+            : null;
+
+        // Fares for display
+        $fares = Fare::where('active', true)->pluck('price', 'passenger_type');
+
+        // Load active admin-configured wallets for customer selection (guard if table missing)
+        $wallets = collect();
+        if (Schema::hasTable('payment_methods')) {
+            $wallets = \App\Models\PaymentMethod::where('is_active', true)->orderBy('type')->get();
+        }
+
+        return view('bookings.checkout', array_merge([
+            'outboundTrip' => $outboundTrip,
+            'inboundTrip' => $inboundTrip,
+            'fares' => $fares,
+            'grandTotal' => $data['grand_total'] ?? $data['grandTotal'] ?? 0,
+            'wallets' => $wallets,
+        ], $data));
     }
 
-    public function process(Request $request)
+    public function process(Request $request, PaymentService $paymentService)
     {
         $data = session('booking.summary');
         abort_if(!$data, 404);
 
         $validationRules = [
-            'payment_method' => 'required|in:cod,card,gcash,paymaya',
+            'payment_method' => 'required|in:cod,card,gcash,paymaya,paymongo_card,paymongo_gcash',
             'terms' => 'required|accepted',
         ];
 
-        // Add card validation if card payment is selected
-        if ($request->payment_method === 'card') {
-            $validationRules = array_merge($validationRules, [
-                'card_number' => 'required|string|min:13|max:19',
-                'card_expiry' => 'required|string|regex:/^(0[1-9]|1[0-2])\/([0-9]{2})$/',
-                'card_cvv' => 'required|string|min:3|max:4',
-                'card_name' => 'required|string|max:100',
-            ]);
-        }
-
         $request->validate($validationRules);
+
+        // Validate payment-specific data using PaymentService
+        $paymentErrors = $paymentService->validatePaymentData($request);
+        if (!empty($paymentErrors)) {
+            return redirect()->back()->withErrors($paymentErrors)->withInput();
+        }
 
         // Get trip data - handle both old and new data structures
         $tripId = $data['trip_id'] ?? $data['outbound_trip_id'];
@@ -175,6 +193,7 @@ class BookingController extends Controller
             'child' => $data['counts']['child'],
             'infant' => $data['counts']['infant'],
             'pwd' => $data['counts']['pwd'],
+            'student' => $data['counts']['student'] ?? 0,
             'full_name' => $data['contact_info']['contact_name'] ?? $data['customer']['full_name'] ?? 'Guest',
             'email' => $data['contact_info']['contact_email'] ?? $data['customer']['email'] ?? '',
             'phone' => $data['contact_info']['contact_phone'] ?? $data['customer']['phone'] ?? null,
@@ -185,15 +204,35 @@ class BookingController extends Controller
 
         // Here you’d integrate real payment. For now, mark confirmed for COD.
         // Process payment based on method
-        $paymentStatus = $this->processPayment($request, $booking);
+        $paymentStatus = $paymentService->processPayment($request, $booking);
+
+        // If PayMongo returns a redirect URL (e.g., GCash), show QR/Continue page
+        if (!empty($paymentStatus['redirect_url'])) {
+            $booking->update([
+                'status' => 'pending',
+                'payment_reference' => $paymentStatus['payment_reference'] ?? null
+            ]);
+
+            // Keep session so user can come back if needed
+            return view('payments.gcash', [
+                'booking' => $booking,
+                'checkoutUrl' => $paymentStatus['redirect_url'],
+            ]);
+        }
 
         if ($paymentStatus['success']) {
+            // Normalize status to allowed enum values
+            $normalizedStatus = in_array($paymentStatus['status'] ?? 'pending', ['pending','confirmed','cancelled'])
+                ? $paymentStatus['status']
+                : (($paymentStatus['status'] ?? '') === 'failed' ? 'cancelled' : 'pending');
+
             $booking->update([
-                'status' => $paymentStatus['status'],
+                'status' => $normalizedStatus,
+                'payment_reference' => $paymentStatus['payment_reference'] ?? null
             ]);
         } else {
-            // Payment failed
-            $booking->update(['status' => 'failed']);
+            // Payment failed -> use allowed enum value
+            $booking->update(['status' => 'cancelled']);
             
             return back()->withErrors(['payment' => $paymentStatus['message']])
                 ->withInput();
@@ -211,11 +250,70 @@ class BookingController extends Controller
         return view('bookings.confirmation', compact('booking'));
     }
 
+    // PayMongo success callback (user redirected here after approving)
+    public function paymongoSuccess(\App\Models\Booking $booking)
+    {
+        // Show confirmation; final status should be set via webhook
+        return redirect()->route('bookings.confirmation', $booking)
+            ->with('success', 'Payment processing… We will confirm once the provider notifies us.');
+    }
+
+    // PayMongo failed/cancelled callback
+    public function paymongoFailed(\App\Models\Booking $booking)
+    {
+        // Map to allowed enum value
+        $booking->update(['status' => 'cancelled']);
+        return redirect()->back()->withErrors(['payment' => 'Payment cancelled or failed.']);
+    }
+
+    // PayMongo webhook to finalize payment status
+    public function paymongoWebhook(Request $request)
+    {
+        // Verify PayMongo signature header
+        $payload = $request->getContent();
+        $signatureHeader = $request->header('Paymongo-Signature');
+        $webhookSecret = env('PAYMONGO_WEBHOOK_SECRET');
+
+        try {
+            $client = new \Paymongo\PaymongoClient(env('PAYMONGO_SECRET_KEY'));
+            $event = $client->webhooks->constructEvent([
+                'payload' => $payload,
+                'signature_header' => $signatureHeader,
+                'webhook_secret_key' => $webhookSecret,
+            ]);
+        } catch (\Throwable $e) {
+            // Invalid signature or parsing error
+            return response('invalid signature', 400);
+        }
+
+        $type = $event->type ?? '';
+        $resource = $event->resource ?? [];
+
+        // For payment.paid, locate booking by source id and mark confirmed
+        if (str_contains($type, 'payment.paid')) {
+            $sourceId = $resource['data']['attributes']['source']['id'] ?? null;
+            $paymentId = $resource['data']['id'] ?? null;
+
+            if ($sourceId) {
+                $booking = \App\Models\Booking::where('payment_reference', $sourceId)->first();
+                if ($booking) {
+                    $booking->update([
+                        'status' => 'confirmed',
+                        'payment_reference' => $paymentId ?? $sourceId,
+                    ]);
+                }
+            }
+        }
+
+        return response()->noContent();
+    }
+
     // Superadmin: list + filter by origin & destination
     public function index(Request $request)
     {
         $query = \App\Models\Booking::query()->with('trip');
 
+        // Basic filters
         if ($request->filled('origin')) {
             $query->where('origin', $request->string('origin'));
         }
@@ -226,9 +324,63 @@ class BookingController extends Controller
             $query->where('status', $request->string('status'));
         }
 
+        // Enhanced filters to match new UI
+        if ($request->filled('q')) {
+            $q = $request->string('q');
+            $query->where(function ($sub) use ($q) {
+                $sub->where('id', $q)
+                    ->orWhere('full_name', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%");
+            });
+        }
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->date('start_date'));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->date('end_date'));
+        }
+        if ($request->filled('payment_status')) {
+            // Map payment status to booking status until a payments table exists
+            $payment = $request->string('payment_status');
+            $map = [
+                'paid' => 'confirmed',
+                'pending' => 'pending',
+                'refunded' => 'cancelled',
+            ];
+            if (isset($map[$payment])) {
+                $query->where('status', $map[$payment]);
+            }
+        }
+
         $bookings = $query->latest()->paginate(15)->withQueryString();
 
         return view('bookings.index', compact('bookings'));
+    }
+
+    // Superadmin: edit booking (minimal for now)
+    public function edit(\App\Models\Booking $booking)
+    {
+        return view('bookings.edit', compact('booking'));
+    }
+
+    // Superadmin: update booking (allow editing contact and basic counts)
+    public function update(Request $request, \App\Models\Booking $booking)
+    {
+        $validated = $request->validate([
+            'full_name' => 'required|string|max:120',
+            'email' => 'required|email|max:120',
+            'phone' => 'nullable|string|max:20',
+            'adult' => 'required|integer|min:0',
+            'child' => 'required|integer|min:0',
+            'infant' => 'required|integer|min:0',
+            'pwd' => 'required|integer|min:0',
+            'student' => 'nullable|integer|min:0',
+            'status' => 'required|in:pending,confirmed,cancelled',
+        ]);
+
+        $booking->update($validated);
+
+        return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
     }
 
     // Superadmin: update status

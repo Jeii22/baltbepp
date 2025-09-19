@@ -1,39 +1,63 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-@section('content')
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Progress Bar -->
-        <div class="mb-8">
-            <div class="flex items-center justify-center">
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">✓</div>
-                        <span class="ml-2 text-sm font-medium text-gray-900">Trip Selection</span>
+    <title>Payment - Balt-Bep</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="antialiased bg-white text-gray-800">
+
+    <!-- Navbar (aligned with passenger/summary pages) -->
+    <nav class="absolute top-0 left-0 w-full z-20 bg-transparent">
+        <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
+            <a href="/" class="flex items-center space-x-2">
+                <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
+            </a>
+            <div class="hidden md:flex space-x-8 text-white font-medium">
+                <a href="{{ route('welcome') }}#book" class="hover:text-cyan-200">Book</a>
+                <a href="#refund" class="hover:text-cyan-200">Refund & Rebooking</a>
+                <a href="#info" class="hover:text-cyan-200">Travel Info</a>
+                <a href="#updates" class="hover:text-cyan-200">Latest Updates</a>
+                <a href="#contact" class="hover:text-cyan-200">Contact Us</a>
+            </div>
+            <div>
+                @auth
+                    <div class="flex items-center space-x-3 text-white">
+                        <span>Hi, {{ Auth::user()->name }}</span>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="border border-white px-3 py-1 rounded-lg hover:bg-white hover:text-blue-600 transition">Log out</button>
+                        </form>
                     </div>
-                    <div class="w-16 h-1 bg-blue-600"></div>
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">✓</div>
-                        <span class="ml-2 text-sm font-medium text-gray-900">Passenger Details</span>
-                    </div>
-                    <div class="w-16 h-1 bg-blue-600"></div>
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">3</div>
-                        <span class="ml-2 text-sm font-medium text-blue-600">Payment</span>
-                    </div>
-                    <div class="w-16 h-1 bg-gray-300"></div>
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">4</div>
-                        <span class="ml-2 text-sm font-medium text-gray-500">Confirmation</span>
-                    </div>
-                </div>
+                @else
+                    <a href="{{ route('login') }}" class="border border-white px-4 py-2 rounded-lg text-white hover:bg-white hover:text-blue-600 transition">
+                        Sign In
+                    </a>
+                @endauth
             </div>
         </div>
+    </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Hero Section (same style) -->
+    <div class="relative bg-cover bg-center h-[45vh] md:h-[55vh]" style="background-image: url('/images/barko.png');">
+        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+            <div class="text-center text-white px-6">
+                <h1 class="text-3xl md:text-5xl font-bold">Payment</h1>
+                <p class="mt-2 text-lg md:text-2xl italic">Complete your booking</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Card (matches previous pages) -->
+    <div class="relative -mt-16 max-w-6xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 md:p-8">
+        @include('bookings.partials.progress', ['current' => 'payment'])
+
+        <div class="grid lg:grid-cols-3 gap-8 mt-6">
             <!-- Payment Form -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                     <h1 class="text-2xl font-bold text-gray-900 mb-6">Complete Your Payment</h1>
 
                     <!-- Error Messages -->
@@ -64,48 +88,50 @@
                                 <!-- Digital Wallets -->
                                 <div class="space-y-3">
                                     <h4 class="text-sm font-medium text-gray-700 uppercase tracking-wide">Digital Wallets</h4>
-                                    
-                                    <!-- GCash -->
-                                    <label class="payment-option relative flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
-                                        <input type="radio" name="payment_method" value="gcash" class="sr-only" {{ old('payment_method') == 'gcash' ? 'checked' : '' }}>
-                                        <div class="flex items-center space-x-3 w-full">
-                                            <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-                                                <span class="text-white font-bold text-sm">G</span>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="font-medium text-gray-900">GCash</p>
-                                                <p class="text-sm text-gray-500">Pay with your GCash wallet</p>
-                                            </div>
-                                            <div class="payment-check hidden">
-                                                <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </label>
 
-                                    <!-- PayMaya -->
-                                    <label class="payment-option relative flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
-                                        <input type="radio" name="payment_method" value="paymaya" class="sr-only" {{ old('payment_method') == 'paymaya' ? 'checked' : '' }}>
-                                        <div class="flex items-center space-x-3 w-full">
-                                            <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
-                                                <span class="text-white font-bold text-sm">PM</span>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="font-medium text-gray-900">PayMaya</p>
-                                                <p class="text-sm text-gray-500">Pay with your Maya wallet</p>
-                                            </div>
-                                            <div class="payment-check hidden">
-                                                <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                    </svg>
+                                    @if(isset($wallets) && count($wallets))
+                                        <div class="space-y-3">
+                                            @foreach($wallets as $wallet)
+                                            <label class="payment-option relative flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
+                                                <input type="radio" name="payment_method" value="{{ $wallet->type }}" class="sr-only" {{ old('payment_method', 'cod') == $wallet->type ? 'checked' : '' }}>
+                                                <div class="flex items-center space-x-3 w-full">
+                                                    <div class="w-12 h-12 {{ $wallet->type==='gcash' ? 'bg-blue-600' : 'bg-green-600' }} rounded-lg flex items-center justify-center">
+                                                        <span class="text-white font-bold text-sm">{{ strtoupper(substr($wallet->type,0,2)) }}</span>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <p class="font-medium text-gray-900">{{ strtoupper($wallet->type) }} — {{ $wallet->label }}</p>
+                                                        <p class="text-xs text-gray-500">Account: {{ $wallet->account_name }} ({{ $wallet->account_number }})</p>
+                                                        @if($wallet->type==='gcash')
+                                                        <div class="mt-3 hidden gcash-extra">
+                                                            <label class="block text-xs text-gray-600 mb-1">Your GCash Phone</label>
+                                                            <input type="text" name="gcash_phone" placeholder="09xxxxxxxxx" value="{{ old('gcash_phone') }}" class="w-full px-3 py-2 border @error('gcash_phone') border-red-300 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                            @error('gcash_phone')
+                                                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                        @endif
+                                                        @if($wallet->type==='paymaya')
+                                                        <div class="mt-3 hidden paymaya-extra">
+                                                            <label class="block text-xs text-gray-600 mb-1">Your Maya Phone</label>
+                                                            <input type="text" name="paymaya_phone" placeholder="09xxxxxxxxx" value="{{ old('paymaya_phone') }}" class="w-full px-3 py-2 border @error('paymaya_phone') border-red-300 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                            @error('paymaya_phone')
+                                                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                        @endif
+                                                    </div>
+                                                    <div class="payment-check hidden">
+                                                        <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                                                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </label>
+                                            @endforeach
                                         </div>
-                                    </label>
+                                    @else
+                                        <p class="text-sm text-gray-500">No admin-configured wallets available.</p>
+                                    @endif
                                 </div>
 
                                 <!-- Cards & Others -->
@@ -345,10 +371,20 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show/hide card details
             const paymentMethod = this.querySelector('input[type="radio"]').value;
+            // Toggle extra fields for wallets
+            document.querySelectorAll('.gcash-extra').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.paymaya-extra').forEach(el => el.classList.add('hidden'));
+
             if (paymentMethod === 'card') {
                 cardDetails.classList.remove('hidden');
             } else {
                 cardDetails.classList.add('hidden');
+            }
+
+            if (paymentMethod === 'gcash') {
+                document.querySelectorAll('.gcash-extra').forEach(el => el.classList.remove('hidden'));
+            } else if (paymentMethod === 'paymaya') {
+                document.querySelectorAll('.paymaya-extra').forEach(el => el.classList.remove('hidden'));
             }
         });
     });
@@ -376,4 +412,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-@endsection
+</body>
+</html>

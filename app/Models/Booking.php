@@ -18,12 +18,14 @@ class Booking extends Model
         'child',
         'infant',
         'pwd',
+        'student',
         'full_name',
         'email',
         'phone',
         'status',
         'total_amount',
         'payment_method',
+        'payment_reference',
     ];
 
     protected $casts = [

@@ -693,5 +693,45 @@
         });
     </script>
 
+    <!-- Data bridge to avoid Blade vs JS template literal conflicts -->
+    <div id="bookingData" data-has-return="{{ $inboundTrip ? 'true' : 'false' }}" class="hidden"></div>
+
+    @verbatim
+    <script>
+        // Recompute totals safely with verbatim to prevent Blade parsing ${...}
+        (function() {
+            function updateGrandTotalBlock(totalFare) {
+                const bookingDataEl = document.getElementById('bookingData');
+                const hasReturn = bookingDataEl && bookingDataEl.dataset.hasReturn === 'true';
+                const grandTotal = totalFare * (hasReturn ? 2 : 1);
+
+                const totalContainer = document.querySelector('.total-cost');
+                if (totalContainer) {
+                    totalContainer.innerHTML = '
+                        <div class="flex justify-between">\
+                            <span>Outbound Trip:</span>\
+                            <span class="font-medium">₱' + totalFare.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</span>\
+                        </div>' +
+                        (hasReturn ? '
+                        <div class="flex justify-between">\
+                            <span>Return Trip:</span>\
+                            <span class="font-medium">₱' + totalFare.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</span>\
+                        </div>' : '') +
+                        '
+                        <div class="border-t pt-2 mt-2">\
+                            <div class="flex justify-between font-bold text-lg">\
+                                <span>Grand Total:</span>\
+                                <span class="text-green-600">₱' + grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</span>\
+                            </div>\
+                        </div>';
+                }
+            }
+
+            // If your page already defines updateFareCalculation, hook into it; else expose helper
+            window.updateGrandTotalBlock = updateGrandTotalBlock;
+        })();
+    </script>
+    @endverbatim
+
 </body>
 </html>

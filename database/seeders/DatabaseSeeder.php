@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             FareSeeder::class,
             BookingSeeder::class,
+            PaymentMethodSeeder::class,
         ]);
     }
 }

@@ -22,8 +22,13 @@ Route::get('/booking/schedule/passenger', [BookingController::class, 'passenger'
 Route::get('/booking/available-dates', [TripController::class, 'availableDates'])->name('booking.availableDates');
 Route::get('/trips/{trip}/book', [BookingController::class, 'create'])->name('bookings.create');
 Route::post('/bookings/summary', [BookingController::class, 'summary'])->name('bookings.summary');
-Route::post('/bookings/checkout', [BookingController::class, 'checkout'])->name('bookings.checkout');
+Route::match(['GET','POST'], '/bookings/checkout', [BookingController::class, 'checkout'])->name('bookings.checkout');
 Route::post('/bookings/process', [BookingController::class, 'process'])->name('bookings.process');
+
+// PayMongo GCash routes
+Route::get('/payments/paymongo/gcash/success/{booking}', [BookingController::class, 'paymongoSuccess'])->name('payments.paymongo.gcash.success');
+Route::get('/payments/paymongo/gcash/failed/{booking}', [BookingController::class, 'paymongoFailed'])->name('payments.paymongo.gcash.failed');
+Route::post('/webhooks/paymongo', [BookingController::class, 'paymongoWebhook'])->name('webhooks.paymongo');
 Route::get('/bookings/{booking}/confirmation', [BookingController::class, 'confirmation'])->name('bookings.confirmation');
 
 Route::get('/dashboard', function () {
@@ -63,12 +68,25 @@ Route::middleware(['auth', 'isSuperAdmin'])->group(function () {
     Route::put('/fares/{fare}', [FareController::class, 'update'])->name('fares.update');
     Route::delete('/fares/{fare}', [FareController::class, 'destroy'])->name('fares.destroy');
 
+    // Payment Methods (Superadmin)
+    Route::get('/admin/payment-methods', [\App\Http\Controllers\PaymentMethodController::class, 'index'])->name('admin.payment-methods.index');
+    Route::get('/admin/payment-methods/create', [\App\Http\Controllers\PaymentMethodController::class, 'create'])->name('admin.payment-methods.create');
+    Route::post('/admin/payment-methods', [\App\Http\Controllers\PaymentMethodController::class, 'store'])->name('admin.payment-methods.store');
+    Route::get('/admin/payment-methods/{paymentMethod}/edit', [\App\Http\Controllers\PaymentMethodController::class, 'edit'])->name('admin.payment-methods.edit');
+    Route::put('/admin/payment-methods/{paymentMethod}', [\App\Http\Controllers\PaymentMethodController::class, 'update'])->name('admin.payment-methods.update');
+    Route::delete('/admin/payment-methods/{paymentMethod}', [\App\Http\Controllers\PaymentMethodController::class, 'destroy'])->name('admin.payment-methods.destroy');
+
+    // Settings
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+
     // Other
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/{booking}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
+    Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
     Route::patch('/bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.updateStatus');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 });
 
 Route::middleware(['auth'])->group(function () {
