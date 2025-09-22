@@ -5,10 +5,6 @@
     <div class="max-w-3xl mx-auto">
         <h1 class="text-2xl font-bold mb-6">Settings</h1>
 
-        @if(session('success'))
-            <div class="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded">{{ session('success') }}</div>
-        @endif
-
         <form method="POST" action="{{ route('settings.index') }}" class="bg-white border rounded p-6 space-y-6 shadow-sm">
             @csrf
             @method('PUT')

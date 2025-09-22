@@ -4,10 +4,6 @@
 <div class="p-6">
     <h1 class="text-2xl font-bold mb-4">Trip Management</h1>
 
-    @if (session('success'))
-        <div class="mb-4 rounded bg-green-100 text-green-800 px-4 py-2">{{ session('success') }}</div>
-    @endif
-
     <a href="{{ route('trips.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded">+ Add Trip</a>
 
     <!-- Upcoming Trips -->

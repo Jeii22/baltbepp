@@ -7,10 +7,6 @@
         <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Booking Management - Super Admin</h1>
     </div>
 
-    @if (session('success'))
-        <div class="rounded-lg bg-green-50 border border-green-200 text-green-800 px-4 py-3">{{ session('success') }}</div>
-    @endif
-
     <!-- Search and Filters -->
     <form method="GET" class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 shadow-sm">
         <div class="grid grid-cols-1 md:grid-cols-6 gap-3 md:gap-4">
