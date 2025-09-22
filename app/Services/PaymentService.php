@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Booking;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -33,9 +34,23 @@ class PaymentService
                     return $this->processCardPayment($request, $booking);
 
                 case 'paymongo_card':
+                    if (!Setting::getBool('paymongo_enabled', true)) {
+                        return [
+                            'success' => false,
+                            'status' => 'failed',
+                            'message' => 'PayMongo is currently disabled by the administrator.'
+                        ];
+                    }
                     return $this->processPayMongoCard($request, $booking);
 
                 case 'paymongo_gcash':
+                    if (!Setting::getBool('paymongo_enabled', true)) {
+                        return [
+                            'success' => false,
+                            'status' => 'failed',
+                            'message' => 'PayMongo is currently disabled by the administrator.'
+                        ];
+                    }
                     return $this->processPayMongoGCash($request, $booking);
 
                 default:
@@ -273,11 +288,7 @@ class PaymentService
         switch ($paymentMethod) {
             case 'gcash':
             case 'paymongo_gcash':
-                if (empty($request->gcash_phone)) {
-                    $errors['gcash_phone'] = 'GCash phone number is required.';
-                } elseif (!preg_match('/^(09|\+639)\d{9}$/', $request->gcash_phone)) {
-                    $errors['gcash_phone'] = 'Please enter a valid Philippine mobile number.';
-                }
+                // No phone number required for hosted GCash checkout
                 break;
 
             case 'paymaya':

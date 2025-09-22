@@ -153,12 +153,16 @@ class BookingController extends Controller
             $wallets = \App\Models\PaymentMethod::where('is_active', true)->orderBy('type')->get();
         }
 
+        // Feature flags
+        $paymongoEnabled = \App\Models\Setting::getBool('paymongo_enabled', true);
+
         return view('bookings.checkout', array_merge([
             'outboundTrip' => $outboundTrip,
             'inboundTrip' => $inboundTrip,
             'fares' => $fares,
             'grandTotal' => $data['grand_total'] ?? $data['grandTotal'] ?? 0,
             'wallets' => $wallets,
+            'paymongoEnabled' => $paymongoEnabled,
         ], $data));
     }
 

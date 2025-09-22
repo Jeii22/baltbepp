@@ -10,7 +10,9 @@ class PaymentMethodController extends Controller
     public function index()
     {
         $methods = PaymentMethod::orderBy('type')->get();
-        return view('admin.payment_methods.index', compact('methods'));
+        $paymongoEnabled = \App\Models\Setting::getBool('paymongo_enabled', true);
+        $codEnabled = \App\Models\Setting::getBool('cod_enabled', true);
+        return view('admin.payment_methods.index', compact('methods', 'paymongoEnabled', 'codEnabled'));
     }
 
     public function create()

@@ -83,5 +83,54 @@
             </main>
         </div>
     </div>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(session('success'))
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: @json(session('success')),
+            timer: 2000,
+            showConfirmButton: false
+        });
+    });
+    </script>
+    @endif
+    @if(session('error'))
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: @json(session('error'))
+        });
+    });
+    </script>
+    @endif
+    <script>
+    // Intercept forms with data-confirm for SweetAlert confirmation
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('form[data-confirm]')?.forEach((form) => {
+            form.addEventListener('submit', function(e) {
+                const msg = this.getAttribute('data-confirm') || 'Are you sure?';
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Please confirm',
+                    text: msg,
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            }, { once: true });
+        });
+    });
+    </script>
 </body>
 </html>

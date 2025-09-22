@@ -8,9 +8,25 @@
             <a href="{{ route('admin.payment-methods.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded">Add Method</a>
         </div>
 
-        @if(session('success'))
-            <div class="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded">{{ session('success') }}</div>
-        @endif
+        <div class="mb-6 bg-white border rounded p-4 flex items-center justify-between">
+            <div>
+                <div class="font-medium">PayMongo</div>
+                <div class="text-sm text-gray-600">Toggle to activate or deactivate PayMongo across checkout.</div>
+            </div>
+            <form method="POST" action="{{ route('settings.update') }}" class="flex items-center">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="cod_enabled" value="{{ $codEnabled ? 'on' : '' }}">
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="paymongo_enabled" class="sr-only" {{ $paymongoEnabled ? 'checked' : '' }} onchange="this.form.submit()">
+                    <span class="w-11 h-6 rounded-full relative transition {{ $paymongoEnabled ? 'bg-green-500' : 'bg-red-500' }}">
+                        <span class="dot absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition transform {{ $paymongoEnabled ? 'translate-x-5' : '' }}"></span>
+                    </span>
+                </label>
+            </form>
+        </div>
+
+
 
         <div class="bg-white border rounded shadow-sm">
             <table class="min-w-full text-sm">
@@ -34,10 +50,10 @@
                             <td class="p-3">{{ $method->is_active ? 'Yes' : 'No' }}</td>
                             <td class="p-3 text-right space-x-2">
                                 <a class="px-3 py-1 border rounded" href="{{ route('admin.payment-methods.edit', $method) }}">Edit</a>
-                                <form action="{{ route('admin.payment-methods.destroy', $method) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.payment-methods.destroy', $method) }}" method="POST" class="inline" data-confirm="Delete this method?">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="px-3 py-1 border rounded text-red-600" onclick="return confirm('Delete this method?')">Delete</button>
+                                    <button type="submit" class="px-3 py-1 border rounded text-red-600">Delete</button>
                                 </form>
                             </td>
                         </tr>

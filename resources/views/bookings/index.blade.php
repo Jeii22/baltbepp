@@ -1,7 +1,7 @@
 @extends('layouts.superadmin')
 
 @section('content')
-<div class="p-6 space-y-6">
+<div class="p-6 space-y-6" x-data="{ showModal: false, selected: null, showPassengers: false }">
     <!-- Title -->
     <div class="flex items-center justify-between">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Booking Management - Super Admin</h1>
@@ -146,26 +146,32 @@
                         <!-- Actions -->
                         <td class="px-4 py-3 align-top">
                             <div class="flex flex-wrap gap-2">
-                                <!-- View -->
-                                <a href="{{ route('bookings.confirmation', $b) }}" class="px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700">View</a>
-                                <!-- Edit (wire later) -->
-                                <a href="{{ route('bookings.edit', $b) }}" class="px-3 py-1.5 rounded-md bg-green-600 text-white hover:bg-green-700" onclick="return false;" title="Wire this route in the controller later">Edit</a>
-                                <!-- Confirm -->
-                                <form action="{{ route('bookings.updateStatus', $b) }}" method="POST" onsubmit="return confirm('Confirm booking #{{ $b->id }}?')">
-                                    @csrf
-                                    @method('PATCH')
-                                    <input type="hidden" name="status" value="confirmed">
-                                    <button type="submit" class="px-3 py-1.5 rounded-md bg-yellow-500 text-white hover:bg-yellow-600">Confirm</button>
-                                </form>
-                                <!-- Cancel -->
-                                <form action="{{ route('bookings.updateStatus', $b) }}" method="POST" onsubmit="return confirm('Cancel booking #{{ $b->id }}?')">
-                                    @csrf
-                                    @method('PATCH')
-                                    <input type="hidden" name="status" value="cancelled">
-                                    <button type="submit" class="px-3 py-1.5 rounded-md bg-red-600 text-white hover:bg-red-700">Cancel</button>
-                                </form>
-                                <!-- Refund (placeholder to integrate payment gateway) -->
-                                <button type="button" class="px-3 py-1.5 rounded-md bg-purple-600 text-white hover:bg-purple-700" title="Integrate refund logic with your payment gateway" onclick="alert('Refund flow to be integrated with your payment gateway.');">Refund</button>
+                                <!-- Single View button opens floating modal -->
+                                <button type="button"
+                                        class="px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                                        @click.prevent="selected = {
+                                            id: {{ $b->id }},
+                                            full_name: @js($b->full_name),
+                                            email: @js($b->email),
+                                            phone: @js($b->phone),
+                                            origin: @js($b->origin),
+                                            destination: @js($b->destination),
+                                            depart_at: @js(optional($departAt)->format('M d, Y • h:i A')),
+                                            arrive_at: @js(optional($arriveAt)->format('M d, Y • h:i A')),
+                                            tickets: {{ $tickets }},
+                                            adult: {{ (int) $b->adult }},
+                                            child: {{ (int) $b->child }},
+                                            infant: {{ (int) $b->infant }},
+                                            pwd: {{ (int) $b->pwd }},
+                                            student: {{ (int) ($b->student ?? 0) }},
+                                            total_amount_label: @js('₱'.number_format($b->total_amount, 2)),
+                                            status: @js($b->status),
+                                            payment_status: @js($paymentStatus),
+                                            created_at: @js(optional($b->created_at)->format('M d, Y • h:i A')),
+                                            update_status_url: @js(route('bookings.updateStatus', $b)),
+                                        }; showPassengers = false; showModal = true">
+                                    View
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -180,5 +186,86 @@
 
     <!-- Pagination -->
     <div class="mt-4">{{ $bookings->links() }}</div>
+
+    <!-- Floating modal for viewing + actions -->
+    <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black/40" @click="showModal=false"></div>
+
+        <!-- Panel -->
+        <div class="relative w-full sm:max-w-2xl bg-white rounded-t-2xl sm:rounded-2xl shadow-xl p-6 sm:p-7 translate-y-0 sm:translate-y-0">
+            <div class="flex items-start justify-between gap-4 mb-4">
+                <h3 class="text-xl font-semibold text-gray-900">Booking #<span x-text="selected?.id"></span> Details</h3>
+                <button class="text-gray-500 hover:text-gray-700" @click="showModal=false">✕</button>
+            </div>
+
+            <!-- Details -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <!-- Passenger details toggle -->
+                <div class="sm:col-span-2">
+                    <button type="button"
+                            class="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                            @click="showPassengers = !showPassengers">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                        View Details
+                    </button>
+                    <div x-show="showPassengers" x-collapse class="mt-3 rounded-lg border border-gray-200 p-4 bg-gray-50">
+                        <div class="text-gray-700 font-medium mb-2">Passenger Details</div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>Adult: <span class="font-medium" x-text="selected?.adult"></span></li>
+                            <li>Child: <span class="font-medium" x-text="selected?.child"></span></li>
+                            <li>Infant: <span class="font-medium" x-text="selected?.infant"></span></li>
+                            <li>PWD: <span class="font-medium" x-text="selected?.pwd"></span></li>
+                            <li>Student: <span class="font-medium" x-text="selected?.student"></span></li>
+                        </ul>
+                        <p class="mt-3 text-xs text-gray-500">Note: Showing category counts. If you later store per-passenger records, we can render a full list here (names, seat numbers, etc.).</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-gray-500">Customer</div>
+                    <div class="font-medium" x-text="selected?.full_name"></div>
+                    <div class="text-gray-500" x-text="selected?.email"></div>
+                    <div class="text-gray-500" x-text="selected?.phone"></div>
+                </div>
+                <div>
+                    <div class="text-gray-500">Route</div>
+                    <div class="font-medium"><span x-text="selected?.origin"></span> → <span x-text="selected?.destination"></span></div>
+                    <div><span class="text-gray-500">Dep:</span> <span x-text="selected?.depart_at"></span></div>
+                    <div><span class="text-gray-500">Arr:</span> <span x-text="selected?.arrive_at"></span></div>
+                </div>
+                <div>
+                    <div class="text-gray-500">Tickets</div>
+                    <div class="font-medium"><span x-text="selected?.tickets"></span> total</div>
+                    <div class="text-gray-500">Adult: <span x-text="selected?.adult"></span>, Child: <span x-text="selected?.child"></span>, Infant: <span x-text="selected?.infant"></span>, PWD: <span x-text="selected?.pwd"></span>, Student: <span x-text="selected?.student"></span></div>
+                </div>
+                <div>
+                    <div class="text-gray-500">Payment</div>
+                    <div class="font-medium" x-text="selected?.total_amount_label"></div>
+                    <div class="text-gray-500">Status: <span x-text="selected?.payment_status"></span></div>
+                </div>
+                <div>
+                    <div class="text-gray-500">Created</div>
+                    <div class="font-medium" x-text="selected?.created_at"></div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-6 flex flex-wrap items-center justify-end gap-2">
+                <form :action="selected?.update_status_url" method="POST" onsubmit="return confirm('Confirm this booking?')">
+                    @csrf
+                    @method('PATCH')
+                    <input type="hidden" name="status" value="confirmed">
+                    <button type="submit" class="px-4 py-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600">Confirm</button>
+                </form>
+                <form :action="selected?.update_status_url" method="POST" onsubmit="return confirm('Cancel this booking?')">
+                    @csrf
+                    @method('PATCH')
+                    <input type="hidden" name="status" value="cancelled">
+                    <button type="submit" class="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700">Cancel</button>
+                </form>
+                <button type="button" class="px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700" title="Integrate refund logic with payment gateway" onclick="alert('Refund flow to be integrated with your payment gateway.')">Refund</button>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
