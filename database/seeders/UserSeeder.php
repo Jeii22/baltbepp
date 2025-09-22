@@ -10,11 +10,14 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@baltbep.com',
-            'password' => Hash::make('password123'), // change later
-            'role' => 'super_admin',
-        ]);
+        // Ensure there's at least one superadmin
+        if (!User::where('role', 'super_admin')->exists()) {
+            User::create([
+                'name' => 'System Super Admin',
+                'email' => 'superadmin@system.com',
+                'password' => Hash::make('SuperAdmin123!'),
+                'role' => 'super_admin',
+            ]);
+        }
     }
 }

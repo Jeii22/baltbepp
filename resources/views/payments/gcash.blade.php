@@ -15,8 +15,10 @@
             const url = document.getElementById('checkoutUrl').value;
             const img = document.getElementById('qr');
             img.src = makeQrUrl(url);
-            // Optional: auto-open GCash in new tab on load
-            // window.open(url, '_blank');
+            // Auto-redirect in the same tab so the address bar shows payment.gcash.com after the PayMongo hop
+            if (url) {
+                window.location.assign(url);
+            }
         });
     </script>
 </head>

@@ -1,15 +1,10 @@
 <x-guest-layout>
     <div class="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-8">
-
-
         <!-- Welcome -->
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">
-            Welcome to Balt-Bep Ferries
-        </h2>
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">Welcome to Balt-Bep Ferries</h2>
         <p class="text-center text-gray-500 mb-6">Sign in to continue</p>
 
         <!-- Google Login -->
-        <!-- Always show Google button; controller will handle missing config nicely -->
         <a href="{{ url('auth/google') }}"
            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 mb-4">
             <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48">
@@ -24,66 +19,43 @@
             <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">{{ $message }}</div>
         @enderror
 
-        <!-- Divider -->
-        <div class="flex items-center mb-6">
-            <div class="flex-grow border-t border-gray-300"></div>
-            <span class="mx-2 text-sm text-gray-400">or sign in with</span>
-            <div class="flex-grow border-t border-gray-300"></div>
+        <!-- Google is the only sign-in method on this page -->
+        <p class="text-center text-gray-500 mb-2">Use your Google account to sign in.</p>
+
+        <div class="text-center mt-4">
+            <a href="{{ route('administration.login') }}" class="text-xs text-gray-300 hover:text-gray-400">&nbsp;</a>
         </div>
-
-        <!-- Login Form -->
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
-
-            <!-- Email -->
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <div class="mt-1 relative">
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus 
-                           class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10">
-                    <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-                        
-                    </span>
-                </div>
-            </div>
-
-            <!-- Password -->
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <div class="mt-1 relative">
-                    <input id="password" type="password" name="password" required 
-                           class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10">
-                    <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-                        
-                    </span>
-                </div>
-            </div>
-
-            <!-- Remember Me -->
-            <div class="flex items-center mb-4">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                       name="remember">
-                <label for="remember_me" class="ml-2 text-sm text-gray-600">Remember me</label>
-            </div>
-
-             <!-- Actions -->
-            <div class="flex items-center justify-between">
-                @if (Route::has('password.request'))
-                    <a class="text-sm text-blue-600 hover:underline"
-                    href="{{ route('password.request') }}">
-                        Forgot your password?
-                    </a>
-                    <a class="text-sm text-blue-600 hover:underline"
-                    href="{{ route('register') }}">
-                        Register
-                    </a>
-                @endif
-                <div class="flex items-center space-x-4">                 
-                    <x-primary-button>
-                        {{ __('Log in') }}
-                    </x-primary-button>                 
-                </div>
-            </div>
-        </form>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if ($errors->any())
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Login failed',
+                text: '{{ $errors->first('email') ?? $errors->first() }}',
+                confirmButtonColor: '#ef4444'
+            })
+        </script>
+    @endif
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Welcome!',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#10b981'
+            })
+        </script>
+    @endif
+    @if (session('status') === 'locked')
+        <script>
+            Swal.fire({
+                icon: 'warning',
+                title: 'Too many attempts',
+                text: 'Your account is temporarily locked. Please try again later.',
+                confirmButtonColor: '#f59e0b'
+            })
+        </script>
+    @endif
 </x-guest-layout>

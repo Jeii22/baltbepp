@@ -30,21 +30,17 @@ class AuthenticatedSessionController extends Controller
 
         // Get the authenticated user
         $user = $request->user();
+
+        // Clear lock status on successful login
+        $request->session()->forget('status');
         
         // Redirect based on user role
         if ($user->isSuperAdmin()) {
-            $intended = $request->session()->get('url.intended');
-            // If intended URL is for super admin area, allow it, otherwise go to dashboard
-            if ($intended && (str_contains($intended, '/dashboard') || str_contains($intended, '/reports') || str_contains($intended, '/users') || str_contains($intended, '/trips') || str_contains($intended, '/fares') || str_contains($intended, '/bookings') || str_contains($intended, '/settings'))) {
-                return redirect()->intended(route('dashboard', absolute: false));
-            }
-            return redirect()->route('dashboard')->with('success', 'Welcome back, Super Administrator!');
+            return redirect()->route('superadmin.dashboard')->with('success', 'Welcome back, Super Administrator!');
         } elseif ($user->isAdmin()) {
-            // For now, redirect to welcome page until admin dashboard is created
-            return redirect()->route('welcome')->with('success', 'Welcome back, Administrator!');
+            return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Administrator!');
         } else {
-            // Regular user/customer - redirect to welcome page
-            return redirect()->route('welcome')->with('success', 'Welcome back!');
+            return redirect()->route('customer.dashboard')->with('success', 'Welcome back!');
         }
     }
 

@@ -46,9 +46,20 @@ Route::middleware('auth')->group(function () {
 });
 
 
+// Customer Dashboard
+Route::get('/customer/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('customer.dashboard');
+
+// Admin Dashboard
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+})->middleware(['auth', 'isAdmin'])->name('admin.dashboard');
+
+// Superadmin Dashboard
 Route::get('/superadmin/dashboard', function () {
     return view('superadmin.dashboard');
-})->name('superadmin.dashboard');
+})->middleware(['auth', 'isSuperAdmin'])->name('superadmin.dashboard');
 
 Route::middleware(['auth', 'isSuperAdmin'])->group(function () {
     // User management (admins)

@@ -22,6 +22,12 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
+    // Hidden Superadmin login
+    Route::get('administration-login', [\App\Http\Controllers\Auth\SuperAdminLoginController::class, 'show'])
+        ->name('administration.login');
+    Route::post('administration-login', [\App\Http\Controllers\Auth\SuperAdminLoginController::class, 'login'])
+        ->name('administration.login.attempt');
+
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
