@@ -246,20 +246,87 @@
             </div>
 
             <!-- Actions -->
-            <div class="mt-6 flex flex-wrap items-center justify-end gap-2">
-                <form :action="selected?.update_status_url" method="POST" onsubmit="return confirm('Confirm this booking?')">
-                    @csrf
-                    @method('PATCH')
-                    <input type="hidden" name="status" value="confirmed">
-                    <button type="submit" class="px-4 py-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600">Confirm</button>
-                </form>
-                <form :action="selected?.update_status_url" method="POST" onsubmit="return confirm('Cancel this booking?')">
-                    @csrf
-                    @method('PATCH')
-                    <input type="hidden" name="status" value="cancelled">
-                    <button type="submit" class="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700">Cancel</button>
-                </form>
-                <button type="button" class="px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700" title="Integrate refund logic with payment gateway" onclick="alert('Refund flow to be integrated with your payment gateway.')">Refund</button>
+            <div class="mt-6 space-y-4">
+                <!-- Confirm Button -->
+                <div class="flex justify-end">
+                    <form :action="selected?.update_status_url" method="POST" onsubmit="return confirm('Confirm this booking? Customer will receive an email with their ticket.')">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="status" value="confirmed">
+                        <button type="submit" class="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Confirm & Send Ticket
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Cancel with Reason -->
+                <div x-data="{ showCancelForm: false }" class="border-t pt-4">
+                    <div class="flex justify-end">
+                        <button type="button" 
+                                @click="showCancelForm = !showCancelForm"
+                                class="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Cancel Booking
+                        </button>
+                    </div>
+                    
+                    <div x-show="showCancelForm" x-collapse class="mt-3">
+                        <form :action="selected?.update_status_url" method="POST" class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="status" value="cancelled">
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-red-800 mb-2">
+                                    Cancellation Reason (will be sent to customer)
+                                </label>
+                                <textarea name="rejection_reason" 
+                                         rows="3" 
+                                         placeholder="e.g., Payment could not be processed, Trip cancelled due to weather conditions, etc."
+                                         class="w-full rounded-lg border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm"
+                                         required></textarea>
+                                <p class="text-xs text-red-600 mt-1">
+                                    This reason will be included in the automatic apology email sent to the customer.
+                                </p>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <button type="button" 
+                                        @click="showCancelForm = false"
+                                        class="px-3 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50">
+                                    Cancel
+                                </button>
+                                <button type="submit" 
+                                        onclick="return confirm('Cancel this booking? Customer will receive an apology email and refund will be processed manually.')"
+                                        class="px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700">
+                                    Cancel Booking & Send Apology Email
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Manual Refund Note -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <h4 class="text-sm font-medium text-blue-800">Refund Process</h4>
+                            <p class="text-sm text-blue-700 mt-1">
+                                When a booking is cancelled, an automatic apology email is sent to the customer. 
+                                <strong>Refunds must be processed manually</strong> through your payment gateway, 
+                                and you should send a follow-up email with screenshot proof of the refund transaction.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

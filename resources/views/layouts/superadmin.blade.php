@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Balt-Bep Super Admin</title>
+    <title>Balt-Bep Admin Panel</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -22,7 +22,7 @@
                          alt="BaltBep Logo" 
                          class="mx-auto mb-2 h-20 w-30 hover:scale-105 transition-transform duration-200">
                         <div class="p-4 text-2xl font-bold text-center border-b border-blue-700">
-                        Super Admin
+                        {{ Auth::user()->getRoleDisplayName() }}
                     </div>
                 </a>
             </div>
@@ -30,19 +30,69 @@
             <!-- Sidebar Navigation - Scrollable if needed -->
             <div class="flex-1 overflow-y-auto">
                 <ul class="space-y-2 p-4">
-                    <li><a href="{{ route('dashboard') }}" class="block px-4 py-2 rounded hover:bg-white/20">Dashboard</a></li>
-                    <li><a href="{{ route('users.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">User Management</a></li>
-                    <li><a href="{{ route('trips.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Trip Management</a></li>
-                    <li><a href="{{ route('fares.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Fare Management</a></li>
-                    <li><a href="{{ route('bookings.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Booking Management</a></li>
+                    <!-- Dashboard - Available to all admin roles -->
                     <li>
-                        <a href="{{ route('admin.payment-methods.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">
+                        <a href="{{ route('dashboard') }}" 
+                           class="block px-4 py-2 rounded hover:bg-white/20 {{ request()->routeIs('dashboard') ? 'bg-white/20 text-white' : '' }}">
+                            Dashboard
+                        </a>
+                    </li>
+                    
+                    <!-- Booking Management - Available to both SuperAdmin and Admin -->
+                    <li>
+                        <a href="{{ route('bookings.index') }}" 
+                           class="block px-4 py-2 rounded hover:bg-white/20 {{ request()->routeIs('bookings.*') ? 'bg-white/20 text-white' : '' }}">
+                            Booking Management
+                        </a>
+                    </li>
+                    
+                    <!-- Payment Management - Available to both SuperAdmin and Admin -->
+                    <li>
+                        <a href="{{ route('admin.payment-methods.index') }}" 
+                           class="block px-4 py-2 rounded hover:bg-white/20 {{ request()->routeIs('admin.payment-methods.*') ? 'bg-white/20 text-white' : '' }}">
                             Payment Management
                             <span class="block text-xs opacity-80">Digital Wallets, Cards & COD</span>
                         </a>
                     </li>
-                    <li><a href="{{ route('reports.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Reports</a></li>
-                    <li><a href="{{ route('settings.index') }}" class="block px-4 py-2 rounded hover:bg-white/20">Settings</a></li>
+                    
+                    <!-- Reports - Available to both SuperAdmin and Admin -->
+                    <li>
+                        <a href="{{ route('reports.index') }}" 
+                           class="block px-4 py-2 rounded hover:bg-white/20 {{ request()->routeIs('reports.*') ? 'bg-white/20 text-white' : '' }}">
+                            Reports
+                        </a>
+                    </li>
+                    
+                    @if(Auth::user()->isSuperAdmin())
+                        <!-- SuperAdmin Only Features -->
+                        <li class="pt-4 border-t border-white/20">
+                            <span class="block px-4 py-2 text-xs uppercase tracking-wide text-white/60 font-semibold">Super Admin Only</span>
+                        </li>
+                        <li>
+                            <a href="{{ route('users.index') }}" 
+                               class="block px-4 py-2 rounded hover:bg-white/20 {{ request()->routeIs('users.*') ? 'bg-white/20 text-white' : '' }}">
+                                User Management
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('trips.index') }}" 
+                               class="block px-4 py-2 rounded hover:bg-white/20 {{ request()->routeIs('trips.*') ? 'bg-white/20 text-white' : '' }}">
+                                Trip Management
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('fares.index') }}" 
+                               class="block px-4 py-2 rounded hover:bg-white/20 {{ request()->routeIs('fares.*') ? 'bg-white/20 text-white' : '' }}">
+                                Fare Management
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('settings.index') }}" 
+                               class="block px-4 py-2 rounded hover:bg-white/20 {{ request()->routeIs('settings.*') ? 'bg-white/20 text-white' : '' }}">
+                                Settings
+                            </a>
+                        </li>
+                    @endif
                 </ul>
             </div>
         </div>

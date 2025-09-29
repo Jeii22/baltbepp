@@ -17,10 +17,11 @@
             </a>
             <div class="hidden md:flex space-x-8 text-white font-medium">
                 <a href="{{ route('welcome') }}#book" class="hover:text-cyan-200">Book</a>
-                <a href="#refund" class="hover:text-cyan-200">Refund & Rebooking</a>
-                <a href="#info" class="hover:text-cyan-200">Travel Info</a>
-                <a href="#updates" class="hover:text-cyan-200">Latest Updates</a>
-                <a href="#contact" class="hover:text-cyan-200">Contact Us</a>
+                <a href="{{ route('welcome') }}#promos" class="hover:text-cyan-200">Promos</a>
+                <a href="{{ route('welcome') }}#routes" class="hover:text-cyan-200">Routes</a>
+                <a href="{{ route('welcome') }}#why-choose-us" class="hover:text-cyan-200">Why Choose Us</a>
+                <a href="{{ route('welcome') }}#about-us" class="hover:text-cyan-200">About Us</a>
+                <a href="{{ route('welcome') }}#contact-us" class="hover:text-cyan-200">Contact Us</a>
             </div>
             <div>
                 @auth
@@ -357,13 +358,31 @@
                 </div>
             </div>
         </div>
+
+        <!-- Digital Wallet Confirmation -->
+        <div id="confirmation" class="hidden mt-8 bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Payment Confirmation</h2>
+            <div class="text-center">
+                <img id="qr-image" src="" alt="QR Code" class="w-48 h-48 mx-auto mb-4 border rounded">
+                <p id="account-name" class="text-lg font-semibold mb-2"></p>
+                <p id="account-number" class="text-gray-600 mb-4"></p>
+                <p class="text-sm text-gray-500">Please scan the QR code using your wallet app and complete the payment. Wait for staff confirmation.</p>
+            </div>
+            <div id="status-message" class="mt-6 text-center">
+                <p>Waiting for payment confirmation...</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
+const wallets = @json($wallets ?? []);
+const digitalWalletTypes = wallets.map(w => w.type);
+
 document.addEventListener('DOMContentLoaded', function() {
     const paymentOptions = document.querySelectorAll('.payment-option');
     const cardDetails = document.getElementById('cardDetails');
+    const paymentForm = document.getElementById('paymentForm');
     
     paymentOptions.forEach(option => {
         option.addEventListener('click', function() {
@@ -382,8 +401,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // Check the radio button
             this.querySelector('input[type="radio"]').checked = true;
             
-            // Show/hide card details
+            // Show/hide card details and update form action
             const paymentMethod = this.querySelector('input[type="radio"]').value;
+            
+            // Update form action based on payment method
+            if (digitalWalletTypes.includes(paymentMethod)) {
+                // Digital wallet - use separate route
+                paymentForm.action = '{{ route("bookings.process.digital-wallet") }}';
+            } else {
+                // PayMongo/Card/COD - use regular route
+                paymentForm.action = '{{ route("bookings.process") }}';
+            }
+            
             // Toggle extra fields for wallets
             document.querySelectorAll('.paymaya-extra').forEach(el => el.classList.add('hidden'));
 
@@ -419,6 +448,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             e.target.value = value;
         });
+    }
+    
+    // Set initial form action based on default selected payment method
+    const defaultSelected = document.querySelector('input[name="payment_method"]:checked');
+    if (defaultSelected) {
+        const defaultMethod = defaultSelected.value;
+        if (digitalWalletTypes.includes(defaultMethod)) {
+            paymentForm.action = '{{ route("bookings.process.digital-wallet") }}';
+        } else {
+            paymentForm.action = '{{ route("bookings.process") }}';
+        }
     }
 });
 </script>

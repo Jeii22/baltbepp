@@ -36,6 +36,7 @@
                         <th class="text-left p-3">Label</th>
                         <th class="text-left p-3">Account Name</th>
                         <th class="text-left p-3">Account #</th>
+                        <th class="text-left p-3">QR Code</th>
                         <th class="text-left p-3">Active</th>
                         <th class="text-right p-3">Actions</th>
                     </tr>
@@ -47,6 +48,13 @@
                             <td class="p-3">{{ $method->label }}</td>
                             <td class="p-3">{{ $method->account_name }}</td>
                             <td class="p-3">{{ $method->account_number }}</td>
+                            <td class="p-3">
+                                @if($method->qr_code_image)
+                                    <img src="{{ asset('storage/' . $method->qr_code_image) }}" alt="QR Code" class="w-16 h-16 object-cover">
+                                @else
+                                    No QR Code
+                                @endif
+                            </td>
                             <td class="p-3">{{ $method->is_active ? 'Yes' : 'No' }}</td>
                             <td class="p-3 text-right space-x-2">
                                 <a class="px-3 py-1 border rounded" href="{{ route('admin.payment-methods.edit', $method) }}">Edit</a>
@@ -58,7 +66,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="p-6 text-center text-gray-500">No payment methods yet.</td></tr>
+                        <tr><td colspan="7" class="p-6 text-center text-gray-500">No payment methods yet.</td></tr>
                     @endforelse
                 </tbody>
             </table>

@@ -7,6 +7,12 @@ use App\Models\Fare;
 use Illuminate\Http\Request;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
+use App\Mail\BookingConfirmedMail;
+use App\Mail\BookingRejectedMail;
+use App\Services\TicketService;
 
 class BookingController extends Controller
 {
@@ -171,8 +177,17 @@ class BookingController extends Controller
         $data = session('booking.summary');
         abort_if(!$data, 404);
 
+        // Get available wallets
+        $wallets = collect();
+        if (Schema::hasTable('payment_methods')) {
+            $wallets = \App\Models\PaymentMethod::where('is_active', true)->get();
+        }
+
+        $allowedWalletTypes = $wallets->pluck('type')->unique()->filter()->all();
+        $allowedMethods = array_merge(['cod', 'card', 'paymongo_gcash'], $allowedWalletTypes);
+
         $validationRules = [
-            'payment_method' => 'required|in:cod,card,gcash,paymaya,paymongo_card,paymongo_gcash',
+            'payment_method' => ['required', Rule::in($allowedMethods)],
             'terms' => 'required|accepted',
         ];
 
@@ -206,11 +221,16 @@ class BookingController extends Controller
             'status' => 'pending',
         ]);
 
-        // Here you’d integrate real payment. For now, mark confirmed for COD.
-        // Process payment based on method
+        // This method now only handles PayMongo/Card/COD payments
+        // Digital wallets are handled by processDigitalWallet method
+        if (in_array($request->payment_method, $allowedWalletTypes)) {
+            return back()->withErrors(['payment' => 'Digital wallet payments should use the digital wallet flow.'])->withInput();
+        }
+
+        // Automated flows (PayMongo/Card/COD)
         $paymentStatus = $paymentService->processPayment($request, $booking);
 
-        // If PayMongo returns a redirect URL (e.g., GCash), show QR/Continue page
+        // If PayMongo returns a redirect URL (e.g., hosted checkout), show redirect page
         if (!empty($paymentStatus['redirect_url'])) {
             $booking->update([
                 'status' => 'pending',
@@ -249,9 +269,82 @@ class BookingController extends Controller
             ->with('success', $paymentStatus['message'] ?? 'Booking processed successfully!');
     }
 
+    public function processDigitalWallet(Request $request, PaymentService $paymentService)
+    {
+        $data = session('booking.summary');
+        abort_if(!$data, 404);
+
+        // Get available wallets
+        $wallets = collect();
+        if (Schema::hasTable('payment_methods')) {
+            $wallets = \App\Models\PaymentMethod::where('is_active', true)->get();
+        }
+
+        $allowedWalletTypes = $wallets->pluck('type')->unique()->filter()->all();
+
+        $validationRules = [
+            'payment_method' => ['required', Rule::in($allowedWalletTypes)],
+            'terms' => 'required|accepted',
+        ];
+
+        // Add PayMaya phone validation if needed
+        if ($request->payment_method === 'paymaya') {
+            $validationRules['paymaya_phone'] = 'required|regex:/^09\d{9}$/';
+        }
+
+        $request->validate($validationRules);
+
+        // Get trip data - handle both old and new data structures
+        $tripId = $data['trip_id'] ?? $data['outbound_trip_id'];
+        $trip = Trip::findOrFail($tripId);
+
+        $booking = \App\Models\Booking::create([
+            'trip_id' => $trip->id,
+            'origin' => $trip->origin,
+            'destination' => $trip->destination,
+            'departure_time' => $trip->departure_time,
+            'adult' => $data['counts']['adult'],
+            'child' => $data['counts']['child'],
+            'infant' => $data['counts']['infant'],
+            'pwd' => $data['counts']['pwd'],
+            'student' => $data['counts']['student'] ?? 0,
+            'full_name' => $data['contact_info']['contact_name'] ?? $data['customer']['full_name'] ?? 'Guest',
+            'email' => $data['contact_info']['contact_email'] ?? $data['customer']['email'] ?? '',
+            'phone' => $data['contact_info']['contact_phone'] ?? $data['customer']['phone'] ?? null,
+            'total_amount' => $data['grand_total'] ?? $data['subtotal'] ?? 0,
+            'payment_method' => $request->payment_method,
+            'status' => 'pending',
+            'payment_reference' => $paymentService->generatePaymentReference($request->payment_method, time()),
+        ]);
+
+        // Get the selected wallet details
+        $selectedWallet = $wallets->where('type', $request->payment_method)->first();
+
+        // Clear session step data
+        session()->forget('booking.summary');
+
+        // Show digital wallet payment page with QR code and instructions
+        return view('bookings.digital-wallet-payment', [
+            'booking' => $booking,
+            'wallet' => $selectedWallet,
+            'paymentMethod' => $request->payment_method,
+            'paymentReference' => $booking->payment_reference,
+        ]);
+    }
+
     public function confirmation(\App\Models\Booking $booking)
     {
         return view('bookings.confirmation', compact('booking'));
+    }
+
+    public function status(\App\Models\Booking $booking)
+    {
+        // Ensure user can only check their own booking
+        if (auth()->check() && $booking->user_id != auth()->id()) {
+            abort(403);
+        }
+
+        return response()->json(['status' => $booking->status]);
     }
 
     // PayMongo success callback (user redirected here after approving)
@@ -392,11 +485,65 @@ class BookingController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|in:pending,confirmed,cancelled',
+            'rejection_reason' => 'nullable|string|max:500', // For cancelled bookings
         ]);
 
-        $booking->update(['status' => $validated['status']]);
+        $oldStatus = $booking->status;
+        $newStatus = $validated['status'];
+        
+        $booking->update(['status' => $newStatus]);
 
-        return redirect()->back()->with('success', 'Booking status updated.');
+        // Send email notifications based on status change
+        $this->handleStatusChangeNotification($booking, $oldStatus, $newStatus, $validated['rejection_reason'] ?? null);
+
+        return redirect()->back()->with('success', 'Booking status updated and notification sent.');
+    }
+
+    /**
+     * Handle email notifications when booking status changes
+     */
+    private function handleStatusChangeNotification(\App\Models\Booking $booking, $oldStatus, $newStatus, $rejectionReason = null)
+    {
+        // Only send notifications if status actually changed and booking has email
+        if ($oldStatus === $newStatus || empty($booking->email)) {
+            return;
+        }
+
+        try {
+            if ($newStatus === 'confirmed') {
+                $this->sendBookingConfirmedEmail($booking);
+            } elseif ($newStatus === 'cancelled') {
+                $this->sendBookingRejectedEmail($booking, $rejectionReason);
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to send booking notification email for booking ' . $booking->id . ': ' . $e->getMessage());
+            // Don't throw the error to avoid breaking the status update
+        }
+    }
+
+    /**
+     * Send booking confirmed email with ticket attachment
+     */
+    private function sendBookingConfirmedEmail(\App\Models\Booking $booking)
+    {
+        $ticketService = new TicketService();
+        $ticketPath = $ticketService->generateTicketForEmail($booking);
+        
+        Mail::to($booking->email)->send(new BookingConfirmedMail($booking, $ticketPath));
+        
+        // Clean up the ticket file after sending (optional)
+        if ($ticketPath && file_exists($ticketPath)) {
+            // Keep the file for now - you might want to keep tickets for records
+            // unlink($ticketPath);
+        }
+    }
+
+    /**
+     * Send booking rejected/cancelled email
+     */
+    private function sendBookingRejectedEmail(\App\Models\Booking $booking, $reason = null)
+    {
+        Mail::to($booking->email)->send(new BookingRejectedMail($booking, $reason));
     }
 
     private function processPayment(Request $request, $booking)

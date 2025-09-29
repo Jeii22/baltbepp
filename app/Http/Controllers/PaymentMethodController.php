@@ -28,8 +28,13 @@ class PaymentMethodController extends Controller
             'account_name' => 'nullable|string|max:120',
             'account_number' => 'required|string|max:50',
             'is_active' => 'sometimes|boolean',
+            'qr_code_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         $data['is_active'] = $request->boolean('is_active');
+
+        if ($request->hasFile('qr_code_image')) {
+            $data['qr_code_image'] = $request->file('qr_code_image')->store('payment_qr_codes', 'public');
+        }
 
         PaymentMethod::create($data);
         return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method added.');
@@ -48,8 +53,17 @@ class PaymentMethodController extends Controller
             'account_name' => 'nullable|string|max:120',
             'account_number' => 'required|string|max:50',
             'is_active' => 'sometimes|boolean',
+            'qr_code_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         $data['is_active'] = $request->boolean('is_active');
+
+        if ($request->hasFile('qr_code_image')) {
+            // Delete old image if exists
+            if ($paymentMethod->qr_code_image) {
+                \Storage::disk('public')->delete($paymentMethod->qr_code_image);
+            }
+            $data['qr_code_image'] = $request->file('qr_code_image')->store('payment_qr_codes', 'public');
+        }
 
         $paymentMethod->update($data);
         return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method updated.');
@@ -57,6 +71,9 @@ class PaymentMethodController extends Controller
 
     public function destroy(PaymentMethod $paymentMethod)
     {
+        if ($paymentMethod->qr_code_image) {
+            \Storage::disk('public')->delete($paymentMethod->qr_code_image);
+        }
         $paymentMethod->delete();
         return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method deleted.');
     }

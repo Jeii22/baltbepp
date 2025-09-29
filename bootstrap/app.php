@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\IsSuperAdmin;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUser;
+use App\Http\Middleware\HasAdminPrivileges;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'isSuperAdmin' => IsSuperAdmin::class,
             'isAdmin' => IsAdmin::class,
             'isUser' => IsUser::class,
+            'hasAdminPrivileges' => HasAdminPrivileges::class,
             'trackLastActive' => App\Http\Middleware\TrackLastActive::class,
         ]);
         // Apply to web group globally

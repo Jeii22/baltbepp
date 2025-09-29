@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -10,8 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Convert ENUM('cod','gcash','paymaya','card') to a flexible VARCHAR(50)
-        DB::statement("ALTER TABLE bookings MODIFY COLUMN payment_method VARCHAR(50) NOT NULL DEFAULT 'cod'");
+        // For SQLite compatibility, drop and recreate the column
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->dropColumn('payment_method');
+        });
+
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->string('payment_method', 50)->default('cod');
+        });
     }
 
     /**
@@ -19,7 +26,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Revert back to the original ENUM definition
-        DB::statement("ALTER TABLE bookings MODIFY COLUMN payment_method ENUM('cod','gcash','paymaya','card') NOT NULL DEFAULT 'cod'");
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->dropColumn('payment_method');
+        });
+
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->enum('payment_method', ['cod','gcash','paymaya','card'])->default('cod');
+        });
     }
 };

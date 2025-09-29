@@ -19,10 +19,11 @@
             <!-- Nav Links -->
             <div class="hidden md:flex space-x-8 text-white font-medium">
                 <a href="{{ route('welcome') }}#book" class="hover:text-cyan-200">Book</a>
-                <a href="#refund" class="hover:text-cyan-200">Refund & Rebooking</a>
-                <a href="#info" class="hover:text-cyan-200">Travel Info</a>
-                <a href="#updates" class="hover:text-cyan-200">Latest Updates</a>
-                <a href="#contact" class="hover:text-cyan-200">Contact Us</a>
+                <a href="{{ route('welcome') }}#promos" class="hover:text-cyan-200">Promos</a>
+                <a href="{{ route('welcome') }}#routes" class="hover:text-cyan-200">Routes</a>
+                <a href="{{ route('welcome') }}#why-choose-us" class="hover:text-cyan-200">Why Choose Us</a>
+                <a href="{{ route('welcome') }}#about-us" class="hover:text-cyan-200">About Us</a>
+                <a href="{{ route('welcome') }}#contact-us" class="hover:text-cyan-200">Contact Us</a>
             </div>
             <!-- Auth area -->
             <div>

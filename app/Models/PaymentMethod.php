@@ -15,6 +15,7 @@ class PaymentMethod extends Model
         'account_name',
         'account_number', // phone number or ID
         'is_active',
+        'qr_code_image',
     ];
 
     protected $casts = [
