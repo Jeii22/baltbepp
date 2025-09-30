@@ -42,12 +42,17 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $allowedRoles = ['admin'];
+        if (auth()->user()->role === 'super_admin') {
+            $allowedRoles[] = 'super_admin';
+        }
+
         $data = $request->validate([
             'email' => ['required','email','unique:users,email'],
             'first_name' => ['required','string','max:255'],
             'last_name' => ['required','string','max:255'],
             'username' => ['required','string','max:255','unique:users,username'],
-            'role' => ['required','in:admin'],
+            'role' => ['required','in:' . implode(',', $allowedRoles)],
             'password' => ['required','confirmed', Password::defaults()],
         ]);
 
@@ -57,11 +62,11 @@ class UserController extends Controller
             'last_name' => $data['last_name'],
             'name' => $data['first_name'].' '.$data['last_name'],
             'username' => $data['username'],
-            'role' => 'admin',
+            'role' => $data['role'],
             'password' => $data['password'], // cast hashes automatically
         ]);
 
-        return redirect()->route('users.index')->with('status', 'Admin created successfully');
+        return redirect()->route('users.index')->with('status', 'User created successfully');
     }
 
     public function destroy(User $user)
