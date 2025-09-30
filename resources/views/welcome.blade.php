@@ -15,7 +15,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
             <!-- Logo -->
             <a href="/" class="flex items-center space-x-2">
-                <img src="{{ asset('images/baltbep-logo.jpg') }}" class="h-20" alt="BaltBep Logo">
+                <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
             </a>
             <!-- Mobile Menu Button -->
             <button @click="open = !open" class="md:hidden text-white p-2">
