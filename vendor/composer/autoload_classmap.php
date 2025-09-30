@@ -39,6 +39,7 @@ return array(
     'App\\Mail\\BookingRejectedMail' => $baseDir . '/app/Mail/BookingRejectedMail.php',
     'App\\Models\\Booking' => $baseDir . '/app/Models/Booking.php',
     'App\\Models\\Fare' => $baseDir . '/app/Models/Fare.php',
+    'App\\Models\\LoginAttempt' => $baseDir . '/app/Models/LoginAttempt.php',
     'App\\Models\\PaymentMethod' => $baseDir . '/app/Models/PaymentMethod.php',
     'App\\Models\\Setting' => $baseDir . '/app/Models/Setting.php',
     'App\\Models\\Trip' => $baseDir . '/app/Models/Trip.php',

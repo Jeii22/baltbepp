@@ -705,6 +705,7 @@ class ComposerStaticInita604a19f9b48703165d77459ee5cd4fe
         'App\\Mail\\BookingRejectedMail' => __DIR__ . '/../..' . '/app/Mail/BookingRejectedMail.php',
         'App\\Models\\Booking' => __DIR__ . '/../..' . '/app/Models/Booking.php',
         'App\\Models\\Fare' => __DIR__ . '/../..' . '/app/Models/Fare.php',
+        'App\\Models\\LoginAttempt' => __DIR__ . '/../..' . '/app/Models/LoginAttempt.php',
         'App\\Models\\PaymentMethod' => __DIR__ . '/../..' . '/app/Models/PaymentMethod.php',
         'App\\Models\\Setting' => __DIR__ . '/../..' . '/app/Models/Setting.php',
         'App\\Models\\Trip' => __DIR__ . '/../..' . '/app/Models/Trip.php',
