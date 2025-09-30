@@ -26,5 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [App\Http\Middleware\TrackLastActive::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Throwable $e, $request) {
+            return response()->view('errors.403', ['exception' => $e], 403);
+        });
     })->create();
