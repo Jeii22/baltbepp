@@ -75,6 +75,7 @@ Route::get('/superadmin/dashboard', function () {
 Route::middleware(['auth', 'isSuperAdmin'])->group(function () {
     // User management (admins)
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LoginAttempt;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
@@ -10,9 +11,28 @@ class UserController extends Controller
 {
     public function index()
     {
-        // List admins only for manage view
-        $admins = User::whereIn('role', ['admin'])->orderByDesc('last_active_at')->paginate(10);
-        return view('superadmin.users.index', compact('admins'));
+        // List all users
+        $users = User::orderByDesc('last_active_at')->paginate(10);
+        return view('superadmin.users.index', compact('users'));
+    }
+
+    public function show(User $user)
+    {
+        $loginAttempts = LoginAttempt::where('user_id', $user->id)
+            ->orWhere('email', $user->email)
+            ->orderByDesc('attempted_at')
+            ->paginate(20);
+
+        $totalAttempts = LoginAttempt::where('user_id', $user->id)
+            ->orWhere('email', $user->email)
+            ->count();
+
+        $failedAttempts = LoginAttempt::where('user_id', $user->id)
+            ->orWhere('email', $user->email)
+            ->where('successful', false)
+            ->count();
+
+        return view('superadmin.users.show', compact('user', 'loginAttempts', 'totalAttempts', 'failedAttempts'));
     }
 
     public function create()

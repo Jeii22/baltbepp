@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\LoginAttempt;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,14 +32,36 @@ class SuperAdminLoginController extends Controller
 
         $this->ensureIsNotRateLimited($request);
 
-        $user = User::where('email', $validated['email'])->first();
+        $email = $validated['email'];
+        $user = User::where('email', $email)->first();
 
         if (!$user || !in_array($user->role, ['super_admin', 'admin']) || !Hash::check($validated['password'], $user->password)) {
             RateLimiter::hit($this->throttleKey($request));
+
+            // Log failed attempt
+            LoginAttempt::create([
+                'user_id' => $user?->id,
+                'email' => $email,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'successful' => false,
+                'attempted_at' => now(),
+            ]);
+
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
         }
+
+        // Log successful attempt
+        LoginAttempt::create([
+            'user_id' => $user->id,
+            'email' => $email,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'successful' => true,
+            'attempted_at' => now(),
+        ]);
 
         Auth::login($user, $request->boolean('remember'));
         RateLimiter::clear($this->throttleKey($request));
