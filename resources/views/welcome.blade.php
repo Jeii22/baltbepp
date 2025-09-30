@@ -6,18 +6,26 @@
 
     <title>Balt-Bep</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="antialiased bg-white text-gray-800">
 
     <!-- Navbar -->
-    <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm">
+    <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
             <!-- Logo -->
             <a href="/" class="flex items-center space-x-2">
                 <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
             </a>
+            <!-- Mobile Menu Button -->
+            <button @click="open = !open" class="md:hidden text-white p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
             <!-- Nav Links -->
-            <div class="hidden md:flex space-x-8 text-white font-medium">
+            <div class="hidden md:flex space-x-8 text-white font-medium" x-show="open || window.innerWidth >= 768" :class="{ 'flex flex-col space-y-4 mt-4': open && window.innerWidth < 768 }">
                 <a href="#book" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Book</a>
                 <a href="#promos" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Promos</a>
                 <a href="#routes" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Routes</a>

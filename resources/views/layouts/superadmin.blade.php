@@ -10,10 +10,29 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="font-sans antialiased bg-gray-100">
-    <div class="h-screen flex overflow-hidden">
+    <div class="h-screen flex overflow-hidden" x-data="{ sidebarOpen: false }">
+
+        <!-- Mobile Sidebar Overlay -->
+        <div x-show="sidebarOpen" @click="sidebarOpen = false"
+             class="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden"
+             x-transition:enter="transition-opacity ease-linear duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-linear duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+        </div>
 
         <!-- Fixed Sidebar -->
-        <div class="w-64 h-full bg-gradient-to-b from-blue-600 via-cyan-500 to-white text-white shadow-lg flex flex-col">
+        <div class="fixed inset-y-0 left-0 z-50 w-64 h-full bg-gradient-to-b from-blue-600 via-cyan-500 to-white text-white shadow-lg flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+             :class="{ 'translate-x-0': sidebarOpen }"
+             x-show="sidebarOpen || window.innerWidth >= 768"
+             x-transition:enter="transition-transform ease-in-out duration-300"
+             x-transition:enter-start="-translate-x-full"
+             x-transition:enter-end="translate-x-0"
+             x-transition:leave="transition-transform ease-in-out duration-300"
+             x-transition:leave-start="translate-x-0"
+             x-transition:leave-end="-translate-x-full">
             
             <!-- Logo -->
             <div class="p-4 flex justify-center border-b border-white/20 flex-shrink-0">
@@ -98,10 +117,18 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div class="flex-1 flex flex-col h-full overflow-hidden md:ml-64">
             
             <!-- Fixed Top Navigation -->
-            <header class="bg-white border-b border-gray-200 shadow px-6 py-3 flex justify-between items-center flex-shrink-0">
+            <header class="bg-white border-b border-gray-200 shadow px-4 sm:px-6 py-3 flex justify-between items-center flex-shrink-0">
+                <!-- Mobile Menu Button -->
+                <button @click="sidebarOpen = !sidebarOpen"
+                        class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+
                 <h1 class="text-lg font-semibold">Balt-Bep Shipping Express</h1>
 
                 <!-- Dropdown -->
