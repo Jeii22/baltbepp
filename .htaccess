@@ -1,4 +1,18 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Redirect everything to the public folder
+    RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
+
+# Protect sensitive files
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
