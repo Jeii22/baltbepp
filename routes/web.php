@@ -14,21 +14,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Temporary route to run migrations - REMOVE AFTER USE
-Route::get('/run-migrations-temp', function () {
-    // Basic security check - only works in production
-    if (!app()->environment('production')) {
-        return 'This route is only available in production';
-    }
-
-    try {
-        \Artisan::call('migrate', ['--force' => true]);
-        return 'Migrations completed successfully!';
-    } catch (\Exception $e) {
-        return 'Migration failed: ' . $e->getMessage();
-    }
-});
-
 // Public search and booking
 
 Route::get('/trips/search', [TripController::class, 'search'])->name('trips.search');
