@@ -417,8 +417,8 @@ class BookingController extends Controller
         if ($request->filled('destination')) {
             $query->where('destination', $request->string('destination'));
         }
-        if ($request->filled('status')) {
-            $query->where('status', $request->string('status'));
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->string('payment_method'));
         }
 
         // Enhanced filters to match new UI
@@ -436,22 +436,20 @@ class BookingController extends Controller
         if ($request->filled('end_date')) {
             $query->whereDate('created_at', '<=', $request->date('end_date'));
         }
-        if ($request->filled('payment_status')) {
-            // Map payment status to booking status until a payments table exists
-            $payment = $request->string('payment_status');
-            $map = [
-                'paid' => 'confirmed',
-                'pending' => 'pending',
-                'refunded' => 'cancelled',
-            ];
-            if (isset($map[$payment])) {
-                $query->where('status', $map[$payment]);
-            }
+
+        // Booking status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->string('status'));
         }
 
         $bookings = $query->latest()->paginate(15)->withQueryString();
 
-        return view('bookings.index', compact('bookings'));
+        // Get filter options
+        $origins = \App\Models\Booking::distinct()->pluck('origin')->filter()->sort()->values();
+        $destinations = \App\Models\Booking::distinct()->pluck('destination')->filter()->sort()->values();
+        $paymentMethods = \App\Models\Booking::distinct()->pluck('payment_method')->filter()->sort()->values();
+
+        return view('bookings.index', compact('bookings', 'origins', 'destinations', 'paymentMethods'));
     }
 
     // Superadmin: edit booking (minimal for now)
