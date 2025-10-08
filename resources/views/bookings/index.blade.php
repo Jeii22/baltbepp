@@ -9,7 +9,7 @@
 
     <!-- Search and Filters -->
     <form method="GET" class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 shadow-sm">
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-3 md:gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-9 gap-3 md:gap-4">
             <!-- Search -->
             <div class="md:col-span-2">
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Search</label>
@@ -19,6 +19,28 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </div>
                 </div>
+            </div>
+
+            <!-- Origin -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Origin</label>
+                <select name="origin" class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Origins</option>
+                    @foreach($origins as $origin)
+                        <option value="{{ $origin }}" @selected(request('origin') === $origin)>{{ $origin }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Destination -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Destination</label>
+                <select name="destination" class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Destinations</option>
+                    @foreach($destinations as $destination)
+                        <option value="{{ $destination }}" @selected(request('destination') === $destination)>{{ $destination }}</option>
+                    @endforeach
+                </select>
             </div>
 
             <!-- Date Range -->
@@ -31,18 +53,18 @@
                 <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
 
-            <!-- Payment Status -->
+            <!-- Payment Method -->
             <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Payment Status</label>
-                <select name="payment_status" class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">All</option>
-                    <option value="paid" @selected(request('payment_status')==='paid')>Paid</option>
-                    <option value="pending" @selected(request('payment_status')==='pending')>Pending</option>
-                    <option value="refunded" @selected(request('payment_status')==='refunded')>Refunded</option>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Payment Method</label>
+                <select name="payment_method" class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Methods</option>
+                    @foreach($paymentMethods as $method)
+                        <option value="{{ $method }}" @selected(request('payment_method') === $method)>{{ ucfirst($method) }}</option>
+                    @endforeach
                 </select>
             </div>
 
-            <!-- Booking Status (maps to existing 'status' filter) -->
+            <!-- Booking Status -->
             <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Booking Status</label>
                 <select name="status" class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -142,7 +164,7 @@
                         <!-- Actions -->
                         <td class="px-4 py-3 align-top">
                             <div class="flex flex-wrap gap-2">
-                                <!-- Single View button opens floating modal -->
+                                <!-- View button opens floating modal -->
                                 <button type="button"
                                         class="px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700"
                                         @click.prevent="selected = {
@@ -168,6 +190,12 @@
                                         }; showPassengers = false; showModal = true">
                                     View
                                 </button>
+
+                                <!-- Edit button -->
+                                <a href="{{ route('bookings.edit', $b) }}"
+                                   class="px-3 py-1.5 rounded-md bg-gray-600 text-white hover:bg-gray-700">
+                                    Edit
+                                </a>
                             </div>
                         </td>
                     </tr>

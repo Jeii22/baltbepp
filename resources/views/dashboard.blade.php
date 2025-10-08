@@ -6,7 +6,7 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p class="text-gray-600">Welcome back! Here's what's happening with your ferry service.</p>
+            <p class="text-gray-600">Here's what's happening with your ferry service.</p>
         </div>
         <div class="text-sm text-gray-500">
             Last updated: {{ now()->format('M d, Y h:i A') }}
