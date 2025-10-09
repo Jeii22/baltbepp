@@ -120,7 +120,7 @@
         <div class="flex-1 flex flex-col h-full overflow-hidden md:ml-64">
             
             <!-- Fixed Top Navigation -->
-            <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow px-4 sm:px-6 py-3 flex justify-between items-center flex-shrink-0">
+            <header class="bg-white shadow px-4 sm:px-6 py-3 flex justify-between items-center flex-shrink-0">
                 <!-- Mobile Menu Button -->
                 <button @click="sidebarOpen = !sidebarOpen"
                         class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">

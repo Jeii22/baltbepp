@@ -79,7 +79,7 @@
         <!-- Trip Search Box -->
 <div id="book" class="relative -mt-64 max-w-5xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 md:p-8">
     <h2 class="text-2xl font-bold mb-2 text-gray-800">Where’s your next adventure?</h2>
-    <p class="text-gray-600 mb-6">Let’s make yougr next trip one to remember, book now!</p>
+    <p class="text-gray-600 mb-6">Let’s make your next trip one to remember, book now!</p>
 
     <!-- Trip Type -->
     <div class="flex flex-wrap items-center gap-4 mb-6">
