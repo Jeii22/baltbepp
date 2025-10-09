@@ -24,7 +24,7 @@
         </div>
 
         <!-- Fixed Sidebar -->
-        <div class="fixed inset-y-0 left-0 z-50 w-64 h-full bg-gradient-to-b from-indigo-600 to-blue-500 text-white shadow-xl flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+        <div class="fixed inset-y-0 left-0 z-50 w-64 h-full bg-gradient-to-b from-sky-300 via-blue-500 to-blue-800 text-white shadow-xl flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
              :class="{ 'translate-x-0': sidebarOpen }"
              x-show="sidebarOpen || window.innerWidth >= 768"
              x-transition:enter="transition-transform ease-in-out duration-300"
