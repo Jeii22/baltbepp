@@ -687,6 +687,7 @@ class ComposerStaticInita604a19f9b48703165d77459ee5cd4fe
         'App\\Http\\Controllers\\BookingController' => __DIR__ . '/../..' . '/app/Http/Controllers/BookingController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\FareController' => __DIR__ . '/../..' . '/app/Http/Controllers/FareController.php',
+        'App\\Http\\Controllers\\GoogleController' => __DIR__ . '/../..' . '/app/Http/Controllers/GoogleController.php',
         'App\\Http\\Controllers\\PaymentMethodController' => __DIR__ . '/../..' . '/app/Http/Controllers/PaymentMethodController.php',
         'App\\Http\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileController.php',
         'App\\Http\\Controllers\\ReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/ReportController.php',

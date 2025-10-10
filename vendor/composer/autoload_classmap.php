@@ -21,6 +21,7 @@ return array(
     'App\\Http\\Controllers\\BookingController' => $baseDir . '/app/Http/Controllers/BookingController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\FareController' => $baseDir . '/app/Http/Controllers/FareController.php',
+    'App\\Http\\Controllers\\GoogleController' => $baseDir . '/app/Http/Controllers/GoogleController.php',
     'App\\Http\\Controllers\\PaymentMethodController' => $baseDir . '/app/Http/Controllers/PaymentMethodController.php',
     'App\\Http\\Controllers\\ProfileController' => $baseDir . '/app/Http/Controllers/ProfileController.php',
     'App\\Http\\Controllers\\ReportController' => $baseDir . '/app/Http/Controllers/ReportController.php',
