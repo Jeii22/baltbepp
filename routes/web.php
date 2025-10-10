@@ -49,6 +49,9 @@ Route::get('/dashboard', function () {
 // Google OAuth for users only
 Route::get('/auth/google', [\App\Http\Controllers\Auth\SocialAuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\SocialAuthController::class, 'handleGoogleCallback']);
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
