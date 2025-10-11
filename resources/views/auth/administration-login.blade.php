@@ -26,12 +26,14 @@
                 @enderror
             </div>
 
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between mb-4">
+                <a href="{{ route('password.request.otp') }}" class="text-sm text-gray-500 hover:underline">Forgot password?</a>
                 <a href="{{ route('login') }}" class="text-sm text-gray-500 hover:underline">Back to user login</a>
-                <x-primary-button>
-                    {{ __('Log in') }}
-                </x-primary-button>
             </div>
+
+            <x-primary-button class="w-full">
+                {{ __('Log in') }}
+            </x-primary-button>
         </form>
     </div>
 
