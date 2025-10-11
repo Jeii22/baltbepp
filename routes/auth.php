@@ -6,7 +6,7 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\OtpPasswordResetController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
@@ -28,17 +28,23 @@ Route::middleware('guest')->group(function () {
     Route::post('administration-login', [\App\Http\Controllers\Auth\SuperAdminLoginController::class, 'login'])
         ->name('administration.login.attempt');
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
+    Route::get('forgot-password', [OtpPasswordResetController::class, 'create'])
+        ->name('password.request.otp');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->name('password.email');
+    Route::post('forgot-password', [OtpPasswordResetController::class, 'sendOtp'])
+        ->name('password.send.otp');
 
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
+    Route::get('verify-otp', [OtpPasswordResetController::class, 'showVerifyForm'])
+        ->name('password.verify.form');
 
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store');
+    Route::post('verify-otp', [OtpPasswordResetController::class, 'verifyOtp'])
+        ->name('password.verify.otp');
+
+    Route::get('reset-password-otp', [OtpPasswordResetController::class, 'showResetForm'])
+        ->name('password.reset.otp');
+
+    Route::post('reset-password-otp', [OtpPasswordResetController::class, 'resetPassword'])
+        ->name('password.reset.otp.post');
 });
 
 Route::middleware('auth')->group(function () {
