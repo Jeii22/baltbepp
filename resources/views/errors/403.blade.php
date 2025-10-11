@@ -33,7 +33,7 @@
                 </div>
             `,
             showConfirmButton: true,
-            confirmButtonText: 'Go to Dashboard',
+            confirmButtonText: 'HOME',
             confirmButtonColor: '#3085d6',
             allowOutsideClick: false,
             allowEscapeKey: false
