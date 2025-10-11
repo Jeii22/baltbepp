@@ -184,17 +184,7 @@
     });
     </script>
     @endif
-    @if(session('error'))
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: @json(session('error'))
-        });
-    });
-    </script>
-    @endif
+
     <script>
     // Intercept forms with data-confirm for SweetAlert confirmation
     document.addEventListener('DOMContentLoaded', () => {
