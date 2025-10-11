@@ -24,7 +24,8 @@
         </div>
 
         <!-- Fixed Sidebar -->
-        <div class="fixed inset-y-0 left-0 z-50 w-64 h-full bg-gradient-to-b from-blue-600 via-sky-200 to-white text-white shadow-xl flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+        <div class="fixed inset-y-0 left-0 z-50 w-64 h-full bg-gradient-to-b from-blue-900 via-cyan-400 to-gray-200 text-white shadow-xl flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+             x-bind:class="{ '-translate-x-full': !sidebarOpen }"   
              :class="{ 'translate-x-0': sidebarOpen }"
              x-show="sidebarOpen || window.innerWidth >= 768"
              x-transition:enter="transition-transform ease-in-out duration-300"
