@@ -250,14 +250,22 @@ class BookingController extends Controller
                 ? $paymentStatus['status']
                 : (($paymentStatus['status'] ?? '') === 'failed' ? 'cancelled' : 'pending');
 
+            $oldStatus = $booking->status;
             $booking->update([
                 'status' => $normalizedStatus,
                 'payment_reference' => $paymentStatus['payment_reference'] ?? null
             ]);
+
+            // Send email notifications for status changes
+            $this->handleStatusChangeNotification($booking, $oldStatus, $normalizedStatus);
         } else {
             // Payment failed -> use allowed enum value
+            $oldStatus = $booking->status;
             $booking->update(['status' => 'cancelled']);
-            
+
+            // Send rejection email
+            $this->handleStatusChangeNotification($booking, $oldStatus, 'cancelled', $paymentStatus['message'] ?? 'Payment failed');
+
             return back()->withErrors(['payment' => $paymentStatus['message']])
                 ->withInput();
         }
@@ -359,7 +367,12 @@ class BookingController extends Controller
     public function paymongoFailed(\App\Models\Booking $booking)
     {
         // Map to allowed enum value
+        $oldStatus = $booking->status;
         $booking->update(['status' => 'cancelled']);
+
+        // Send cancellation email
+        $this->handleStatusChangeNotification($booking, $oldStatus, 'cancelled', 'Payment cancelled or failed');
+
         return redirect()->back()->withErrors(['payment' => 'Payment cancelled or failed.']);
     }
 
@@ -394,10 +407,14 @@ class BookingController extends Controller
             if ($sourceId) {
                 $booking = \App\Models\Booking::where('payment_reference', $sourceId)->first();
                 if ($booking) {
+                    $oldStatus = $booking->status;
                     $booking->update([
                         'status' => 'confirmed',
                         'payment_reference' => $paymentId ?? $sourceId,
                     ]);
+
+                    // Send confirmation email
+                    $this->handleStatusChangeNotification($booking, $oldStatus, 'confirmed');
                 }
             }
         }
