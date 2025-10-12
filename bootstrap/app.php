@@ -7,6 +7,9 @@ use App\Http\Middleware\IsSuperAdmin;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUser;
 use App\Http\Middleware\HasAdminPrivileges;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -26,7 +29,37 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [App\Http\Middleware\TrackLastActive::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\Throwable $e, $request) {
-            return response()->view('errors.403', ['exception' => $e], 403);
+        $exceptions->renderable(function (ValidationException $exception, $request) {
+            if ($request->expectsJson()) {
+                return null;
+            }
+
+            $firstMessage = collect($exception->errors())->flatten()->first()
+                ?? 'Please review the form and try again.';
+
+            return back(fallback: url('/'))
+                ->withInput($request->all())
+                ->withErrors($exception->errors(), $exception->errorBag)
+                ->with('error', $firstMessage);
+        });
+
+        $exceptions->renderable(function (AuthorizationException $exception, $request) {
+            if ($request->expectsJson()) {
+                return null;
+            }
+
+            $message = $exception->getMessage() ?: 'You do not have permission to access this area.';
+
+            return back(fallback: url('/'))->with('error', $message);
+        });
+
+        $exceptions->renderable(function (HttpExceptionInterface $exception, $request) {
+            if ($exception->getStatusCode() !== 403 || $request->expectsJson()) {
+                return null;
+            }
+
+            $message = $exception->getMessage() ?: 'You do not have permission to access this area.';
+
+            return back(fallback: url('/'))->with('error', $message);
         });
     })->create();
