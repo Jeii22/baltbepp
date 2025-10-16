@@ -36,6 +36,7 @@ class BookingSeeder extends Seeder
             $totalAmount = ($adultCount * 900) + ($childCount * 450) + ($infantCount * 0) + ($pwdCount * 720) + ($studentCount * 765);
             
             Booking::create([
+                'user_id' => null,
                 'trip_id' => $trip->id,
                 'origin' => $trip->origin,
                 'destination' => $trip->destination,

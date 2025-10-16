@@ -24,9 +24,16 @@ return Application::configure(basePath: dirname(__DIR__))
             'isUser' => IsUser::class,
             'hasAdminPrivileges' => HasAdminPrivileges::class,
             'trackLastActive' => App\Http\Middleware\TrackLastActive::class,
+            'checkLocked' => App\Http\Middleware\CheckAccountLocked::class,
+            'role' => App\Http\Middleware\RoleMiddleware::class,
+            'requireAdmin2FA' => App\Http\Middleware\RequireAdminTwoFactor::class,
+            'password.confirm' => App\Http\Middleware\RequirePasswordConfirmation::class,
         ]);
         // Apply to web group globally
-        $middleware->web(append: [App\Http\Middleware\TrackLastActive::class]);
+        $middleware->web(append: [
+            App\Http\Middleware\TrackLastActive::class,
+            App\Http\Middleware\CheckAccountLocked::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->renderable(function (ValidationException $exception, $request) {

@@ -26,13 +26,29 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
-
         // Get the authenticated user
         $user = $request->user();
 
         // Clear lock status on successful login
         $request->session()->forget('status');
+
+        // Check if 2FA is enabled for this user
+        if ($user->two_factor_enabled) {
+            // Logout temporarily
+            Auth::logout();
+
+            // Store user ID in session for 2FA verification
+            $request->session()->put('2fa:user:id', $user->id);
+            $request->session()->put('2fa:remember', $request->boolean('remember'));
+
+            // Generate and send 2FA code
+            $twoFactorCode = \App\Models\TwoFactorCode::createForUser($user, 'login');
+            $user->notify(new \App\Notifications\TwoFactorCodeNotification($twoFactorCode->code, 'login'));
+
+            return redirect()->route('two-factor.login')->with('success', 'A verification code has been sent to your email.');
+        }
+
+        $request->session()->regenerate();
         
         // Redirect based on user role
         if ($user->isSuperAdmin()) {
