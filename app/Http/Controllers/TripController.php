@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Trip;
 use App\Models\Fare;
+use App\Traits\LogsAdminActivity;
 use Illuminate\Http\Request;
 
 class TripController extends Controller
 {
+    use LogsAdminActivity;
     public function index()
     {
         $now = now();
@@ -133,7 +135,16 @@ class TripController extends Controller
             'price' => 'required|numeric',
         ]);
 
-        Trip::create($request->all());
+        $trip = Trip::create($request->all());
+
+        $this->logActivity('trip_created', "Created trip from {$trip->origin} to {$trip->destination} departing at {$trip->departure_time}", [
+            'trip_id' => $trip->id,
+            'origin' => $trip->origin,
+            'destination' => $trip->destination,
+            'departure_time' => $trip->departure_time,
+            'capacity' => $trip->capacity,
+        ]);
+
         return redirect()->route('trips.index')->with('success', 'Trip created successfully!');
     }
 
@@ -153,13 +164,31 @@ class TripController extends Controller
             'price' => 'required|numeric',
         ]);
 
+        $oldData = $trip->only(['origin', 'destination', 'departure_time', 'capacity']);
         $trip->update($validated);
+
+        $this->logActivity('trip_updated', "Updated trip #{$trip->id} from {$trip->origin} to {$trip->destination}", [
+            'trip_id' => $trip->id,
+            'old_data' => $oldData,
+            'new_data' => $validated,
+        ]);
+
         return redirect()->route('trips.index')->with('success', 'Trip updated successfully!');
     }
 
     public function destroy(Trip $trip)
     {
+        $tripInfo = [
+            'trip_id' => $trip->id,
+            'origin' => $trip->origin,
+            'destination' => $trip->destination,
+            'departure_time' => $trip->departure_time,
+        ];
+
         $trip->delete();
+
+        $this->logActivity('trip_deleted', "Deleted trip from {$tripInfo['origin']} to {$tripInfo['destination']} departing at {$tripInfo['departure_time']}", $tripInfo);
+
         return redirect()->route('trips.index')->with('success', 'Trip deleted successfully!');
     }
 }
