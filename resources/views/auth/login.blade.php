@@ -28,7 +28,7 @@
             }
         }"
         class="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-8 relative"
-        @keydown.escape.window="showSecurityModal = false"
+        @keydown.escape.window="if (activeForm === 'register') showSecurityModal = false"
     >
         <!-- Welcome -->
         <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">Welcome to Balt-Bep Ferries</h2>
@@ -182,9 +182,9 @@
             <a href="{{ route('administration.login') }}" class="text-xs text-gray-300 hover:text-gray-400">&nbsp;</a>
         </div>
 
-        <!-- Security Modal -->
+        <!-- Security Modal (Registration Only) -->
         <div
-            x-show="showSecurityModal"
+            x-show="showSecurityModal && activeForm === 'register'"
             x-transition.opacity
             x-cloak
             class="fixed inset-0 z-50 flex items-center justify-center"
