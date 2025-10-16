@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\LoginAttempt;
 use App\Models\User;
+use App\Traits\LogsAdminActivity;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
+    use LogsAdminActivity;
     public function index()
     {
         // List all users
@@ -66,6 +68,12 @@ class UserController extends Controller
             'password' => $data['password'], // cast hashes automatically
         ]);
 
+        $this->logActivity('user_created', "Created user: {$user->name} ({$user->email}) with role {$user->role}", [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'role' => $user->role,
+        ]);
+
         return redirect()->route('users.index')->with('status', 'User created successfully');
     }
 
@@ -74,7 +82,19 @@ class UserController extends Controller
         if ($user->role === 'super_admin') {
             abort(403);
         }
+
+        $userName = $user->name;
+        $userEmail = $user->email;
+        $userRole = $user->role;
+
         $user->delete();
+
+        $this->logActivity('user_deleted', "Deleted user: {$userName} ({$userEmail}) with role {$userRole}", [
+            'user_id' => $user->id,
+            'email' => $userEmail,
+            'role' => $userRole,
+        ]);
+
         return redirect()->route('users.index')->with('status', 'User deleted');
     }
 }

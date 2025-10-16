@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Trip;
 use App\Models\Fare;
+use App\Traits\LogsAdminActivity;
 use Illuminate\Http\Request;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\Schema;
@@ -16,6 +17,7 @@ use App\Services\TicketService;
 
 class BookingController extends Controller
 {
+    use LogsAdminActivity;
     public function passenger(Request $request)
     {
         // Simplified validation - just check the essentials
@@ -204,6 +206,7 @@ class BookingController extends Controller
         $trip = Trip::findOrFail($tripId);
 
         $booking = \App\Models\Booking::create([
+            'user_id' => auth()->id(),
             'trip_id' => $trip->id,
             'origin' => $trip->origin,
             'destination' => $trip->destination,
@@ -307,6 +310,7 @@ class BookingController extends Controller
         $trip = Trip::findOrFail($tripId);
 
         $booking = \App\Models\Booking::create([
+            'user_id' => auth()->id(),
             'trip_id' => $trip->id,
             'origin' => $trip->origin,
             'destination' => $trip->destination,
@@ -507,6 +511,15 @@ class BookingController extends Controller
         $newStatus = $validated['status'];
         
         $booking->update(['status' => $newStatus]);
+
+        // Log the status change
+        $this->logActivity('booking_status_updated', "Updated booking #{$booking->id} status from {$oldStatus} to {$newStatus}", [
+            'booking_id' => $booking->id,
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'customer_name' => $booking->full_name,
+            'rejection_reason' => $validated['rejection_reason'] ?? null,
+        ]);
 
         // Send email notifications based on status change
         $this->handleStatusChangeNotification($booking, $oldStatus, $newStatus, $validated['rejection_reason'] ?? null);

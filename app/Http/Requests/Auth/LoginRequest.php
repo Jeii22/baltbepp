@@ -46,8 +46,21 @@ class LoginRequest extends FormRequest
         $email = $this->string('email');
         $user = User::where('email', $email)->first();
 
+        // Check if account is locked
+        if ($user && $user->isLocked()) {
+            $minutes = now()->diffInMinutes($user->locked_until);
+            throw ValidationException::withMessages([
+                'email' => "Your account has been locked due to multiple failed login attempts. Please try again in {$minutes} minutes.",
+            ]);
+        }
+
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
+
+            // Increment failed attempts for the user
+            if ($user) {
+                $user->incrementFailedAttempts();
+            }
 
             // Log failed attempt
             LoginAttempt::create([
@@ -62,6 +75,12 @@ class LoginRequest extends FormRequest
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
+        }
+
+        // Reset failed attempts on successful login
+        if ($user) {
+            $user->resetFailedAttempts();
+            $user->updateLastLogin($this->ip());
         }
 
         // Log successful attempt
@@ -84,7 +103,8 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        // Reduced to 3 attempts to match account lockout
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 3)) {
             return;
         }
 

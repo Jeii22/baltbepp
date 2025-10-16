@@ -2,6 +2,49 @@
 
 @section('content')
 <div class="space-y-6">
+    <!-- Security Alerts -->
+    @if(isset($twoFactorWarning) && $twoFactorWarning)
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <div class="ml-3 flex-1">
+                <p class="text-sm text-yellow-700">
+                    <strong>Security Warning:</strong> Two-Factor Authentication is disabled. 
+                    <a href="{{ route('profile.edit') }}" class="font-medium underline hover:text-yellow-600">Enable it now</a> for better account protection.
+                </p>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if(isset($securityAlerts) && count($securityAlerts) > 0)
+        @foreach($securityAlerts as $alert)
+        <div class="bg-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-50 border-l-4 border-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-400 p-4 rounded-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-700">{{ $alert['message'] }}</p>
+                    </div>
+                </div>
+                @if($alert['action_url'])
+                <a href="{{ $alert['action_url'] }}" class="text-sm font-medium text-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-700 hover:text-{{ $alert['type'] === 'warning' ? 'yellow' : 'blue' }}-600 underline">
+                    {{ $alert['action_text'] }}
+                </a>
+                @endif
+            </div>
+        </div>
+        @endforeach
+    @endif
+
     <!-- Header -->
     <div class="flex justify-between items-center">
         <div>
@@ -204,5 +247,67 @@
             </div>
         </div>
     </div>
+
+    <!-- Security Metrics (Super Admin Only) -->
+    @if(auth()->user()->isSuperAdmin())
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Security Overview</h3>
+            <a href="{{ route('admin.security.overview') }}" class="text-sm text-blue-600 hover:text-blue-800">View Details</a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 bg-red-50 rounded-lg border border-red-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-red-600">Locked Accounts</p>
+                        <p class="text-2xl font-bold text-red-700">{{ $lockedAccountsCount ?? 0 }}</p>
+                    </div>
+                    <svg class="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-yellow-600">Failed Logins (1h)</p>
+                        <p class="text-2xl font-bold text-yellow-700">{{ $recentFailedLogins ?? 0 }}</p>
+                    </div>
+                    <svg class="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-green-600">2FA Enabled</p>
+                        <p class="text-2xl font-bold text-green-700">{{ \App\Models\User::where('two_factor_enabled', true)->count() }}</p>
+                    </div>
+                    <svg class="w-8 h-8 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
+
+<!-- Session Timeout Warning (JavaScript) -->
+<script>
+    // Warn user 5 minutes before session expires
+    const sessionLifetime = {{ config('session.lifetime') }} * 60 * 1000; // Convert to milliseconds
+    const warningTime = sessionLifetime - (5 * 60 * 1000); // 5 minutes before expiry
+
+    setTimeout(function() {
+        if (confirm('Your session will expire in 5 minutes. Click OK to stay logged in.')) {
+            // Ping server to keep session alive
+            fetch('{{ route("dashboard") }}', {
+                method: 'HEAD',
+                credentials: 'same-origin'
+            });
+        }
+    }, warningTime);
+</script>
 @endsection

@@ -61,6 +61,20 @@ Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\SocialAuthContro
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
+// Two-Factor Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/two-factor-challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'show'])->name('two-factor.login');
+    Route::post('/two-factor-challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])->name('two-factor.verify');
+    Route::post('/two-factor-challenge/resend', [\App\Http\Controllers\Auth\TwoFactorController::class, 'resend'])->name('two-factor.resend');
+});
+
+// Two-Factor Management Routes (for authenticated users)
+Route::middleware('auth')->group(function () {
+    Route::post('/user/two-factor-authentication', [\App\Http\Controllers\Auth\TwoFactorController::class, 'enable'])->name('two-factor.enable');
+    Route::post('/user/two-factor-authentication/confirm', [\App\Http\Controllers\Auth\TwoFactorController::class, 'confirmEnable'])->name('two-factor.confirm');
+    Route::delete('/user/two-factor-authentication', [\App\Http\Controllers\Auth\TwoFactorController::class, 'disable'])->name('two-factor.disable');
+});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -71,13 +85,13 @@ Route::middleware('auth')->group(function () {
 
 // Customer Dashboard
 Route::get('/customer/dashboard', function () {
-    return view('dashboard');
+    return view('user-dashboard');
 })->middleware(['auth', 'verified'])->name('customer.dashboard');
 
 // Admin Dashboard
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware(['auth', 'isAdmin'])->name('admin.dashboard');
+Route::get('/admin/dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])
+    ->middleware(['auth', 'isAdmin'])
+    ->name('admin.dashboard');
 
 // Superadmin Dashboard
 Route::get('/superadmin/dashboard', function () {
@@ -85,6 +99,17 @@ Route::get('/superadmin/dashboard', function () {
 })->middleware(['auth', 'isSuperAdmin'])->name('superadmin.dashboard');
 
 Route::middleware(['auth', 'isSuperAdmin'])->group(function () {
+    // Security Overview (Super Admin Only)
+    Route::get('/admin/security/overview', [\App\Http\Controllers\AdminDashboardController::class, 'securityOverview'])
+        ->name('admin.security.overview');
+    
+    // Unlock User Account
+    Route::post('/admin/users/{user}/unlock', function ($userId) {
+        $user = \App\Models\User::findOrFail($userId);
+        $user->unlockAccount();
+        return back()->with('success', 'Account unlocked successfully.');
+    })->name('admin.users.unlock');
+    
     // User management (admins)
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
