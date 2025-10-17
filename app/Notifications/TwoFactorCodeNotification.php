@@ -56,13 +56,19 @@ class TwoFactorCodeNotification extends Notification implements ShouldQueue
             default => 'We detected a login attempt to your account. Please use the code below to verify it\'s you:',
         };
 
-        return (new MailMessage)
+        $mailMessage = (new MailMessage)
             ->subject($subject)
             ->greeting($greeting)
             ->line($message)
             ->line('')
             ->line('**Verification Code:**')
-            ->line('# ' . $this->code)
+            ->line('# ' . $this->code);
+
+        if ($this->type === 'registration') {
+            $mailMessage->action('Confirm email to Balt Bep', route('verification.notice'));
+        }
+
+        return $mailMessage
             ->line('')
             ->line('This code will expire in 10 minutes.')
             ->line('If you did not initiate this request, please ignore this email or contact support immediately.')

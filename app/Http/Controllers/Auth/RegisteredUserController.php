@@ -19,7 +19,13 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        if (!session()->has('registration:captcha:question')) {
+            $this->setCaptcha();
+        }
+
+        return view('auth.register', [
+            'captchaQuestion' => session('registration:captcha:question'),
+        ]);
     }
 
     /**
@@ -29,11 +35,23 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if (!session()->has('registration:captcha:answer')) {
+            $this->setCaptcha();
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class, 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()->min(8)->mixedCase()->numbers()->symbols()],
             'terms' => ['accepted'],
+            'captcha' => ['required', function ($attribute, $value, $fail) {
+                $expected = session('registration:captcha:answer');
+
+                if (!$expected || trim((string) $value) !== $expected) {
+                    $this->setCaptcha();
+                    $fail('The captcha answer is incorrect.');
+                }
+            }],
         ], [
             'terms.accepted' => 'You must agree to the terms and conditions before continuing.',
             'email.regex' => 'Only Gmail addresses are allowed for registration.',
@@ -41,7 +59,11 @@ class RegisteredUserController extends Controller
             'password.mixed_case' => 'Password must contain at least one uppercase and one lowercase letter.',
             'password.numbers' => 'Password must contain at least one number.',
             'password.symbols' => 'Password must contain at least one special character.',
+            'captcha.required' => 'Please solve the captcha to continue.',
         ]);
+
+        session()->forget('registration:captcha:question');
+        session()->forget('registration:captcha:answer');
 
         $user = User::create([
             'name' => $request->name,
@@ -50,15 +72,27 @@ class RegisteredUserController extends Controller
             'role' => 'user',
         ]);
 
+        Auth::login($user);
+
         event(new Registered($user));
 
-        // Generate and send OTP for email verification
         $twoFactorCode = \App\Models\TwoFactorCode::createForUser($user, 'registration');
         $user->notify(new \App\Notifications\TwoFactorCodeNotification($twoFactorCode->code, 'registration'));
 
-        // Store user ID in session for verification
         session(['registration:user:id' => $user->id]);
 
         return redirect()->route('verification.notice')->with('success', 'Registration successful! Please check your Gmail for the verification code.');
+    }
+
+    protected function setCaptcha(): void
+    {
+        $first = random_int(1, 9);
+        $second = random_int(1, 9);
+        $answer = (string) ($first + $second);
+
+        session([
+            'registration:captcha:question' => 'What is '.$first.' + '.$second.'?',
+            'registration:captcha:answer' => $answer,
+        ]);
     }
 }

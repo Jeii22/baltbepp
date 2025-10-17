@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\OtpPasswordResetController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -58,6 +60,27 @@ Route::middleware('auth')->group(function () {
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
+
+    Route::post('verify-email/otp', function (Request $request) {
+        $request->validate([
+            'code' => ['required', 'string', 'size:6'],
+        ]);
+
+        $user = $request->user();
+
+        if (!\App\Models\TwoFactorCode::verify($user, $request->code, 'registration')) {
+            return back()->withInput()->with('error', 'The OTP is invalid or has expired.');
+        }
+
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            event(new Verified($user));
+        }
+
+        session()->forget('registration:user:id');
+
+        return redirect()->intended(route('dashboard', absolute: false).'?verified=1')->with('success', 'Email verified successfully.');
+    })->name('verification.otp');
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
         ->name('password.confirm');
