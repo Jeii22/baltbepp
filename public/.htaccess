@@ -1,26 +1,16 @@
 # =========================================================================
-# Laravel Secure .htaccess - Safe & Asset-Friendly
+# Laravel Public .htaccess (Optimized & Secure)
 # =========================================================================
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
 
-    # Optional HTTPS redirect
+    # Redirect all traffic to HTTPS (optional, comment out if not using SSL)
     RewriteCond %{HTTPS} !=on
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-    # Protect sensitive files in root
-    RewriteRule ^(\.env|\.htaccess|\.htpasswd|composer\.json|composer\.lock|artisan|package\.json|webpack\.mix\.js)$ - [F,L,NC]
-
-    # Block access to Laravel internal folders
-    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor)/ - [F,L,NC]
-
-    # Protect against common injection patterns
-    RewriteCond %{QUERY_STRING} (\<|%3C|\b(alert|script|onerror|onload|eval|javascript|base64|data:)\b) [NC]
-    RewriteRule .* - [F,L]
-
-    # Laravel default rewrites
+    # Laravel core rewrite rules
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
@@ -30,16 +20,29 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 
-# Security headers (CSP allows assets)
+# =========================================================================
+# Security & Performance
+# =========================================================================
+
+# Prevent access to sensitive files
+<FilesMatch "(\.env|\.htaccess|\.htpasswd|composer\.json|composer\.lock|artisan|package\.json|webpack\.mix\.js)$">
+    Require all denied
+</FilesMatch>
+
+# Protect Laravel internal folders
+<IfModule mod_rewrite.c>
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor)/ - [F,L,NC]
+</IfModule>
+
+# Security headers
 <IfModule mod_headers.c>
     Header always set X-Frame-Options "DENY"
     Header always set X-Content-Type-Options "nosniff"
     Header always set Referrer-Policy "no-referrer"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
     Header always set X-XSS-Protection "1; mode=block"
-    Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https:; img-src 'self' data: https:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+    Header always set Content-Security-Policy "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';"
     Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)"
-   # Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:; object-src 'none';"
 </IfModule>
 
 # Disable directory listing
