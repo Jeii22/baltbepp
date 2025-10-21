@@ -6,6 +6,15 @@
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
+# Allow public assets to be served when using the top-level .htaccess redirect
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
+RewriteCond %{REQUEST_URI} ^/public/build/
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^public/(.*)$ $1 [L]
+
 # Block access to sensitive files
 <FilesMatch "(^\.|\.env|composer\.json|artisan|server\.php|.git|.env|.htaccess|phpunit\.xml|storage|vendor)">
     Order allow,deny
