@@ -203,7 +203,7 @@
                         </div>
 
                         <!-- Card Details (Hidden by default) -->
-                        <div id="cardDetails" class="hidden space-y-4 p-4 bg-gray-50 rounded-lg">
+                      <!--  <div id="cardDetails" class="hidden space-y-4 p-4 bg-gray-50 rounded-lg">
                             <h4 class="font-medium text-gray-900">Card Information</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="md:col-span-2">
@@ -239,7 +239,7 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Terms and Conditions -->
                         <div class="flex items-start space-x-3">
