@@ -48,7 +48,8 @@ class LoginRequest extends FormRequest
 
         // Check if account is locked
         if ($user && $user->isLocked()) {
-            $minutes = now()->diffInMinutes($user->locked_until);
+            $lockedUntil = \Carbon\Carbon::parse($user->locked_until);
+            $minutes = now()->diffInMinutes($lockedUntil);
             throw ValidationException::withMessages([
                 'email' => "Your account has been locked due to multiple failed login attempts. Please try again in {$minutes} minutes.",
             ]);

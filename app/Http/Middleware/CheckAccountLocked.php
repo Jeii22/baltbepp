@@ -16,7 +16,8 @@ class CheckAccountLocked
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->user() && $request->user()->isLocked()) {
-            $minutes = now()->diffInMinutes($request->user()->locked_until);
+            $lockedUntil = \Carbon\Carbon::parse($request->user()->locked_until);
+            $minutes = now()->diffInMinutes($lockedUntil);
             
             auth()->logout();
             $request->session()->invalidate();

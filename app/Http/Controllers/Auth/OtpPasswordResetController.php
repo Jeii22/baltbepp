@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\OtpPasswordReset;
@@ -33,7 +34,7 @@ class OtpPasswordResetController extends Controller
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         // Store OTP in cache for 10 minutes
-        Cache::put('password_reset_otp_' . $user->id, $otp, now()->addMinutes(10));
+        Cache::put('password_reset_otp_' . $user->id, Hash::make($otp), now()->addMinutes(10));
 
         // Send OTP via email
         Mail::to($user->email)->send(new OtpPasswordReset($otp));
@@ -66,7 +67,7 @@ class OtpPasswordResetController extends Controller
         $user = User::where('email', $request->email)->first();
         $cachedOtp = Cache::get('password_reset_otp_' . $user->id);
 
-        if (!$cachedOtp || $cachedOtp !== $request->otp) {
+        if (!$cachedOtp || !Hash::check($request->otp, $cachedOtp)) {
             return back()->withErrors(['otp' => 'Invalid or expired OTP.']);
         }
 
@@ -106,7 +107,7 @@ class OtpPasswordResetController extends Controller
         }
 
         $user->update([
-            'password' => bcrypt($request->password),
+            'password' => Hash::make($request->password),
         ]);
 
         Cache::forget('password_reset_verified_' . $user->id);
