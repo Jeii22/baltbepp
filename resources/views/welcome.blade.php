@@ -34,27 +34,41 @@
                 <a href="#contact-us" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Contact Us</a>
             </div>
             <!-- Auth area: show user name if logged in, otherwise Sign In -->
-            <div>
+            <div x-data="{ dropdownOpen: false }" class="relative">
                 @auth
-                    <div class="flex items-center space-x-3 text-white">
-                        <div class="flex items-center space-x-2">
-                            <span>Hi, {{ Auth::user()->name }}</span>
-                            <span class="text-xs bg-white/20 px-2 py-1 rounded-full">{{ Auth::user()->getRoleDisplayName() }}</span>
-                        </div>
-                        
-                        @if(Auth::user()->isSuperAdmin())
-                            <a href="{{ route('dashboard') }}" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg transition">
-                                Super Admin Dashboard
-                            </a>
-                        @elseif(Auth::user()->isAdmin())
-                            <a href="{{ route('dashboard') }}" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded-lg transition">
-                                Admin Dashboard
-                            </a>
-                        @endif
-                        
-                        <form method="POST" action="{{ route('logout') }}">
+                    <button @click="dropdownOpen = !dropdownOpen" class="flex items-center space-x-2 text-white hover:text-cyan-200 transition">
+                        <span>Welcome {{ Auth::user()->name }}</span>
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+                    @if(Auth::user()->isSuperAdmin())
+                        <a href="{{ route('dashboard') }}" class="ml-3 bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg transition">
+                            Super Admin Dashboard
+                        </a>
+                    @elseif(Auth::user()->isAdmin())
+                        <a href="{{ route('dashboard') }}" class="ml-3 bg-green-600 hover:bg-green-700 px-3 py-1 rounded-lg transition">
+                            Admin Dashboard
+                        </a>
+                    @endif
+
+                    <!-- Dropdown Menu -->
+                    <div x-show="dropdownOpen" @click.away="dropdownOpen = false" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
+                        <!-- My Profile -->
+                        <a href="{{ route('customer.dashboard') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-t-lg">
+                            My Profile
+                        </a>
+                        <!-- My Bookings -->
+                        <a href="{{ route('bookings.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-50">
+                            My Bookings
+                        </a>
+                        <!-- Logout -->
+                        <form method="POST" action="{{ route('logout') }}" class="border-t">
                             @csrf
-                            <button type="submit" class="border border-white px-3 py-1 rounded-lg hover:bg-white hover:text-blue-600 transition">Log out</button>
+                            <button type="submit" class="w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-b-lg">
+                                Logout
+                            </button>
                         </form>
                     </div>
                 @else
