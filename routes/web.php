@@ -86,7 +86,7 @@ Route::middleware('auth')->group(function () {
 
 // Customer Dashboard
 Route::get('/customer/dashboard', function () {
-    return view('user-dashboard');
+    return view('user-dashboard', ['user' => auth()->user()]);
 })->middleware(['auth', 'verified'])->name('customer.dashboard');
 
 // Admin Dashboard
@@ -160,6 +160,16 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+
+// Route for My Bookings
+Route::get('/my-bookings', function () {
+    $bookings = \App\Models\Booking::with(['passengers','trip'])
+        ->where('user_id', auth()->id())
+        ->latest()
+        ->get();
+
+    return view('my-bookings', ['bookings' => $bookings]);
+})->middleware(['auth', 'verified'])->name('my-bookings');
 
 // Test routes for role-based access (for demonstration)
 Route::middleware(['auth', 'isAdmin'])->group(function () {

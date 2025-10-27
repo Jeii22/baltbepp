@@ -32,6 +32,7 @@ class User extends Authenticatable
         'locked_until',
         'last_login_at',
         'last_login_ip',
+        'photo',
     ];
 
     /**

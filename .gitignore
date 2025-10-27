@@ -4,6 +4,7 @@
 .env.production
 .env.online
 .env.offline
+.env
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -23,4 +24,5 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
-.env
+vendor/
+composer.lock

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>User Dashboard</title>
+    <title>My Bookings</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="antialiased bg-white text-gray-800">
@@ -23,7 +23,15 @@
                     <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
-
+            <!-- Nav Links -->
+            <div class="hidden md:flex space-x-8 text-white font-medium" x-show="open || window.innerWidth >= 768" :class="{ 'flex flex-col space-y-4 mt-4': open && window.innerWidth < 768 }">
+                <a href="#book" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Book</a>
+                <a href="#promos" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Promos</a>
+                <a href="#routes" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Routes</a>
+                <a href="#why-choose-us" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Why Choose Us</a>
+                <a href="#about-us" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">About Us</a>
+                <a href="#contact-us" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Contact Us</a>
+            </div>
             <!-- Auth area: show user name if logged in, otherwise Sign In -->
             <div x-data="{ dropdownOpen: false }" class="relative">
                 @auth
@@ -41,11 +49,9 @@
                             My Profile
                         </a>
                         <!-- My Bookings -->
-                         <!--
                         <a href="{{ route('bookings.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-50">
                             My Bookings
                         </a>
-                        -->
                         <!-- Logout -->
                         <form method="POST" action="{{ route('logout') }}" class="border-t">
                             @csrf
@@ -62,54 +68,53 @@
             </div>
         </div>
     </nav>
+    
 
     <!-- Hero Section -->
-    <div class="relative bg-cover bg-center h-[60vh]" style="background-image: url('/images/barko.png');">
+    <div class="relative bg-cover bg-center h-[40vh]" style="background-image: url('/images/barko.png');">
         <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
             <div class="text-center text-white px-6">
-                <h1 class="text-4xl md:text-5xl font-bold">Welcome to Your Profile</h1>
+                <h1 class="text-4xl md:text-5xl font-bold">Your Bookings</h1>
+                <p class="mt-2 text-2xl italic">Manage and review your trips with ease.</p>
             </div>
         </div>
     </div>
 
     <!-- Content Section -->
-    <div class="relative -mt-48 max-w-6xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl ring-1 ring-black/5 p-8 md:p-10">
+    <div class="max-w-6xl mx-auto py-12">
         <header class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">Welcome, {{ $user->name }}</h1>
-            <div class="flex justify-between items-center">
-                <p class="text-gray-600">Manage your account and view your recent activities.</p>
-                <a href="{{ route('welcome') }}" class="inline-block mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                    Book a Trip
-                </a>
-            </div>
+            <h1 class="text-2xl font-bold text-gray-900">My Bookings</h1>
+            <p class="text-gray-600">View and manage your recent bookings.</p>
         </header>
 
         <section class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-lg font-medium text-gray-900">Profile Information</h2>
-            <p class="mt-1 text-sm text-gray-600">Update your account's profile information and email address.</p>
+            <h2 class="text-lg font-medium text-gray-900">Recent Bookings</h2>
+            <p class="mt-1 text-sm text-gray-600">Here are your most recent bookings:</p>
 
-            <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
-                @csrf
-                @method('patch')
-
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                    <input id="name" name="name" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('name', $user->name) }}" required autofocus autocomplete="name">
-                </div>
-
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input id="email" name="email" type="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('email', $user->email) }}" required autocomplete="username">
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Save</button>
-
-                    @if (session('status') === 'profile-updated')
-                        <p class="text-sm text-green-600">Saved.</p>
-                    @endif
-                </div>
-            </form>
+            <div class="mt-6 space-y-4">
+                @forelse($bookings as $booking)
+                    <div class="bg-gray-50 p-4 rounded-lg shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Booking #{{ $booking->id }}</h3>
+                                <p class="text-sm text-gray-600">{{ $booking->origin }} → {{ $booking->destination }}</p>
+                                <p class="text-sm text-gray-500">{{ $booking->trip_date }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-semibold text-gray-900">₱{{ number_format($booking->total_amount, 2) }}</p>
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                    @if($booking->status === 'confirmed') bg-green-100 text-green-800
+                                    @elseif($booking->status === 'pending') bg-yellow-100 text-yellow-800
+                                    @else bg-red-100 text-red-800 @endif">
+                                    {{ ucfirst($booking->status) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-center text-gray-500">No bookings found.</p>
+                @endforelse
+            </div>
         </section>
     </div>
 

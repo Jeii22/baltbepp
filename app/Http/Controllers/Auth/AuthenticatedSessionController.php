@@ -54,7 +54,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Administrator!');
         }
 
-        return redirect()->route('customer.dashboard')->with('success', 'Welcome back!');
+        return redirect('/')->with('success', 'Welcome back!');
     }
 
     /**

@@ -76,9 +76,13 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Generate OTP
         $twoFactorCode = \App\Models\TwoFactorCode::createForUser($user, 'registration');
+
+        // Send OTP to the user's email
         $user->notify(new \App\Notifications\TwoFactorCodeNotification($twoFactorCode->code, 'registration'));
 
+        // Store user ID in session for verification
         session(['registration:user:id' => $user->id]);
 
         return redirect()->route('verification.notice')->with('success', 'Registration successful! Please check your Gmail for the verification code.');

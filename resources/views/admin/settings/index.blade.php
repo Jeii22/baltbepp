@@ -7,9 +7,7 @@
 
         <!-- User Profile Information -->
         <div class="bg-white border rounded p-6 mb-6 shadow-sm">
-            <h2 class="text-lg font-medium mb-4">Profile Information</h2>
-            <p class="text-sm text-gray-600 mb-4">Update your account's profile information and email address.</p>
-
+            <h2 class="text-lg font-medium mb-4">Profile</h2>
             <form method="post" action="{{ route('profile.update') }}" class="space-y-4">
                 @csrf
                 @method('patch')
@@ -39,8 +37,8 @@
                 </div>
             </form>
         </div>
-
-        <!-- App Settings -->
+    <!--
+    
         <form method="POST" action="{{ route('settings.update') }}" class="bg-white border rounded p-6 space-y-6 shadow-sm">
             @csrf
 
@@ -56,7 +54,6 @@
                     </span>
                 </label>
             </div>
-
             <div class="flex items-center justify-between">
                 <div>
                     <div class="font-medium">Enable PayMongo (GCash/Card)</div>
@@ -69,8 +66,8 @@
                     </span>
                 </label>
             </div>
-
-            <!-- Dark Mode Toggle -->
+   
+            
             <div class="flex items-center justify-between">
                 <div>
                     <div class="font-medium">Dark Mode</div>
@@ -83,10 +80,11 @@
                     </span>
                 </label>
             </div>
-
+           
             <div class="pt-2">
                 <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Settings</button>
             </div>
+             -->
         </form>
     </div>
 </div>

@@ -96,9 +96,28 @@
                     </div>
                 @endif
 
-                <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+                <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
                     @csrf
                     @method('patch')
+
+                    <div>
+                        <label for="photo" class="block text-sm font-semibold text-gray-700">Profile Photo</label>
+                        <div class="mt-2 flex items-end gap-4">
+                            @if($user->photo)
+                                <img src="data:image/jpeg;base64,{{ base64_encode($user->photo) }}" alt="Profile Photo" class="h-24 w-24 rounded-xl border border-gray-200 object-cover" />
+                            @else
+                                <div class="h-24 w-24 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                </div>
+                            @endif
+                            <input id="photo" name="photo" type="file" accept="image/*" class="flex-1 rounded-xl border border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+                        </div>
+                        @error('photo')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
 
                     <div>
                         <label for="name" class="block text-sm font-semibold text-gray-700">Name</label>

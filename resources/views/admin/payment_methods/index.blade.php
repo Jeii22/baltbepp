@@ -7,7 +7,7 @@
             <h1 class="text-2xl font-bold">Payment Methods</h1>
             <a href="{{ route('admin.payment-methods.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded">Add Method</a>
         </div>
-
+        <!--
         <div class="mb-6 bg-white border rounded p-4 flex items-center justify-between">
             <div>
                 <div class="font-medium">PayMongo</div>
@@ -25,7 +25,7 @@
                 </label>
             </form>
         </div>
-
+            -->
 
 
         <div class="bg-white border rounded shadow-sm">

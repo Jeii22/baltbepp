@@ -7,6 +7,14 @@
     <title>Balt Bep</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        @media (max-width: 768px) {
+            nav .nav-links {
+                display: none; /* Hide navigation links */
+            }
+        }
+    </style>
 </head>
 <body class="antialiased bg-white text-gray-800">
 
@@ -17,13 +25,7 @@
             <a href="/" class="flex items-center space-x-2">
                 <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
             </a>
-            <!-- Mobile Menu Button -->
-            <button @click="open = !open" class="md:hidden text-white p-2">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
+          
             <!-- Nav Links -->
             <div class="hidden md:flex space-x-8 text-white font-medium" x-show="open || window.innerWidth >= 768" :class="{ 'flex flex-col space-y-4 mt-4': open && window.innerWidth < 768 }">
                 <a href="#book" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll">Book</a>
@@ -167,7 +169,6 @@
                  class="hidden absolute z-20 mt-2 w-80 bg-white border rounded-xl shadow-lg p-4">
 
                 @php
-                    // Map database passenger types to our form fields
                     $passengerTypeMap = [
                         'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 1],
                         'Child (2-11)' => ['key' => 'child', 'label' => 'Child', 'description' => 'Ages 2-11', 'default' => 0],
@@ -175,26 +176,28 @@
                         'Senior Citizen / PWD' => ['key' => 'pwd', 'label' => 'PWD/Senior', 'description' => 'Persons With Disability / Senior Citizens', 'default' => 0],
                         'Student' => ['key' => 'student', 'label' => 'Student', 'description' => 'With valid student ID', 'default' => 0],
                     ];
+                    $fareLookup = $fares->keyBy('passenger_type');
                 @endphp
 
-                @foreach($fares as $index => $fare)
-                    @if(isset($passengerTypeMap[$fare->passenger_type]))
-                        @php $typeInfo = $passengerTypeMap[$fare->passenger_type]; @endphp
-                        <div class="flex items-center justify-between {{ $index < count($fares) - 1 ? 'mb-3' : '' }}">
-                            <div class="flex-1">
-                                <div class="flex items-center justify-between">
-                                    <p class="font-semibold">{{ $typeInfo['label'] }}</p>
-                                    <p class="text-sm font-medium text-green-600">₱{{ number_format($fare->price, 0) }}</p>
-                                </div>
-                                <p class="text-xs text-gray-500">{{ $typeInfo['description'] }}</p>
+                @foreach($passengerTypeMap as $fareType => $typeInfo)
+                    @php
+                        $fareEntry = $fareLookup->get($fareType);
+                        $price = $fareEntry ? $fareEntry->price : 0;
+                    @endphp
+                    <div class="flex items-center justify-between {{ !$loop->last ? 'mb-3' : '' }}">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <p class="font-semibold">{{ $typeInfo['label'] }}</p>
+                                <p class="text-sm font-medium text-green-600">₱{{ number_format($price, 0) }}</p>
                             </div>
-                            <div class="flex items-center ml-4">
-                                <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l hover:bg-gray-300" data-type="{{ $typeInfo['key'] }}">-</button>
-                                <span id="{{ $typeInfo['key'] }}Count" class="px-3 font-semibold min-w-[2rem] text-center">{{ $typeInfo['default'] }}</span>
-                                <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r hover:bg-blue-700" data-type="{{ $typeInfo['key'] }}">+</button>
-                            </div>
+                            <p class="text-xs text-gray-500">{{ $typeInfo['description'] }}</p>
                         </div>
-                    @endif
+                        <div class="flex items-center ml-4">
+                            <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l hover:bg-gray-300" data-type="{{ $typeInfo['key'] }}">-</button>
+                            <span id="{{ $typeInfo['key'] }}Count" class="px-3 font-semibold min-w-[2rem] text-center">{{ $typeInfo['default'] }}</span>
+                            <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r hover:bg-blue-700" data-type="{{ $typeInfo['key'] }}">+</button>
+                        </div>
+                    </div>
                 @endforeach
 
                 <div class="border-t pt-3 mt-3">
@@ -508,22 +511,22 @@
                     <!-- Social Media -->
                     <div class="bg-white p-6 rounded-xl shadow-lg">
                         <h3 class="text-xl font-bold text-blue-700 mb-4">Follow Us</h3>
-                        <!--<div class="flex space-x-4">
-                            <a href="#" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                                </svg>
-                            </a> -->
-                            <a href="https://web.facebook.com/baltbepshippingexpress" class="bg-blue-800 text-white p-3 rounded-full hover:bg-blue-900 transition">
+                        <div class="flex space-x-4">
+                            <a href="https://web.facebook.com/baltbepshippingexpress" class="bg-blue-800 text-white p-3 rounded-full hover:bg-blue-900 transition" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                 </svg>
                             </a>
-                            <!--<a href="#" class="bg-pink-600 text-white p-3 rounded-full hover:bg-pink-700 transition">
+                            <a href="mailto:support@baltbep.com" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition" aria-label="Email">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.746-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z"/>
+                                    <path d="M2 4h20a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V6a2 2 0 012-2zm10 7l10-5H2l10 5zm-2.236-.132L2 8.118V18h20V8.118l-7.764 2.75a4 4 0 01-4.472 0z"/>
                                 </svg>
-                            </a>-->
+                            </a>
+                            <a href="tel:+639498833551" class="bg-green-600 text-white p-3 rounded-full hover:bg-green-700 transition" aria-label="Call us">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M2.003 5.884l3.682-.737a1 1 0 011.115.595l1.516 3.538a1 1 0 01-.23 1.09l-2.21 2.1a16.053 16.053 0 007.257 7.257l2.1-2.21a1 1 0 011.09-.23l3.538 1.516a1 1 0 01.595 1.115l-.737 3.682A1 1 0 0118.25 24C8.175 24 0 15.825 0 5.75a1 1 0 011.003-1.003z"/>
+                                </svg>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -664,13 +667,11 @@
         const totalDisplay = document.getElementById("totalPassengers");
 
         // Initialize counts dynamically based on available passenger types
-        let counts = {};
-        @foreach($fares as $fare)
-            @if(isset($passengerTypeMap[$fare->passenger_type]))
-                @php $typeInfo = $passengerTypeMap[$fare->passenger_type]; @endphp
-                counts['{{ $typeInfo['key'] }}'] = {{ $typeInfo['default'] }};
-            @endif
-        @endforeach
+        let counts = {
+            @foreach($passengerTypeMap as $typeInfo)
+                '{{ $typeInfo['key'] }}': {{ $typeInfo['default'] }},
+            @endforeach
+        };
 
         // Toggle dropdown
         dropdownBtn.addEventListener("click", () => {
@@ -719,13 +720,10 @@
         function updateTotal() {
             let displayParts = [];
             
-            @foreach($fares as $fare)
-                @if(isset($passengerTypeMap[$fare->passenger_type]))
-                    @php $typeInfo = $passengerTypeMap[$fare->passenger_type]; @endphp
-                    if (counts['{{ $typeInfo['key'] }}'] > 0) {
-                        displayParts.push(`${counts['{{ $typeInfo['key'] }}']} {{ $typeInfo['label'] }}`);
-                    }
-                @endif
+            @foreach($passengerTypeMap as $typeInfo)
+                if (counts['{{ $typeInfo['key'] }}'] > 0) {
+                    displayParts.push(`${counts['{{ $typeInfo['key'] }}']} {{ $typeInfo['label'] }}`);
+                }
             @endforeach
             
             totalDisplay.textContent = displayParts.length > 0 ? displayParts.join(', ') : '1 Adult';
