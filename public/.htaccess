@@ -17,6 +17,8 @@
 
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/storage/ [NC]
+    RewriteCond %{REQUEST_URI} !^/payment_qr_codes/ [NC]
     RewriteRule ^ index.php [L]
 </IfModule>
 

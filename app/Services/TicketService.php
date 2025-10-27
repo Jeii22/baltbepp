@@ -32,18 +32,12 @@ class TicketService
         
         // Create filename
         $filename = 'ticket-' . $booking->id . '-' . time() . '.pdf';
-        $filepath = 'tickets/' . $filename;
-        
-        // Ensure tickets directory exists
-        if (!Storage::disk('public')->exists('tickets')) {
-            Storage::disk('public')->makeDirectory('tickets');
-        }
         
         // Save PDF to storage
-        Storage::disk('public')->put($filepath, $pdf->output());
+        Storage::disk('tickets')->put($filename, $pdf->output());
         
         // Return full path
-        return storage_path('app/public/' . $filepath);
+        return public_path('storage/tickets/' . $filename);
     }
     
     /**
@@ -65,12 +59,12 @@ class TicketService
     public function cleanupOldTickets(int $daysOld = 30): void
     {
         $cutoffDate = now()->subDays($daysOld);
-        $files = Storage::disk('public')->files('tickets');
+        $files = Storage::disk('public_uploads')->files('tickets');
         
         foreach ($files as $file) {
-            $lastModified = Storage::disk('public')->lastModified($file);
+            $lastModified = Storage::disk('public_uploads')->lastModified($file);
             if ($lastModified < $cutoffDate->timestamp) {
-                Storage::disk('public')->delete($file);
+                Storage::disk('public_uploads')->delete($file);
             }
         }
     }

@@ -82,8 +82,8 @@ class PaymentService
     {
         return [
             'success' => true,
-            'status' => 'confirmed',
-            'message' => 'Booking confirmed! Please pay at the terminal before departure.',
+            'status' => 'pending',
+            'message' => 'Booking pending. Please pay at the terminal before departure.',
             'payment_reference' => 'COD-' . $booking->id . '-' . time()
         ];
     }
