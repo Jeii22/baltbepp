@@ -28,7 +28,7 @@ On failure, a validation error keyed `recaptcha` is returned and surfaced via Sw
 
 ### 3. Visible Attribution
 
-reCAPTCHA v3 does not render a floating badge automatically. Google requires attribution. We include a Blade partial: `resources/views/components/recaptcha-v3-info.blade.php` with required Privacy & Terms links.
+The official reCAPTCHA badge (bottom-right) is now forced visible via a small CSS rule targeting `.grecaptcha-badge` in the auth pages. This satisfies Google's attribution requirement.
 
 If you prefer the *visible checkbox* experience, switch to reCAPTCHA v2 (checkbox) or invisible v2:
 
@@ -51,6 +51,7 @@ If you prefer the *visible checkbox* experience, switch to reCAPTCHA v2 (checkbo
 | Always fails | Wrong secret key | Verify `.env` and clear config cache (`php artisan config:clear`). |
 | Low scores | Legitimate users flagged | Lower `RECAPTCHA_SCORE_THRESHOLD` to 0.3–0.4. |
 | Token missing | JS not executed | Ensure no JS errors; check CSP allows `https://www.google.com` & `https://www.gstatic.com`. |
+| Badge hidden | Custom CSS overriding visibility | Remove conflicting CSS; we explicitly set `.grecaptcha-badge { visibility: visible; }`. |
 | Action mismatch | Token reused between pages | Confirm each form passes correct `{action: 'login'}` or `{action: 'register'}`. |
 
 ### 6. Security Notes

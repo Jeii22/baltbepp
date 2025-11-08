@@ -15,6 +15,17 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Google reCAPTCHA v3 -->
     <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_PUBLIC_KEY') }}"></script>
+    <style>
+        /* Ensure the official reCAPTCHA badge is visible at bottom-right */
+        .grecaptcha-badge {
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: fixed !important;
+            right: 12px !important;
+            bottom: 12px !important;
+            z-index: 9999 !important;
+        }
+    </style>
     <script>
         function onLoginSubmit(e) {
             e.preventDefault();
@@ -79,7 +90,6 @@
             </div>
 
             <x-input-error :messages="$errors->get('recaptcha')" class="mt-2" />
-            @include('components.recaptcha-v3-info', ['action' => 'login'])
 
             <div class="flex items-center justify-end mt-4">
                 <x-primary-button class="ml-3">
@@ -97,7 +107,7 @@
         });
     </script>
 
-    <!-- Attribution required for reCAPTCHA v3 (badge not automatically shown) -->
+    <!-- Official reCAPTCHA badge is shown bottom-right -->
 
         <!-- Add a register link below the sign-in button -->
         <p class="text-center text-sm text-gray-600 mt-4">
