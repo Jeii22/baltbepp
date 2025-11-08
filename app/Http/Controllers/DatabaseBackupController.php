@@ -28,27 +28,60 @@ class DatabaseBackupController extends Controller
 
         $filename = 'baltbep-backup-' . date('Y-m-d_H-i-s') . '.sql';
 
-        // Use mysqldump (must be in PATH)
-        $command = [
-            'mysqldump',
-            '-h', $host,
-            '-P', $port,
-            '-u', $user,
-            '-p' . $pass,
-            '--single-transaction',
-            '--quick',
-            '--lock-tables=false',
-            $db
-        ];
-
-        $process = new Process($command);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+        // Try mysqldump first
+        $sql = null;
+        $mysqldumpAvailable = false;
+        try {
+            $command = [
+                'mysqldump',
+                '-h', $host,
+                '-P', $port,
+                '-u', $user,
+                '-p' . $pass,
+                '--single-transaction',
+                '--quick',
+                '--lock-tables=false',
+                $db
+            ];
+            $process = new Process($command);
+            $process->run();
+            if ($process->isSuccessful()) {
+                $sql = $process->getOutput();
+                $mysqldumpAvailable = true;
+            }
+        } catch (\Throwable $e) {
+            // Fallback to PHP export below
         }
 
-        $sql = $process->getOutput();
+        // Fallback: PHP-based export (structure + data, basic)
+        if (!$mysqldumpAvailable) {
+            $pdo = \DB::connection('mysql')->getPdo();
+            $sql = "-- Simple PHP MySQL dump\n";
+            $sql .= "-- Database: `$db`\n\n";
+            $tables = [];
+            $stmt = $pdo->query("SHOW TABLES");
+            while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+                $tables[] = $row[0];
+            }
+            foreach ($tables as $table) {
+                // Structure
+                $row = $pdo->query("SHOW CREATE TABLE `$table`")->fetch(\PDO::FETCH_ASSOC);
+                $sql .= "--\n-- Table structure for table `$table`\n--\n\n";
+                $sql .= $row['Create Table'] . ";\n\n";
+                // Data
+                $sql .= "--\n-- Dumping data for table `$table`\n--\n\n";
+                $data = $pdo->query("SELECT * FROM `$table`");
+                while ($d = $data->fetch(\PDO::FETCH_ASSOC)) {
+                    $vals = array_map(function($v) use ($pdo) {
+                        if ($v === null) return 'NULL';
+                        return $pdo->quote($v);
+                    }, array_values($d));
+                    $sql .= "INSERT INTO `$table` VALUES (" . implode(",", $vals) . ");\n";
+                }
+                $sql .= "\n";
+            }
+        }
+
         return Response::make($sql, 200, [
             'Content-Type' => 'application/sql',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
