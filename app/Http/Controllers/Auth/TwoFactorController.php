@@ -45,7 +45,11 @@ class TwoFactorController extends Controller
         // Clear 2FA session data
         session()->forget('2fa:user:id');
 
-        // Enable 2FA in profile security settings after successful verification
+        // Mark email as verified and enable 2FA after successful verification
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+        
         if (!$user->two_factor_enabled) {
             $user->update(['two_factor_enabled' => true]);
         }
