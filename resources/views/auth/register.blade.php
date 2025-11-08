@@ -13,8 +13,13 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <!-- Google reCAPTCHA v3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_PUBLIC_KEY') }}"></script>
+    @if(config('services.recaptcha.version', 'v3') === 'v2')
+        <!-- Google reCAPTCHA v2 Invisible -->
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @else
+        <!-- Google reCAPTCHA v3 -->
+        <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_PUBLIC_KEY') }}"></script>
+    @endif
     <style>
         .grecaptcha-badge {
             visibility: visible !important;
@@ -28,12 +33,26 @@
     <script>
         function onRegisterSubmit(e) {
             e.preventDefault();
-            grecaptcha.ready(function() {
-                grecaptcha.execute('{{ env('RECAPTCHA_PUBLIC_KEY') }}', {action: 'register'}).then(function(token) {
-                    document.getElementById('recaptcha_token').value = token;
+            @if(config('services.recaptcha.version', 'v3') === 'v2')
+                if (typeof grecaptcha !== 'undefined') {
+                    grecaptcha.execute();
+                } else {
                     e.target.submit();
+                }
+            @else
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ env('RECAPTCHA_PUBLIC_KEY') }}', {action: 'register'}).then(function(token) {
+                        document.getElementById('recaptcha_token').value = token;
+                        e.target.submit();
+                    });
                 });
-            });
+            @endif
+        }
+
+        function onRecaptchaV2Register(token) {
+            document.getElementById('recaptcha_token').value = token;
+            var form = document.querySelector('form[action="{{ route('register') }}"]');
+            if (form) form.submit();
         }
     </script>
 </head>
@@ -131,10 +150,20 @@
                 <p class="text-sm text-red-600">{{ $message }}</p>
             @enderror
 
-            <button type="submit"
+            @if(config('services.recaptcha.version', 'v3') === 'v2')
+                <button type="submit"
+                    class="w-full py-3 px-4 bg-gray-900 text-white font-semibold rounded-lg shadow hover:bg-gray-800 transition g-recaptcha"
+                    data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                    data-callback="onRecaptchaV2Register"
+                    data-size="invisible">
+                    Create account
+                </button>
+            @else
+                <button type="submit"
                     class="w-full py-3 px-4 bg-gray-900 text-white font-semibold rounded-lg shadow hover:bg-gray-800 transition">
-                Create account
-            </button>
+                    Create account
+                </button>
+            @endif
         </form>
         <script>
             document.addEventListener('DOMContentLoaded', function() {

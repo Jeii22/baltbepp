@@ -24,6 +24,8 @@ class RecaptchaService
                 'recaptcha' => 'reCAPTCHA verification is required.',
             ]);
         }
+        
+        $version = config('services.recaptcha.version', 'v3');
 
         try {
             $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
@@ -39,30 +41,27 @@ class RecaptchaService
 
         $result = $response->json();
 
-        // Basic success flag
         if (!($result['success'] ?? false)) {
             throw ValidationException::withMessages([
                 'recaptcha' => 'reCAPTCHA verification failed. Please try again.',
             ]);
         }
 
-        // Score threshold (v3 only)
-        $score = $result['score'] ?? 0;
-        $threshold = (float) config('services.recaptcha.score_threshold', 0.5);
-        if ($score < $threshold) {
-            throw ValidationException::withMessages([
-                'recaptcha' => 'Suspicious activity detected (low reCAPTCHA score). Please retry.',
-            ]);
-        }
+        if ($version === 'v3') {
+            $score = $result['score'] ?? 0;
+            $threshold = (float) config('services.recaptcha.score_threshold', 0.5);
+            if ($score < $threshold) {
+                throw ValidationException::withMessages([
+                    'recaptcha' => 'Suspicious activity detected (low reCAPTCHA score). Please retry.',
+                ]);
+            }
 
-        // Optional action validation (prevent token reuse across forms)
-        $action = $result['action'] ?? null; // present for v3 enterprise / some implementations
-        if ($action && $action !== $expectedAction) {
-            throw ValidationException::withMessages([
-                'recaptcha' => 'Invalid reCAPTCHA action. Please refresh and try again.',
-            ]);
+            $action = $result['action'] ?? null;
+            if ($action && $action !== $expectedAction) {
+                throw ValidationException::withMessages([
+                    'recaptcha' => 'Invalid reCAPTCHA action. Please refresh and try again.',
+                ]);
+            }
         }
-
-        // (Optional) Could inspect hostname: $result['hostname']
     }
 }

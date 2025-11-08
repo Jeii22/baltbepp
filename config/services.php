@@ -45,6 +45,8 @@ return [
         'site_key' => env('RECAPTCHA_PUBLIC_KEY'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),
         'score_threshold' => env('RECAPTCHA_SCORE_THRESHOLD', 0.5),
+        // v3 (score, invisible text attribution) or v2 (invisible checkbox-style with floating badge)
+        'version' => env('RECAPTCHA_VERSION', 'v3'),
     ],
 
 ];

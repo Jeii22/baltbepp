@@ -13,8 +13,13 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <!-- Google reCAPTCHA v3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_PUBLIC_KEY') }}"></script>
+    @if(config('services.recaptcha.version', 'v3') === 'v2')
+        <!-- Google reCAPTCHA v2 Invisible -->
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @else
+        <!-- Google reCAPTCHA v3 -->
+        <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_PUBLIC_KEY') }}"></script>
+    @endif
     <style>
         /* Ensure the official reCAPTCHA badge is visible at bottom-right */
         .grecaptcha-badge {
@@ -29,12 +34,29 @@
     <script>
         function onLoginSubmit(e) {
             e.preventDefault();
-            grecaptcha.ready(function() {
-                grecaptcha.execute('{{ env('RECAPTCHA_PUBLIC_KEY') }}', {action: 'login'}).then(function(token) {
-                    document.getElementById('recaptcha_token').value = token;
+            @if(config('services.recaptcha.version', 'v3') === 'v2')
+                // v2 invisible: badge appears bottom-right; callback will submit
+                if (typeof grecaptcha !== 'undefined') {
+                    grecaptcha.execute();
+                } else {
                     e.target.submit();
+                }
+            @else
+                // v3: execute to get score token, then submit
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ env('RECAPTCHA_PUBLIC_KEY') }}', {action: 'login'}).then(function(token) {
+                        document.getElementById('recaptcha_token').value = token;
+                        e.target.submit();
+                    });
                 });
-            });
+            @endif
+        }
+
+        // reCAPTCHA v2 callback receives token
+        function onRecaptchaV2Login(token) {
+            document.getElementById('recaptcha_token').value = token;
+            var form = document.querySelector('form[action="{{ route('login') }}"]');
+            if (form) form.submit();
         }
     </script>
 </head>
@@ -92,9 +114,18 @@
             <x-input-error :messages="$errors->get('recaptcha')" class="mt-2" />
 
             <div class="flex items-center justify-end mt-4">
-                <x-primary-button class="ml-3">
-                    {{ __('Log in') }}
-                </x-primary-button>
+                @if(config('services.recaptcha.version', 'v3') === 'v2')
+                    <x-primary-button class="ml-3 g-recaptcha"
+                        data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                        data-callback="onRecaptchaV2Login"
+                        data-size="invisible">
+                        {{ __('Log in') }}
+                    </x-primary-button>
+                @else
+                    <x-primary-button class="ml-3">
+                        {{ __('Log in') }}
+                    </x-primary-button>
+                @endif
             </div>
     </form>
     <script>
