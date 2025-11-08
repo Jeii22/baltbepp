@@ -34,7 +34,7 @@ class UserController extends Controller
             ->where('successful', false)
             ->count();
 
-        $this->logActivity('Viewed user account', [
+        $this->logActivity('Viewed user account', 'Viewed user account', [
             'viewed_user_id' => $user->id,
             'viewed_user_email' => $user->email
         ]);
