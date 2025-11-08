@@ -28,11 +28,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => App\Http\Middleware\RoleMiddleware::class,
             'requireAdmin2FA' => App\Http\Middleware\RequireAdminTwoFactor::class,
             'password.confirm' => App\Http\Middleware\RequirePasswordConfirmation::class,
+            'idleTimeout' => App\Http\Middleware\IdleTimeout::class,
         ]);
         // Apply to web group globally
         $middleware->web(append: [
             App\Http\Middleware\TrackLastActive::class,
             App\Http\Middleware\CheckAccountLocked::class,
+            App\Http\Middleware\IdleTimeout::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
