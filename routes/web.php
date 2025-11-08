@@ -117,7 +117,6 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-});
 
     // Trips
     Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
