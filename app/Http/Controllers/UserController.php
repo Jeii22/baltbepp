@@ -34,6 +34,11 @@ class UserController extends Controller
             ->where('successful', false)
             ->count();
 
+        $this->logActivity('Viewed user account', [
+            'viewed_user_id' => $user->id,
+            'viewed_user_email' => $user->email
+        ]);
+
         return view('superadmin.users.show', compact('user', 'loginAttempts', 'totalAttempts', 'failedAttempts'));
     }
 

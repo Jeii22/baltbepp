@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Fare;
 use Illuminate\Http\Request;
 
+use App\Traits\LogsAdminActivity;
+
 class FareController extends Controller
 {
+    use LogsAdminActivity;
     public function index()
     {
         $fares = Fare::orderBy('passenger_type')->get();
@@ -27,7 +30,12 @@ class FareController extends Controller
         ]);
         $validated['active'] = $request->boolean('active', true);
 
-        Fare::create($validated);
+        $fare = Fare::create($validated);
+        $this->logActivity('Created fare', [
+            'fare_id' => $fare->id,
+            'passenger_type' => $fare->passenger_type,
+            'price' => $fare->price
+        ]);
         return redirect()->route('fares.index')->with('success', 'Fare created successfully!');
     }
 
@@ -46,12 +54,21 @@ class FareController extends Controller
         $validated['active'] = $request->boolean('active', true);
 
         $fare->update($validated);
+        $this->logActivity('Updated fare', [
+            'fare_id' => $fare->id,
+            'passenger_type' => $fare->passenger_type,
+            'price' => $fare->price
+        ]);
         return redirect()->route('fares.index')->with('success', 'Fare updated successfully!');
     }
 
     public function destroy(Fare $fare)
     {
+        $fareId = $fare->id;
         $fare->delete();
+        $this->logActivity('Deleted fare', [
+            'fare_id' => $fareId
+        ]);
         return redirect()->route('fares.index')->with('success', 'Fare deleted successfully!');
     }
 }

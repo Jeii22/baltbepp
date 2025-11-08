@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 
+use App\Traits\LogsAdminActivity;
+
 class SettingController extends Controller
 {
+    use LogsAdminActivity;
     public function index()
     {
         $codEnabled = Setting::getBool('cod_enabled', true);
@@ -27,6 +30,11 @@ class SettingController extends Controller
 
         $paymongo = $request->has('paymongo_enabled');
         Setting::setBool('paymongo_enabled', $paymongo);
+
+        $this->logActivity('Updated payment settings', [
+            'cod_enabled' => $cod,
+            'paymongo_enabled' => $paymongo
+        ]);
 
         return back()->with('success', 'Settings updated.');
     }

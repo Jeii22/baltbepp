@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 
+use App\Traits\LogsAdminActivity;
+
 class PaymentMethodController extends Controller
 {
+    use LogsAdminActivity;
     public function index()
     {
         $methods = PaymentMethod::orderBy('type')->get();
@@ -36,7 +39,12 @@ class PaymentMethodController extends Controller
             $data['qr_code_image'] = $request->file('qr_code_image')->store('', 'payment_qr_codes');
         }
 
-        PaymentMethod::create($data);
+        $method = PaymentMethod::create($data);
+        $this->logActivity('Created payment method', [
+            'payment_method_id' => $method->id,
+            'type' => $method->type,
+            'label' => $method->label
+        ]);
         return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method added.');
     }
 
@@ -66,6 +74,11 @@ class PaymentMethodController extends Controller
         }
 
         $paymentMethod->update($data);
+        $this->logActivity('Updated payment method', [
+            'payment_method_id' => $paymentMethod->id,
+            'type' => $paymentMethod->type,
+            'label' => $paymentMethod->label
+        ]);
         return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method updated.');
     }
 
@@ -74,7 +87,11 @@ class PaymentMethodController extends Controller
         if ($paymentMethod->qr_code_image) {
             \Storage::disk('payment_qr_codes')->delete($paymentMethod->qr_code_image);
         }
+        $id = $paymentMethod->id;
         $paymentMethod->delete();
+        $this->logActivity('Deleted payment method', [
+            'payment_method_id' => $id
+        ]);
         return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method deleted.');
     }
 }
