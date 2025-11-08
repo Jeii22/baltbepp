@@ -24,37 +24,29 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Perform credential authentication (logs user in temporarily)
         $request->authenticate();
-
         $user = $request->user();
 
-        $request->session()->forget('status');
-
-        if (! app()->runningUnitTests() && $user->two_factor_enabled) {
+        // Always require multi-factor verification for every login (skip only for unit tests)
+        if (! app()->runningUnitTests()) {
+            // Immediately log out the provisional session
             Auth::logout();
 
+            // Store context for 2FA verification
             $request->session()->put('2fa:user:id', $user->id);
             $request->session()->put('2fa:remember', $request->boolean('remember'));
 
+            // Generate a fresh login OTP code and notify user
             $twoFactorCode = \App\Models\TwoFactorCode::createForUser($user, 'login');
             $user->notify(new \App\Notifications\TwoFactorCodeNotification($twoFactorCode->code, 'login'));
 
-            return redirect()->route('two-factor.login')->with('success', 'A verification code has been sent to your email.');
+            return redirect()->route('two-factor.login')->with('success', 'We sent a verification email: confirm this login to continue.');
         }
 
+        // Test environment fallback: proceed directly
         $request->session()->regenerate();
-
-        if (app()->runningUnitTests()) {
-            return redirect()->intended(route('dashboard', absolute: false));
-        }
-
-        if ($user->isSuperAdmin()) {
-            return redirect()->route('superadmin.dashboard')->with('success', 'Welcome back, Super Administrator!');
-        } elseif ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Administrator!');
-        }
-
-        return redirect('/')->with('success', 'Welcome back!');
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

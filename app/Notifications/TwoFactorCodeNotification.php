@@ -41,19 +41,22 @@ class TwoFactorCodeNotification extends Notification implements ShouldQueue
         $subject = match($this->type) {
             'registration' => 'Verify Your Email - Balt-Bep Ferries',
             'password_reset' => 'Password Reset Code - Balt-Bep Ferries',
-            default => 'Your Login Verification Code - Balt-Bep Ferries',
+            'login' => 'Is This You Trying to Log In?',
+            default => 'Verification Code - Balt-Bep Ferries',
         };
 
         $greeting = match($this->type) {
             'registration' => 'Welcome to Balt-Bep Ferries!',
             'password_reset' => 'Password Reset Request',
-            default => 'Account Verification Required',
+            'login' => 'Is This You Trying to Log In?',
+            default => 'Verification Required',
         };
 
         $message = match($this->type) {
             'registration' => 'Thank you for registering! Please click the button below to verify your account:',
             'password_reset' => 'You requested to reset your password. Use the code below to proceed:',
-            default => 'We detected a login attempt to your account. Please click the button below to verify your account:',
+            'login' => 'If this was you, confirm the login below. If not, secure your account immediately by changing your password.',
+            default => 'Use the code below to continue:',
         };
 
         $mailMessage = (new MailMessage)
@@ -61,8 +64,9 @@ class TwoFactorCodeNotification extends Notification implements ShouldQueue
             ->greeting($greeting)
             ->line($message);
 
-        if ($this->type === 'registration' || $this->type === 'login') {
-            $mailMessage->action('Verify Account', route('two-factor.login'))
+        if (in_array($this->type, ['registration','login'])) {
+            $actionLabel = $this->type === 'login' ? 'Verify Log In' : 'Verify Account';
+            $mailMessage->action($actionLabel, route('two-factor.login'))
                 ->line('')
                 ->line('Or use this verification code: **' . $this->code . '**');
         } else {
