@@ -1,9 +1,9 @@
 @extends('layouts.superadmin')
 
 @section('content')
-<div class="flex items-center justify-between mb-6">
+<div class="flex items-center justify-between mb-6 print-container">
     <h1 class="text-2xl font-bold">User Management</h1>
-    <a href="{{ route('users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add Admin</a>
+    <a href="{{ route('users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 print-hidden">Add Admin</a>
 </div>
 
 <div class="bg-white shadow rounded-xl overflow-hidden">
@@ -57,7 +57,163 @@
     </table>
 </div>
 
-<div class="mt-4">
+<div class="mt-4 print-hidden">
     {{ $users->links() }}
 </div>
+
+<style>
+@media print {
+    /* Hide interactive elements */
+    .print-hidden,
+    button,
+    input,
+    select,
+    textarea,
+    form,
+    a[href]:not([href^="#"]) {
+        display: none !important;
+    }
+
+    /* Page setup */
+    body {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 12pt;
+        line-height: 1.4;
+        color: #000;
+        background: #fff !important;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Container styling */
+    .print-container {
+        max-width: none;
+        margin: 0;
+        padding: 20pt;
+        box-shadow: none;
+        border: none;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+        color: #000;
+        page-break-after: avoid;
+        margin-top: 0;
+    }
+
+    h1 {
+        font-size: 18pt;
+        font-weight: bold;
+        margin-bottom: 15pt;
+        text-align: center;
+    }
+
+    /* Table styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10pt 0;
+        font-size: 10pt;
+    }
+
+    th, td {
+        border: 1pt solid #000;
+        padding: 6pt;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    th {
+        background: #f5f5f5 !important;
+        font-weight: bold;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+
+    /* Role badges */
+    .print-role-badge {
+        display: inline-block;
+        padding: 2pt 4pt;
+        font-size: 9pt;
+        font-weight: bold;
+        border: 1pt solid #000;
+        background: #fff !important;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+    }
+
+    /* Status indicators */
+    .print-status-active {
+        font-weight: bold;
+        color: #000;
+    }
+
+    .print-status-inactive {
+        font-weight: bold;
+        color: #666;
+    }
+
+    /* Layout utilities */
+    .print-grid {
+        display: table;
+        width: 100%;
+    }
+
+    .print-row {
+        display: table-row;
+    }
+
+    .print-cell {
+        display: table-cell;
+        padding: 4pt;
+    }
+
+    /* Spacing */
+    .print-section {
+        margin-bottom: 15pt;
+        page-break-inside: avoid;
+    }
+
+    /* Hide layout elements */
+    .flex,
+    .items-center,
+    .justify-between,
+    .mb-6,
+    .bg-white,
+    .shadow,
+    .rounded-xl,
+    .overflow-hidden,
+    .min-w-full,
+    .bg-gray-50,
+    .divide-y,
+    .divide-gray-100,
+    .mt-4 {
+        all: unset;
+    }
+
+    /* Ensure content flows properly */
+    .print-flow {
+        display: block;
+        width: 100%;
+    }
+
+    /* Page breaks */
+    .page-break {
+        page-break-before: always;
+    }
+
+    .no-break {
+        page-break-inside: avoid;
+    }
+
+    /* SVG icons */
+    svg {
+        display: none !important;
+    }
+}
+</style>
 @endsection

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -31,7 +32,74 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            // 'recaptcha_token' => ['required', 'string'], // Temporarily disabled
         ];
+    }
+
+    /**
+     * Get location data from IP address
+     */
+    private function getLocationFromIp(string $ip): array
+    {
+        if ($ip === '127.0.0.1' || $ip === '::1') {
+            return [
+                'country' => 'Local',
+                'region' => 'Local',
+                'city' => 'Localhost',
+                'latitude' => null,
+                'longitude' => null,
+            ];
+        }
+
+        try {
+            $response = Http::timeout(5)->get("http://ipapi.co/{$ip}/json/");
+            $data = $response->json();
+
+            return [
+                'country' => $data['country_name'] ?? null,
+                'region' => $data['region'] ?? null,
+                'city' => $data['city'] ?? null,
+                'latitude' => $data['latitude'] ?? null,
+                'longitude' => $data['longitude'] ?? null,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'country' => null,
+                'region' => null,
+                'city' => null,
+                'latitude' => null,
+                'longitude' => null,
+            ];
+        }
+    }
+
+    /**
+     * Verify reCAPTCHA token
+     */
+    private function verifyRecaptcha(): void
+    {
+        $recaptchaToken = $this->input('recaptcha_token');
+
+        if (!$recaptchaToken) {
+            throw ValidationException::withMessages([
+                'recaptcha' => 'reCAPTCHA verification is required.',
+            ]);
+        }
+
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret_key'),
+            'response' => $recaptchaToken,
+            'remoteip' => $this->ip(),
+        ]);
+
+        $result = $response->json();
+
+        $threshold = config('services.recaptcha.score_threshold', 0.5);
+        if (!($result['success'] ?? false) || ($result['score'] ?? 0) < $threshold) {
+            throw ValidationException::withMessages([
+                'recaptcha' => 'reCAPTCHA verification failed. Please try again.',
+            ]);
+        }
     }
 
     /**
@@ -42,6 +110,9 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+
+        // Temporarily disable reCAPTCHA for testing
+        // $this->verifyRecaptcha();
 
         $email = $this->string('email');
         $user = User::where('email', $email)->first();
@@ -64,10 +135,16 @@ class LoginRequest extends FormRequest
             }
 
             // Log failed attempt
+            $location = $this->getLocationFromIp($this->ip());
             LoginAttempt::create([
                 'user_id' => $user?->id,
                 'email' => $email,
                 'ip_address' => $this->ip(),
+                'country' => $location['country'],
+                'region' => $location['region'],
+                'city' => $location['city'],
+                'latitude' => $location['latitude'],
+                'longitude' => $location['longitude'],
                 'user_agent' => $this->userAgent(),
                 'successful' => false,
                 'attempted_at' => now(),
@@ -85,10 +162,16 @@ class LoginRequest extends FormRequest
         }
 
         // Log successful attempt
+        $location = $this->getLocationFromIp($this->ip());
         LoginAttempt::create([
             'user_id' => $user?->id,
             'email' => $email,
             'ip_address' => $this->ip(),
+            'country' => $location['country'],
+            'region' => $location['region'],
+            'city' => $location['city'],
+            'latitude' => $location['latitude'],
+            'longitude' => $location['longitude'],
             'user_agent' => $this->userAgent(),
             'successful' => true,
             'attempted_at' => now(),

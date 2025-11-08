@@ -7,11 +7,103 @@
 
     <title>Digital Wallet Payment - Balt-Bep</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        @page {
+            margin: 20mm;
+        }
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #1f2933 !important;
+                font-family: "Helvetica Neue", Arial, sans-serif;
+                font-size: 11pt;
+                line-height: 1.5;
+            }
+            nav, .print-hidden {
+                display: none !important;
+            }
+            .print-container {
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                background: #ffffff !important;
+            }
+            .print-body {
+                margin-top: 0 !important;
+            }
+            .print-card {
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                padding: 24px !important;
+            }
+            .print-section-title {
+                font-size: 16pt;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: #0f172a !important;
+                margin-bottom: 12px !important;
+            }
+            .print-grid {
+                display: block !important;
+            }
+            .print-grid > * {
+                width: 100% !important;
+                margin-bottom: 24px !important;
+            }
+            .print-row {
+                display: grid !important;
+                grid-template-columns: 160px 1fr;
+                align-items: center;
+                padding: 6px 0;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .print-row:last-child {
+                border-bottom: none;
+            }
+            .print-label {
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                color: #475569 !important;
+            }
+            .print-value {
+                font-weight: 600;
+                color: #0f172a !important;
+            }
+            .print-highlight {
+                font-size: 13pt;
+            }
+            .print-table {
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 16px;
+                background: #ffffff !important;
+            }
+            .print-actions {
+                display: none !important;
+            }
+            .print-qr img {
+                width: 200px !important;
+                height: 200px !important;
+                border: 1px solid #e2e8f0;
+                padding: 12px;
+            }
+            a[href]:after {
+                content: "";
+            }
+            button {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 <body class="antialiased bg-white text-gray-800">
 
     <!-- Navbar -->
-    <nav class="absolute top-0 left-0 w-full z-20 bg-transparent">
+    <nav class="absolute top-0 left-0 w-full z-20 bg-transparent print-hidden">
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
             <a href="/" class="flex items-center space-x-2">
                 <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
@@ -43,7 +135,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="relative bg-cover bg-center h-[45vh] md:h-[55vh]" style="background-image: url('/images/barko.png');">
+    <div class="relative bg-cover bg-center h-[45vh] md:h-[55vh] print-hidden" style="background-image: url('/images/barko.png');">
         <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
             <div class="text-center text-white px-6">
                 <h1 class="text-3xl md:text-5xl font-bold">Complete Your Payment</h1>
@@ -53,11 +145,11 @@
     </div>
 
     <!-- Content Card -->
-    <div class="relative -mt-16 max-w-4xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 md:p-8">
+    <div class="relative -mt-16 max-w-4xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 md:p-8 print-container print-body">
         
-        <div class="grid lg:grid-cols-2 gap-8">
+        <div class="grid lg:grid-cols-2 gap-8 print-grid">
             <!-- Payment Instructions -->
-            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm print-card">
                 <div class="flex items-center space-x-3 mb-6">
                     <div class="w-12 h-12 {{ $paymentMethod==='gcash' ? 'bg-blue-600' : ($paymentMethod==='paymaya' ? 'bg-green-600' : 'bg-purple-600') }} rounded-lg flex items-center justify-center">
                         <span class="text-white font-bold text-sm">{{ strtoupper(substr($paymentMethod,0,2)) }}</span>
@@ -69,30 +161,30 @@
                 </div>
 
                 <div class="space-y-4">
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h3 class="font-semibold text-blue-900 mb-2">Payment Details</h3>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 print-table">
+                        <h3 class="font-semibold text-blue-900 mb-2 print-section-title">Payment Details</h3>
                         <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-blue-700">Account Name:</span>
-                                <span class="font-medium text-blue-900">{{ $wallet->account_name }}</span>
+                            <div class="flex justify-between print-row">
+                                <span class="text-blue-700 print-label">Account Name:</span>
+                                <span class="font-medium text-blue-900 print-value">{{ $wallet->account_name }}</span>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-blue-700">Account Number:</span>
-                                <span class="font-medium text-blue-900">{{ $wallet->account_number }}</span>
+                            <div class="flex justify-between print-row">
+                                <span class="text-blue-700 print-label">Account Number:</span>
+                                <span class="font-medium text-blue-900 print-value">{{ $wallet->account_number }}</span>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-blue-700">Amount to Pay:</span>
-                                <span class="font-bold text-blue-900">₱{{ number_format($booking->total_amount, 2) }}</span>
+                            <div class="flex justify-between print-row">
+                                <span class="text-blue-700 print-label">Amount to Pay:</span>
+                                <span class="font-bold text-blue-900 print-value print-highlight">₱{{ number_format($booking->total_amount, 2) }}</span>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-blue-700">Reference:</span>
-                                <span class="font-mono text-blue-900">{{ $paymentReference }}</span>
+                            <div class="flex justify-between print-row">
+                                <span class="text-blue-700 print-label">Reference:</span>
+                                <span class="font-mono text-blue-900 print-value">{{ $paymentReference }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                        <h3 class="font-semibold text-yellow-900 mb-2">Payment Instructions</h3>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 print-table">
+                        <h3 class="font-semibold text-yellow-900 mb-2 print-section-title">Payment Instructions</h3>
                         <ol class="list-decimal list-inside space-y-1 text-sm text-yellow-800">
                             <li>Scan the QR code or send money to the account details above</li>
                             <li>Use the reference number: <strong>{{ $paymentReference }}</strong></li>
@@ -102,10 +194,10 @@
                         </ol>
                     </div>
 
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 print-card">
                         <div class="flex items-center space-x-2 mb-2">
                             <div class="w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
-                            <h3 class="font-semibold text-green-900">Payment Status</h3>
+                            <h3 class="font-semibold text-green-900 print-section-title">Payment Status</h3>
                         </div>
                         <p class="text-sm text-green-800" id="payment-status">
                             Waiting for payment confirmation...
@@ -120,19 +212,19 @@
             </div>
 
             <!-- QR Code -->
-            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 text-center">Scan QR Code to Pay</h3>
+            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm print-card">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 text-center print-section-title">Scan QR Code to Pay</h3>
                 
                 @if($wallet->qr_code_image)
-                    <div class="flex justify-center mb-4">
+                    <div class="flex justify-center mb-4 print-qr">
                         <div class="bg-white p-4 rounded-lg shadow-inner border-2 border-gray-100">
-                            <img src="{{ asset('storage/' . $wallet->qr_code_image) }}" 
+                            <img src="{{ asset('public/storage/payment_qr_codes/' . $wallet->qr_code_image) }}" 
                                  alt="{{ strtoupper($paymentMethod) }} QR Code" 
                                  class="w-64 h-64 object-contain">
                         </div>
                     </div>
                 @else
-                    <div class="flex justify-center mb-4">
+                    <div class="flex justify-center mb-4 print-qr">
                         <div class="w-64 h-64 bg-gray-100 rounded-lg flex items-center justify-center">
                             <div class="text-center text-gray-500">
                                 <svg class="w-16 h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
@@ -155,24 +247,42 @@
         </div>
 
         <!-- Booking Summary -->
-        <div class="mt-8 bg-gray-50 border border-gray-200 rounded-xl p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Booking Summary</h3>
-            <div class="grid md:grid-cols-2 gap-4 text-sm">
-                <div>
-                    <p><span class="text-gray-600">Booking ID:</span> <span class="font-mono">{{ $booking->id }}</span></p>
-                    <p><span class="text-gray-600">Route:</span> {{ $booking->origin }} → {{ $booking->destination }}</p>
-                    <p><span class="text-gray-600">Departure:</span> {{ \Carbon\Carbon::parse($booking->departure_time)->format('M j, Y g:i A') }}</p>
+        <div class="mt-8 bg-gray-50 border border-gray-200 rounded-xl p-6 print-card">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 print-section-title">Booking Summary</h3>
+            <div class="grid md:grid-cols-2 gap-4 text-sm print-grid">
+                <div class="space-y-2">
+                    <div class="flex justify-between print-row">
+                        <span class="text-gray-600 print-label">Booking ID:</span>
+                        <span class="font-mono print-value">{{ $booking->id }}</span>
+                    </div>
+                    <div class="flex justify-between print-row">
+                        <span class="text-gray-600 print-label">Route:</span>
+                        <span class="print-value">{{ $booking->origin }} → {{ $booking->destination }}</span>
+                    </div>
+                    <div class="flex justify-between print-row">
+                        <span class="text-gray-600 print-label">Departure:</span>
+                        <span class="print-value">{{ \Carbon\Carbon::parse($booking->departure_time)->format('M j, Y g:i A') }}</span>
+                    </div>
                 </div>
-                <div>
-                    <p><span class="text-gray-600">Passenger:</span> {{ $booking->full_name }}</p>
-                    <p><span class="text-gray-600">Total Amount:</span> <span class="font-bold">₱{{ number_format($booking->total_amount, 2) }}</span></p>
-                    <p><span class="text-gray-600">Payment Method:</span> {{ strtoupper($paymentMethod) }}</p>
+                <div class="space-y-2">
+                    <div class="flex justify-between print-row">
+                        <span class="text-gray-600 print-label">Passenger:</span>
+                        <span class="print-value">{{ $booking->full_name }}</span>
+                    </div>
+                    <div class="flex justify-between print-row">
+                        <span class="text-gray-600 print-label">Total Amount:</span>
+                        <span class="font-bold print-value print-highlight">₱{{ number_format($booking->total_amount, 2) }}</span>
+                    </div>
+                    <div class="flex justify-between print-row">
+                        <span class="text-gray-600 print-label">Payment Method:</span>
+                        <span class="print-value">{{ strtoupper($paymentMethod) }}</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+        <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center print-actions">
             <button onclick="window.print()" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition">
                 Print Instructions
             </button>

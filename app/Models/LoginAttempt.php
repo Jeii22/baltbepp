@@ -11,6 +11,11 @@ class LoginAttempt extends Model
         'user_id',
         'email',
         'ip_address',
+        'country',
+        'region',
+        'city',
+        'latitude',
+        'longitude',
         'user_agent',
         'successful',
         'attempted_at',
@@ -19,6 +24,8 @@ class LoginAttempt extends Model
     protected $casts = [
         'successful' => 'boolean',
         'attempted_at' => 'datetime',
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
     ];
 
     public function user(): BelongsTo

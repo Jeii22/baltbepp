@@ -847,5 +847,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+@if(isset($showAlert) && $showAlert)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'Profile Updated!',
+                text: 'Your profile has been successfully updated.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        });
+    </script>
+@endif
+
 </body>
 </html>

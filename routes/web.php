@@ -12,7 +12,8 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\GoogleController;
 
 Route::get('/', function () {
-    return view('welcome');
+    $fares = \App\Models\Fare::where('active', true)->get();
+    return view('welcome', compact('fares'));
 });
 
 Route::get('/privacy-policy', function () {
@@ -84,9 +85,9 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Customer Dashboard
+// Customer Dashboard with SweetAlert
 Route::get('/customer/dashboard', function () {
-    return view('user-dashboard', ['user' => auth()->user()]);
+    return view('user-dashboard', ['user' => auth()->user(), 'showAlert' => session('status') === 'profile-updated']);
 })->middleware(['auth', 'verified'])->name('customer.dashboard');
 
 // Admin Dashboard
@@ -159,7 +160,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('trips', TripController::class);
 });
 
-Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+// Welcome Page with SweetAlert
+Route::get('/welcome', function () {
+    $fares = \App\Models\Fare::where('active', true)->get();
+    return view('welcome', compact('fares'));
+})->name('welcome');
 
 // Route for My Bookings
 Route::get('/my-bookings', function () {

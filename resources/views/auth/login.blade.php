@@ -33,53 +33,48 @@
         </h2>
 
         <!-- Form -->
-        <form method="POST" action="{{ route('login') }}" class="space-y-5">
+        <form method="POST" action="{{ route('login') }}">
             @csrf
+            <!-- <input type="hidden" id="recaptcha_token" name="recaptcha_token"> -->
 
+            <!-- Email Address -->
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <div class="mt-1 relative">
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                           class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10"
-                           placeholder="you@gmail.com">
-                    <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-                        📧
-                    </span>
-                </div>
-                @error('email')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+                <x-input-label for="email" :value="__('Email')" />
+                <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <div class="mt-1 relative">
-                    <input id="password" type="password" name="password" required
-                           class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10"
-                           placeholder="Your password">
-                    <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-                        🔒
-                    </span>
-                </div>
-                @error('password')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+            <!-- Password -->
+            <div class="mt-4">
+                <x-input-label for="password" :value="__('Password')" />
+                <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
             </div>
 
-            <div class="flex items-center justify-between">
-                <label for="remember_me" class="flex items-center">
-                    <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring focus:ring-blue-200" name="remember">
-                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
+            <!-- Remember Me -->
+            <div class="block mt-4">
+                <label for="remember_me" class="inline-flex items-center cursor-pointer">
+                    <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                    <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
                 </label>
-
-                <a href="{{ route('password.request.otp') }}" class="text-sm text-blue-600 hover:text-blue-800">Forgot password?</a>
             </div>
 
-            <button type="submit"
-                    class="w-full py-3 px-4 bg-gray-900 text-white font-semibold rounded-lg shadow hover:bg-gray-800 transition">
-                Sign in
-            </button>
+            <div class="flex items-center justify-end mt-4">
+                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request.otp') }}">
+                    {{ __('Forgot your password?') }}
+                </a>
+            </div>
+
+            <!-- <x-input-error :messages="$errors->get('recaptcha')" class="mt-2" /> -->
+
+            <div class="flex items-center justify-end mt-4">
+                <x-primary-button class="ml-3">
+                    {{ __('Log in') }}
+                </x-primary-button>
+            </div>
         </form>
+
+        <!-- reCAPTCHA scripts temporarily disabled for testing -->
 
         <!-- Add a register link below the sign-in button -->
         <p class="text-center text-sm text-gray-600 mt-4">
