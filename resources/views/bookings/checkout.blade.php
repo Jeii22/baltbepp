@@ -9,6 +9,12 @@
 </head>
 <body class="antialiased bg-white text-gray-800">
 
+    <noscript>
+        <div class="bg-red-100 text-red-800 p-4 text-center font-semibold">
+            JavaScript is required to complete your payment. Please enable JavaScript in your browser.
+        </div>
+    </noscript>
+
     <!-- Navbar (aligned with passenger/summary pages) -->
     <nav class="absolute top-0 left-0 w-full z-20 bg-transparent">
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
@@ -78,7 +84,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('bookings.process') }}" method="POST" id="paymentForm" class="space-y-6">
+                    <form action="{{ isset($wallets) && count($wallets) && old('payment_method', 'cod') && $wallets->pluck('type')->contains(old('payment_method', 'cod')) ? route('bookings.process.digital-wallet') : route('bookings.process') }}" method="POST" id="paymentForm" class="space-y-6">
                         @csrf
                         
                         <!-- Payment Method Selection -->

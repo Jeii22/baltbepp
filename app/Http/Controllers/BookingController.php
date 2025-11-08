@@ -144,7 +144,10 @@ class BookingController extends Controller
     public function checkout(Request $request)
     {
         $data = session('booking.summary');
-        abort_if(!$data, 404);
+        if (!$data) {
+            return redirect()->route('bookings.create', ['trip' => $request->input('trip_id') ?? null])
+                ->with('error', 'Your booking session has expired. Please start your booking again.');
+        }
 
         // Determine trips from session data
         $outboundTrip = Trip::findOrFail($data['outbound_trip_id'] ?? $data['trip_id']);
@@ -177,7 +180,10 @@ class BookingController extends Controller
     public function process(Request $request, PaymentService $paymentService)
     {
         $data = session('booking.summary');
-        abort_if(!$data, 404);
+        if (!$data) {
+            return redirect()->route('bookings.create', ['trip' => $request->input('trip_id') ?? null])
+                ->with('error', 'Your booking session has expired. Please start your booking again.');
+        }
 
         // Get available wallets
         $wallets = collect();
@@ -283,7 +289,10 @@ class BookingController extends Controller
     public function processDigitalWallet(Request $request, PaymentService $paymentService)
     {
         $data = session('booking.summary');
-        abort_if(!$data, 404);
+        if (!$data) {
+            return redirect()->route('bookings.create', ['trip' => $request->input('trip_id') ?? null])
+                ->with('error', 'Your booking session has expired. Please start your booking again.');
+        }
 
         // Get available wallets
         $wallets = collect();
