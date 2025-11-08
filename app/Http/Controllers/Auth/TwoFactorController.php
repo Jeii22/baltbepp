@@ -59,14 +59,8 @@ class TwoFactorController extends Controller
         // Update last login
         $user->updateLastLogin($request->ip());
 
-        // Redirect based on role
-        if ($user->isSuperAdmin()) {
-            return redirect()->route('superadmin.dashboard')->with('success', 'Welcome back, Super Administrator!');
-        } elseif ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Administrator!');
-        } else {
-            return redirect()->route('customer.dashboard')->with('success', 'Welcome back!');
-        }
+        // Redirect to main dashboard after verification
+        return redirect()->route('dashboard')->with('success', 'Your account has been verified and 2FA is now enabled.');
     }
 
     /**
