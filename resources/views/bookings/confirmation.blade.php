@@ -6,6 +6,29 @@
 
     <title>Booking Confirmation - Balt-Bep</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        /* Print-specific formatting */
+        @media print {
+            body { background:#fff !important; color:#111827; font-family:'Figtree', Arial, sans-serif; }
+            nav, .relative.bg-cover, .relative.-mt-16, .flex.flex-col.sm\:flex-row, .progress-indicator, .no-print { display:none !important; }
+            .print-wrapper { display:block !important; padding:50px 80px; }
+            .print-header-logo img { height:80px; }
+            .print-ref-date { display:flex; justify-content:space-between; margin:50px 0 30px; font-size:14px; }
+            .print-ref-date div { width:50%; }
+            .print-ref-date div:last-child { text-align:right; }
+            .print-details { font-size:13px; line-height:1.55; }
+            .print-details .row { display:flex; }
+            .print-details .label { width:150px; font-weight:600; }
+            .print-total-center { text-align:center; margin:45px 0 10px; font-size:15px; font-weight:600; }
+            .print-important { margin-top:35px; }
+            .print-important h3 { font-size:15px; font-weight:700; margin-bottom:14px; }
+            .print-important ul { list-style:disc; padding-left:22px; font-size:13px; }
+            .print-important ul li { margin-bottom:10px; }
+            .print-footer { margin-top:50px; font-size:11px; color:#6b7280; text-align:center; }
+        }
+        /* Hide print block on screen */
+        .print-wrapper { display:none; }
+    </style>
 </head>
 <body class="antialiased bg-white text-gray-800">
 
@@ -152,6 +175,47 @@
                 Print Confirmation
             </button>
         </div>
+    </div>
+
+    <!-- PRINT VERSION -->
+    @php
+        $passengerCounts = [];
+        if($booking->adult > 0) $passengerCounts[] = $booking->adult . ' Adult' . ($booking->adult > 1 ? 's' : '');
+        if($booking->child > 0) $passengerCounts[] = $booking->child . ' Child' . ($booking->child > 1 ? 'ren' : '');
+        if($booking->infant > 0) $passengerCounts[] = $booking->infant . ' Infant' . ($booking->infant > 1 ? 's' : '');
+        if($booking->pwd > 0) $passengerCounts[] = $booking->pwd . ' PWD/Senior' . ($booking->pwd > 1 ? 's' : '');
+        $passengerSummary = implode(', ', $passengerCounts);
+        $paymentMethodPrint = (str_contains(strtolower(session('success', '')), 'cash') ? 'Cash on Departure' : ($booking->payment_method ?? 'N/A'));
+    @endphp
+    <div class="print-wrapper">
+        <div class="print-header-logo" style="text-align:center;">
+            <img src="{{ asset('images/baltbep-logo.png') }}" alt="Balt-Bep Logo">
+        </div>
+        <div class="print-ref-date">
+            <div>Reference No:<br><strong>#{{ $booking->id }}</strong></div>
+            <div>Date of Issue:<br><strong>{{ now()->format('M d, Y') }}</strong></div>
+        </div>
+        <div class="print-details">
+            <div class="row"><div class="label">Passengers Name:</div><div>{{ $booking->full_name }}</div></div>
+            <div class="row"><div class="label">Email:</div><div>{{ $booking->email }}</div></div>
+            <div class="row"><div class="label">Phone:</div><div>{{ $booking->phone ?? 'N/A' }}</div></div>
+            <div class="row"><div class="label">Passenger Type:</div><div>{{ $passengerSummary }}</div></div>
+            <div class="row"><div class="label">Payment Method:</div><div>{{ $paymentMethodPrint }}</div></div>
+        </div>
+        <div class="print-total-center">Total Amount: ₱{{ number_format($booking->total_amount, 2) }}</div>
+        <div class="print-important">
+            <h3>Important Information</h3>
+            <ul>
+                <li>Please arrive at the terminal at least 30 minutes before departure</li>
+                <li>Bring a valid ID for verification</li>
+                @if($booking->status === 'confirmed' && str_contains(strtolower(session('success', '')), 'cash'))
+                    <li><strong>Payment Method:</strong> Cash on Departure - Please pay at the terminal</li>
+                @endif
+                <li>Keep this confirmation for your records</li>
+                <li>For changes or cancellations, contact our customer service</li>
+            </ul>
+        </div>
+        <div class="print-footer">Balt-Bep Shipping Express • Generated on {{ now()->format('M d, Y h:i A') }}</div>
     </div>
 </body>
 </html>
