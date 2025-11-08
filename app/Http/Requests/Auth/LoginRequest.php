@@ -32,7 +32,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
-            // 'recaptcha_token' => ['required', 'string'], // Temporarily disabled
+            'recaptcha_token' => ['required', 'string'],
         ];
     }
 
@@ -111,8 +111,8 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        // Temporarily disable reCAPTCHA for testing
-        // $this->verifyRecaptcha();
+    // Perform reCAPTCHA verification
+    $this->verifyRecaptcha();
 
         $email = $this->string('email');
         $user = User::where('email', $email)->first();

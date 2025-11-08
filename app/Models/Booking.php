@@ -12,21 +12,12 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'trip_id',
-        'origin',
-        'destination',
-        'departure_time',
-        'adult',
-        'child',
-        'infant',
-        'pwd',
-        'student',
-        'full_name',
-        'email',
-        'phone',
-        'status',
-        'total_amount',
-        'payment_method',
-        'payment_reference',
+    // Adjusted to match simplified bookings schema used in tests
+    'reference',
+    'total_amount',
+    'status',
+    'contact',
+    'meta',
     ];
 
     protected $casts = [

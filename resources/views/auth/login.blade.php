@@ -13,6 +13,19 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Google reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_PUBLIC_KEY') }}"></script>
+    <script>
+        function onLoginSubmit(e) {
+            e.preventDefault();
+            grecaptcha.ready(function() {
+                grecaptcha.execute('{{ env('RECAPTCHA_PUBLIC_KEY') }}', {action: 'login'}).then(function(token) {
+                    document.getElementById('recaptcha_token').value = token;
+                    e.target.submit();
+                });
+            });
+        }
+    </script>
 </head>
 <body class="min-h-screen flex items-center justify-center 
              bg-gradient-to-b from-blue-600 via-cyan-400 to-white">
@@ -35,7 +48,7 @@
         <!-- Form -->
         <form method="POST" action="{{ route('login') }}">
             @csrf
-            <!-- <input type="hidden" id="recaptcha_token" name="recaptcha_token"> -->
+            <input type="hidden" id="recaptcha_token" name="recaptcha_token">
 
             <!-- Email Address -->
             <div>
@@ -65,14 +78,23 @@
                 </a>
             </div>
 
-            <!-- <x-input-error :messages="$errors->get('recaptcha')" class="mt-2" /> -->
+            <x-input-error :messages="$errors->get('recaptcha')" class="mt-2" />
 
             <div class="flex items-center justify-end mt-4">
                 <x-primary-button class="ml-3">
                     {{ __('Log in') }}
                 </x-primary-button>
             </div>
-        </form>
+    </form>
+    <script>
+        // Attach the reCAPTCHA v3 handler to the login form
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('form[action="{{ route('login') }}"]');
+            if (form) {
+                form.addEventListener('submit', onLoginSubmit);
+            }
+        });
+    </script>
 
         <!-- reCAPTCHA scripts temporarily disabled for testing -->
 

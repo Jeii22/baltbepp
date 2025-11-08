@@ -13,6 +13,19 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Google reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_PUBLIC_KEY') }}"></script>
+    <script>
+        function onRegisterSubmit(e) {
+            e.preventDefault();
+            grecaptcha.ready(function() {
+                grecaptcha.execute('{{ env('RECAPTCHA_PUBLIC_KEY') }}', {action: 'register'}).then(function(token) {
+                    document.getElementById('recaptcha_token').value = token;
+                    e.target.submit();
+                });
+            });
+        }
+    </script>
 </head>
 <body class="min-h-screen flex items-center justify-center 
              bg-gradient-to-b from-blue-600 via-cyan-400 to-white">
@@ -31,6 +44,7 @@
         <!-- Form -->
         <form method="POST" action="{{ route('register') }}" class="space-y-5">
             @csrf
+            <input type="hidden" id="recaptcha_token" name="recaptcha_token">
 
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
@@ -89,25 +103,18 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Captcha</label>
-                <div class="mt-1 flex items-center justify-between gap-3">
-                    <span class="text-sm font-semibold text-gray-900">{{ $captchaQuestion }}</span>
-                    <a href="{{ route('register') }}" class="text-xs text-blue-600 hover:text-blue-800">Refresh</a>
-                </div>
-                <input id="captcha" type="text" name="captcha" required
-                       class="mt-2 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
-                       placeholder="Answer here">
-                @error('captcha')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+            <!-- reCAPTCHA v3 token is generated automatically; show any verification errors -->
+            @error('recaptcha')
+                <p class="text-sm text-red-600">{{ $message }}</p>
+            @enderror
 
             <div class="flex items-start space-x-3">
                 <input id="terms" type="checkbox" name="terms" value="1" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" {{ old('terms') ? 'checked' : '' }}>
                 <label for="terms" class="text-sm text-gray-600">
-                    I agree to the <a href="{{ route('terms-of-service') }}" class="text-blue-600 hover:text-blue-800">Terms of Service</a> and
-                    <a href="{{ route('privacy-policy') }}" class="text-blue-600 hover:text-blue-800">Privacy Policy</a>.
+                    I agree to the
+                    <button type="button" id="open-tos" class="text-blue-600 hover:text-blue-800 underline">Terms of Service</button>
+                    and
+                    <button type="button" id="open-privacy" class="text-blue-600 hover:text-blue-800 underline">Privacy Policy</button>.
                 </label>
             </div>
             @error('terms')
@@ -119,6 +126,73 @@
                 Create account
             </button>
         </form>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var form = document.querySelector('form[action="{{ route('register') }}"]');
+                if (form) {
+                    form.addEventListener('submit', onRegisterSubmit);
+                }
+            });
+        </script>
     </div>
+    <!-- Terms of Service Modal -->
+    <div id="tos-modal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative mx-auto my-10 w-11/12 max-w-3xl bg-white rounded-lg shadow-xl overflow-hidden">
+            <div class="flex items-center justify-between border-b px-4 py-3">
+                <h3 class="text-lg font-semibold">Terms of Service</h3>
+                <button type="button" class="p-2" id="close-tos" aria-label="Close Terms">✕</button>
+            </div>
+            <div class="p-4 max-h-[70vh] overflow-y-auto prose prose-sm">
+                @includeIf('terms-of-service-modal', [])
+                @unless (View::exists('terms-of-service-modal'))
+                    <h4 class="font-semibold mb-2">Summary</h4>
+                    <p>By creating an account, you agree to comply with our usage rules, provide accurate information, and acknowledge that services may change. For the full version, see the Terms page.</p>
+                @endunless
+            </div>
+            <div class="border-t px-4 py-3 flex justify-end gap-2">
+                <button type="button" id="close-tos-bottom" class="px-4 py-2 bg-gray-800 text-white rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-modal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative mx-auto my-10 w-11/12 max-w-3xl bg-white rounded-lg shadow-xl overflow-hidden">
+            <div class="flex items-center justify-between border-b px-4 py-3">
+                <h3 class="text-lg font-semibold">Privacy Policy</h3>
+                <button type="button" class="p-2" id="close-privacy" aria-label="Close Privacy">✕</button>
+            </div>
+            <div class="p-4 max-h-[70vh] overflow-y-auto prose prose-sm">
+                @includeIf('privacy-policy-modal', [])
+                @unless (View::exists('privacy-policy-modal'))
+                    <h4 class="font-semibold mb-2">Summary</h4>
+                    <p>We collect and process your data to provide services, secure your account, and improve features. See the full Privacy Policy page for details on retention and rights.</p>
+                @endunless
+            </div>
+            <div class="border-t px-4 py-3 flex justify-end gap-2">
+                <button type="button" id="close-privacy-bottom" class="px-4 py-2 bg-gray-800 text-white rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function(){
+            function show(id){ document.getElementById(id).classList.remove('hidden'); }
+            function hide(id){ document.getElementById(id).classList.add('hidden'); }
+            document.getElementById('open-tos')?.addEventListener('click', function(){ show('tos-modal'); });
+            document.getElementById('close-tos')?.addEventListener('click', function(){ hide('tos-modal'); });
+            document.getElementById('close-tos-bottom')?.addEventListener('click', function(){ hide('tos-modal'); });
+            document.getElementById('open-privacy')?.addEventListener('click', function(){ show('privacy-modal'); });
+            document.getElementById('close-privacy')?.addEventListener('click', function(){ hide('privacy-modal'); });
+            document.getElementById('close-privacy-bottom')?.addEventListener('click', function(){ hide('privacy-modal'); });
+            // Close when clicking backdrop
+            document.getElementById('tos-modal')?.addEventListener('click', function(e){ if(e.target === this) hide('tos-modal'); });
+            document.getElementById('privacy-modal')?.addEventListener('click', function(e){ if(e.target === this) hide('privacy-modal'); });
+            // ESC key
+            document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ hide('tos-modal'); hide('privacy-modal'); }});
+        })();
+    </script>
 </body>
 </html>
