@@ -132,6 +132,7 @@
                                     <h4 class="text-sm font-medium text-gray-700 uppercase tracking-wide">Cards & Others</h4>
                                     
                                     <!-- Credit/Debit Card -->
+                                     <!--
                                     <label class="payment-option relative flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors">
                                         <input type="radio" name="payment_method" value="card" class="sr-only" {{ old('payment_method') == 'card' ? 'checked' : '' }}>
                                         <div class="flex items-center space-x-3 w-full">
@@ -153,6 +154,7 @@
                                             </div>
                                         </div>
                                     </label>
+                                    -->
 
                                     @if(!empty($paymongoEnabled))
                                     <!-- PayMongo GCash (hosted) -->
