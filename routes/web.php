@@ -134,6 +134,11 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
     // Settings (SuperAdmin only)
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+    
+        // Superadmin-only: Download DB backup
+        Route::middleware(['auth', 'role:super_admin'])->group(function () {
+            Route::get('/settings/backup', [DatabaseBackupController::class, 'download'])->name('settings.backup.download');
+        });
 });
 
 // Shared Admin Routes (accessible by both SuperAdmin and Admin)

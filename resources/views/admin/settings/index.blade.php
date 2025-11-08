@@ -86,6 +86,18 @@
             </div>
              -->
         </form>
+        <!-- Database Backup (Superadmin only) -->
+        @if(auth()->user() && auth()->user()->role === 'super_admin')
+        <div class="bg-white border rounded p-6 mb-6 shadow-sm">
+            <h2 class="text-lg font-medium mb-4">Database Backup</h2>
+            <form method="GET" action="{{ route('settings.backup.download') }}">
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    Download Database Backup
+                </button>
+            </form>
+            <p class="text-xs text-gray-500 mt-2">This will generate and download a full SQL backup of the database. Only visible to superadmin.</p>
+        </div>
+        @endif
     </div>
 </div>
 @endsection
