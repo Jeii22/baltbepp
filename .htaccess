@@ -1,7 +1,13 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Redirect everything to the public folder
+    # Return 404 for attempts to access internal framework/storage directories directly
+    RewriteRule ^(vendor|config|bootstrap|resources|database|storage|tests|app|routes)(/|$) - [R=404,L,NC]
+
+    # Block hidden files (except .well-known) with 404 to reduce disclosure
+    RewriteRule (^|/)\.(?!well-known) - [R=404,L]
+
+    # Internally rewrite everything to the public folder (no URL change)
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
@@ -28,16 +34,24 @@ Options -Indexes -FollowSymLinks +SymLinksIfOwnerMatch
 ServerSignature Off
 
 # ----------------------------------------------------------------------
-# Block access to vendor and sensitive folders
+# Block access to vendor and sensitive folders (handled above with 404)
 # ----------------------------------------------------------------------
-RedirectMatch 403 ^/(vendor|config|bootstrap|resources|database|storage|tests|app|routes)/.*$
+# RedirectMatch 403 ^/(vendor|config|bootstrap|resources|database|storage|tests|app|routes)/.*$
 
-# Block access to hidden files (except .well-known for Let's Encrypt)
-RedirectMatch 403 /\.(?!well-known)
+# Block access to hidden files (except .well-known for Let's Encrypt) - handled above with 404
+# RedirectMatch 403 /\.(?!well-known)
 
 # Block HTTP methods not needed
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteCond %{REQUEST_METHOD} ^(TRACE|DELETE|TRACK) [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# Conservative malicious querystring filtering (extra layer at root)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{QUERY_STRING} (php://|phar://|expect://|data://) [NC,OR]
+    RewriteCond %{QUERY_STRING} (base64_encode\(|into\s+outfile|into\s+dumpfile|load_file\() [NC]
     RewriteRule .* - [F,L]
 </IfModule>

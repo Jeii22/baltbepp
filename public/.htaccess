@@ -20,6 +20,9 @@
     RewriteCond %{REQUEST_URI} !^/storage/ [NC]
     RewriteCond %{REQUEST_URI} !^/payment_qr_codes/ [NC]
     RewriteRule ^ index.php [L]
+
+    # Return 404 (not 403) for internal folders to reduce path disclosure
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor|storage)/ - [L,NC,R=404]
 </IfModule>
 
 # =========================================================================
@@ -31,10 +34,7 @@
     Require all denied
 </FilesMatch>
 
-# Protect Laravel internal folders
-<IfModule mod_rewrite.c>
-    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor)/ - [F,L,NC]
-</IfModule>
+# (Handled above) Protect Laravel internal folders with 404
 
 # Security headers
 <IfModule mod_headers.c>
@@ -45,6 +45,9 @@
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Content-Security-Policy "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';"
     Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)"
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+    Header always set Cross-Origin-Resource-Policy "same-origin"
+    Header always set X-Permitted-Cross-Domain-Policies "none"
 </IfModule>
 
 # Disable directory listing and symlink following
@@ -84,4 +87,15 @@ RedirectMatch 404 /\.svn
     RewriteEngine On
     RewriteCond %{REQUEST_METHOD} ^TRACE
     RewriteRule .* - [F]
+</IfModule>
+
+# Basic malicious query string filtering (conservative)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Common injection and wrapper probes
+    RewriteCond %{QUERY_STRING} (base64_encode\(|concat_ws\(|group_concat\(|into\s+outfile|into\s+dumpfile|load_file\() [NC,OR]
+    RewriteCond %{QUERY_STRING} (php://|phar://|expect://|data://) [NC,OR]
+    RewriteCond %{QUERY_STRING} (\bGLOBALS\b|\b_REQUEST\b) [NC,OR]
+    RewriteCond %{QUERY_STRING} (\beval\(|\bsystem\(|\bexec\(|\bpassthru\(|\bshell_exec\() [NC]
+    RewriteRule .* - [F,L]
 </IfModule>
