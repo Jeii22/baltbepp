@@ -118,10 +118,10 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    // Trips
-    Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
+    // Trips Management
+    Route::resource('trips', TripController::class);
 
-    // Fares
+    // Fares Management
     Route::get('/fares', [FareController::class, 'index'])->name('fares.index');
     Route::get('/fares/create', [FareController::class, 'create'])->name('fares.create');
     Route::post('/fares', [FareController::class, 'store'])->name('fares.store');
@@ -153,10 +153,6 @@ Route::middleware(['auth', 'hasAdminPrivileges'])->group(function () {
     // Reports (both SuperAdmin and Admin)
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::resource('trips', TripController::class);
 });
 
 // Welcome Page with SweetAlert
