@@ -28,12 +28,20 @@ class DatabaseBackupController extends Controller
 
         $filename = 'baltbep-backup-' . date('Y-m-d_H-i-s') . '.sql';
 
-        // Try mysqldump first
+        // Try mysqldump first (use absolute path for XAMPP)
         $sql = null;
         $mysqldumpAvailable = false;
+        
+        // Detect mysqldump path (XAMPP default or system)
+        $mysqldumpPath = 'C:\\xampp\\mysql\\bin\\mysqldump.exe';
+        if (!file_exists($mysqldumpPath)) {
+            // Try to find mysqldump in PATH
+            $mysqldumpPath = 'mysqldump';
+        }
+        
         try {
             $command = [
-                'mysqldump',
+                $mysqldumpPath,
                 '-h', $host,
                 '-P', $port,
                 '-u', $user,
