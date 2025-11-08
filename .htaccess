@@ -15,16 +15,29 @@ RewriteCond %{REQUEST_URI} ^/public/build/
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^public/(.*)$ $1 [L]
 
-# Block access to sensitive files
-<FilesMatch "(^\.|\.env|composer\.json|artisan|server\.php|.git|.env|.htaccess|phpunit\.xml|vendor)">
+# Block access to sensitive files and patterns
+<FilesMatch "(^\.|\.env|composer\.json|composer\.lock|artisan|server\.php|\.git|\.htaccess|phpunit\.xml|package\.json|\.md|\.log|\.sql|\.ini|\.bak|\.swp)">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-# Disable directory listing
-Options -Indexes
+# Disable directory listing and symlinks
+Options -Indexes -FollowSymLinks +SymLinksIfOwnerMatch
+
+# Disable server signature
+ServerSignature Off
 
 # ----------------------------------------------------------------------
 # Block access to vendor and sensitive folders
 # ----------------------------------------------------------------------
-RedirectMatch 403 ^/(vendor|config|bootstrap|resources|database)/.*$
+RedirectMatch 403 ^/(vendor|config|bootstrap|resources|database|storage|tests|app|routes)/.*$
+
+# Block access to hidden files (except .well-known for Let's Encrypt)
+RedirectMatch 403 /\.(?!well-known)
+
+# Block HTTP methods not needed
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} ^(TRACE|DELETE|TRACK) [NC]
+    RewriteRule .* - [F,L]
+</IfModule>

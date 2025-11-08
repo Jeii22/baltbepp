@@ -114,6 +114,17 @@
                                 </div>
                             @endif
                             <input id="photo" name="photo" type="file" accept="image/*" class="flex-1 rounded-xl border border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+                            <p class="text-xs text-gray-500 mt-1">Max size: 2MB. Accepted: JPG, JPEG, PNG, GIF.</p>
+</form>
+<script>
+document.getElementById('photo')?.addEventListener('change', function(e){
+    const file = e.target.files?.[0];
+    if (file && file.size > 2 * 1024 * 1024) {
+        alert('Selected file exceeds the 2MB limit. Please choose a smaller image.');
+        e.target.value='';
+    }
+});
+</script>
                         </div>
                         @error('photo')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>

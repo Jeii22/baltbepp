@@ -28,8 +28,17 @@
             </div>
             <div>
                 <label class="block text-sm font-medium mb-1">QR Code Screenshot</label>
-                <input type="file" name="qr_code_image" class="w-full border rounded px-3 py-2" accept="image/*">
-                <p class="text-xs text-gray-500 mt-1">Upload a screenshot of the QR code for easy scanning. Max 2MB, JPEG/PNG/GIF.</p>
+                                <input type="file" name="qr_code_image" id="qr_code_image" class="w-full border rounded px-3 py-2" accept="image/*">
+                                <p class="text-xs text-gray-500 mt-1">Upload a screenshot of the QR code for easy scanning. Max 2MB, JPEG/PNG/GIF.</p>
+                                <script>
+                                document.getElementById('qr_code_image')?.addEventListener('change', function(e){
+                                    const file = e.target.files?.[0];
+                                    if (file && file.size > 2 * 1024 * 1024) {
+                                        alert('Selected file exceeds the 2MB limit. Please choose a smaller image.');
+                                        e.target.value='';
+                                    }
+                                });
+                                </script>
             </div>
             <div class="flex items-center space-x-2">
                 <input type="checkbox" name="is_active" value="1" checked>

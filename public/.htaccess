@@ -47,15 +47,20 @@
     Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)"
 </IfModule>
 
-# Disable directory listing
-Options -Indexes
+# Disable directory listing and symlink following
+Options -Indexes -FollowSymLinks +SymLinksIfOwnerMatch
 
-# Optional: block known bad bots
+# Disable server signature disclosure
+ServerSignature Off
+
+# Optional: block known bad bots and scanners
 <IfModule mod_setenvif.c>
     SetEnvIfNoCase User-Agent "sqlmap" bad_bot
     SetEnvIfNoCase User-Agent "acunetix" bad_bot
     SetEnvIfNoCase User-Agent "nikto" bad_bot
-    SetEnvIfNoCase User-Agent "curl" bad_bot
+    SetEnvIfNoCase User-Agent "masscan" bad_bot
+    SetEnvIfNoCase User-Agent "zgrab" bad_bot
+    SetEnvIfNoCase User-Agent "python-requests" bad_bot
 </IfModule>
 
 <IfModule mod_authz_core.c>
@@ -63,4 +68,20 @@ Options -Indexes
         Require all granted
         Require not env bad_bot
     </RequireAll>
+</IfModule>
+
+# Block access to backup and config files
+<FilesMatch "\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|md)$">
+    Require all denied
+</FilesMatch>
+
+# Prevent access to version control files
+RedirectMatch 404 /\.git
+RedirectMatch 404 /\.svn
+
+# Disable HTTP TRACE method (anti XST)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} ^TRACE
+    RewriteRule .* - [F]
 </IfModule>
