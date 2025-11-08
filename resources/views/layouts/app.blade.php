@@ -52,7 +52,22 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: @json(session('error'))
+                text: @json(session('error')),
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'OK'
+            });
+        });
+        </script>
+        @endif
+        @if(session('warning'))
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning',
+                text: @json(session('warning')),
+                confirmButtonColor: '#f0ad4e',
+                confirmButtonText: 'OK'
             });
         });
         </script>

@@ -38,6 +38,19 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Log all exceptions with minimal user exposure
+        $exceptions->reportable(function (Throwable $e) {
+            \Log::channel('security')->error('Application Error', [
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'user_id' => auth()->id(),
+                'url' => request()->fullUrl(),
+                'ip' => request()->ip(),
+            ]);
+        });
+
         $exceptions->renderable(function (ValidationException $exception, $request) {
             if ($request->expectsJson()) {
                 return null;
@@ -70,5 +83,33 @@ return Application::configure(basePath: dirname(__DIR__))
             $message = $exception->getMessage() ?: 'You do not have permission to access this area.';
 
             return back(fallback: url('/'))->with('error', $message);
+        });
+
+        // Catch-all for unexpected errors (hide stack traces, show user-friendly message)
+        $exceptions->renderable(function (Throwable $exception, $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'An error occurred. Please try again later.',
+                ], 500);
+            }
+
+            // Don't override validation/authorization errors
+            if ($exception instanceof ValidationException || 
+                $exception instanceof AuthorizationException || 
+                $exception instanceof HttpExceptionInterface) {
+                return null;
+            }
+
+            // Log detailed error, show generic message to user
+            \Log::channel('security')->error('Unhandled Exception', [
+                'exception' => get_class($exception),
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+                'user_id' => auth()->id(),
+                'url' => request()->fullUrl(),
+                'ip' => request()->ip(),
+            ]);
+
+            return back(fallback: url('/'))->with('error', 'An unexpected error occurred. Our team has been notified.');
         });
     })->create();
