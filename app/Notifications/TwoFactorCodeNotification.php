@@ -62,7 +62,7 @@ class TwoFactorCodeNotification extends Notification implements ShouldQueue
             ->line($message);
 
         if ($this->type === 'registration' || $this->type === 'login') {
-            $mailMessage->action('Verify Account', route('verification.notice'))
+            $mailMessage->action('Verify Account', route('two-factor.login'))
                 ->line('')
                 ->line('Or use this verification code: **' . $this->code . '**');
         } else {
