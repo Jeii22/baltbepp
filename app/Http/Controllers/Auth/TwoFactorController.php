@@ -45,6 +45,11 @@ class TwoFactorController extends Controller
         // Clear 2FA session data
         session()->forget('2fa:user:id');
 
+        // Enable 2FA in profile security settings after successful verification
+        if (!$user->two_factor_enabled) {
+            $user->update(['two_factor_enabled' => true]);
+        }
+
         // Log the user in
         Auth::login($user, session('2fa:remember', false));
         session()->forget('2fa:remember');
