@@ -11,6 +11,25 @@ use Illuminate\Validation\Rules\Password;
 class UserController extends Controller
 {
     use LogsAdminActivity;
+    /**
+     * Show activity logs for a specific user (admin actions involving this user)
+     */
+    public function logs(User $user)
+    {
+        $logs = \DB::table('admin_activity_logs')
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhere('metadata', 'like', '%"viewed_user_id":'.$user->id.'%')
+                  ->orWhere('metadata', 'like', '%"user_id":'.$user->id.'%');
+            })
+            ->orderByDesc('created_at')
+            ->paginate(20);
+
+        return view('superadmin.users.logs', [
+            'user' => $user,
+            'logs' => $logs,
+        ]);
+    }
     public function index()
     {
         // List all users

@@ -1,3 +1,7 @@
+// User activity logs (superadmin only)
+Route::middleware(['auth', 'role:super_admin'])->group(function () {
+    Route::get('/admin/users/{user}/logs', [UserController::class, 'logs'])->name('admin.users.logs');
+});
 <?php
 
 use App\Http\Controllers\ProfileController;

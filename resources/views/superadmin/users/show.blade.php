@@ -3,6 +3,9 @@
 @section('content')
 <div class="mb-6">
     <a href="{{ route('users.index') }}" class="text-blue-600 hover:text-blue-800">&larr; Back to Users</a>
+    @if(auth()->user() && auth()->user()->role === 'super_admin')
+        <a href="{{ route('admin.users.logs', $user->id) }}" class="ml-4 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition">View Logs</a>
+    @endif
 </div>
 
 <div class="bg-white shadow rounded-xl p-6 mb-6">
