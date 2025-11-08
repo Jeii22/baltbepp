@@ -7,7 +7,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                 </svg>
             </div>
-            <h2 class="text-2xl font-bold text-gray-800">Two-Factor Authentication</h2>
+            <h2 class="text-2xl font-bold text-gray-800">Verify Your Account</h2>
             <p class="text-gray-500 mt-2">We've sent a 6-digit verification code to your Gmail address.</p>
         </div>
 
@@ -73,7 +73,7 @@
         <script>
             Swal.fire({
                 icon: 'error',
-                title: 'Verification Failed',
+                title: 'Account Verification Failed',
                 text: '{{ $errors->first() }}',
                 confirmButtonColor: '#ef4444'
             })

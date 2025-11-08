@@ -47,25 +47,29 @@ class TwoFactorCodeNotification extends Notification implements ShouldQueue
         $greeting = match($this->type) {
             'registration' => 'Welcome to Balt-Bep Ferries!',
             'password_reset' => 'Password Reset Request',
-            default => 'Login Verification Required',
+            default => 'Account Verification Required',
         };
 
         $message = match($this->type) {
-            'registration' => 'Thank you for registering! Please use the code below to verify your email address:',
+            'registration' => 'Thank you for registering! Please click the button below to verify your account:',
             'password_reset' => 'You requested to reset your password. Use the code below to proceed:',
-            default => 'We detected a login attempt to your account. Please use the code below to verify it\'s you:',
+            default => 'We detected a login attempt to your account. Please click the button below to verify your account:',
         };
 
         $mailMessage = (new MailMessage)
             ->subject($subject)
             ->greeting($greeting)
-            ->line($message)
-            ->line('')
-            ->line('**Verification Code:**')
-            ->line('# ' . $this->code);
+            ->line($message);
 
-        if ($this->type === 'registration') {
-            $mailMessage->action('Confirm email to Balt Bep', route('verification.notice'));
+        if ($this->type === 'registration' || $this->type === 'login') {
+            $mailMessage->action('Verify Account', route('verification.notice'))
+                ->line('')
+                ->line('Or use this verification code: **' . $this->code . '**');
+        } else {
+            // For password reset, keep code-only format
+            $mailMessage->line('')
+                ->line('**Verification Code:**')
+                ->line('# ' . $this->code);
         }
 
         return $mailMessage
