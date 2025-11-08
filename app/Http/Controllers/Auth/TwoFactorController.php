@@ -15,10 +15,36 @@ class TwoFactorController extends Controller
     /**
      * Show the 2FA verification form
      */
-    public function show()
+    public function show(Request $request)
     {
         if (!session('2fa:user:id')) {
             return redirect()->route('login');
+        }
+
+        // Optional: Support direct link verification via code query param
+        $code = $request->query('code');
+        if ($code) {
+            $userId = session('2fa:user:id');
+            $user = User::find($userId);
+            if ($user && TwoFactorCode::verify($user, $code, 'login')) {
+                // Mark email verified if needed and enable 2FA
+                if (!$user->hasVerifiedEmail()) {
+                    $user->markEmailAsVerified();
+                }
+                if (!$user->two_factor_enabled) {
+                    $user->update(['two_factor_enabled' => true]);
+                }
+
+                // Complete login
+                Auth::login($user, session('2fa:remember', false));
+                session()->forget('2fa:remember');
+                session()->forget('2fa:user:id');
+
+                $request->session()->regenerate();
+                $user->updateLastLogin($request->ip());
+
+                return redirect()->route('dashboard')->with('success', 'Login verified. Welcome back!');
+            }
         }
 
         return view('auth.two-factor-challenge');
