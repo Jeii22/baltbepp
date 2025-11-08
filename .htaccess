@@ -7,6 +7,9 @@
     # Block hidden files (except .well-known) with 404 to reduce disclosure
     RewriteRule (^|/)\.(?!well-known) - [R=404,L]
 
+    # Block explicit /public/index.php access (return 403)
+    RewriteRule ^public/index\.php$ - [F,L]
+
     # Internally rewrite everything to the public folder (no URL change)
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L]
