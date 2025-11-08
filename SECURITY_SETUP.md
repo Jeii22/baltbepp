@@ -198,6 +198,33 @@ tail -f storage/logs/laravel.log
 
 ### Issue: Account Locked Permanently
 
+---
+
+## 🌐 Web Server Hardening: Disable Directory Listing
+
+Directory listing is disabled to prevent users from browsing URL folders:
+
+- Global: `Options -Indexes` is set in both root `.htaccess` and `public/.htaccess`.
+- Public subfolders also have their own `.htaccess` to enforce this, even if host overrides differ:
+    - `public/images/.htaccess`
+    - `public/build/.htaccess`
+    - `public/storage/.htaccess`
+    - `public/payment_qr_codes/.htaccess`
+
+Additionally, direct access to front controllers is blocked with 403:
+
+- Root `.htaccess`: blocks `/public/index.php`
+- `public/.htaccess`: blocks `/index.php`
+
+Quick tests:
+
+1. Open `/public/index.php` → 403 Forbidden
+2. Open `/index.php` (if the docroot is `public`) → 403 Forbidden
+3. Open `/images/` or `/build/` → no listing (403)
+4. Open a real asset like `/build/assets/app.css` → loads normally
+
+Note: If your hosting disables `AllowOverride Options`, folder `.htaccess` files may be ignored. Ask your host to enable it or configure `Options -Indexes` in the vhost config.
+
 **Solution**: Manually unlock via database
 ```sql
 UPDATE users 
