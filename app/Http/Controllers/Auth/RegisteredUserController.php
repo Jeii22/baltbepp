@@ -36,12 +36,19 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                // Only allow letters, spaces, hyphens, and apostrophes (no numbers or special chars)
+                'regex:/^[A-Za-zÀ-ÿ\s\-\']+$/u',
+            ],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class, 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()->min(8)->mixedCase()->numbers()->symbols()],
             'terms' => ['accepted'],
             'recaptcha_token' => ['required','string'],
         ], [
+            'name.regex' => 'Full name may only contain letters, spaces, hyphens, and apostrophes.',
             'terms.accepted' => 'You must agree to the terms and conditions before continuing.',
             'email.regex' => 'Only Gmail addresses are allowed for registration.',
             'password.min' => 'Password must be at least 8 characters.',
