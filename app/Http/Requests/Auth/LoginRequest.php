@@ -73,34 +73,6 @@ class LoginRequest extends FormRequest
         }
     }
 
-    /**
-     * Verify reCAPTCHA token
-     */
-    private function verifyRecaptcha(): void
-    {
-        $recaptchaToken = $this->input('recaptcha_token');
-
-        if (!$recaptchaToken) {
-            throw ValidationException::withMessages([
-                'recaptcha' => 'reCAPTCHA verification is required.',
-            ]);
-        }
-
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => config('services.recaptcha.secret_key'),
-            'response' => $recaptchaToken,
-            'remoteip' => $this->ip(),
-        ]);
-
-        $result = $response->json();
-
-        $threshold = config('services.recaptcha.score_threshold', 0.5);
-        if (!($result['success'] ?? false) || ($result['score'] ?? 0) < $threshold) {
-            throw ValidationException::withMessages([
-                'recaptcha' => 'reCAPTCHA verification failed. Please try again.',
-            ]);
-        }
-    }
 
     /**
      * Attempt to authenticate the request's credentials.
@@ -111,8 +83,8 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-    // Perform reCAPTCHA verification
-    $this->verifyRecaptcha();
+        // Perform reCAPTCHA verification via service
+        app(\App\Services\RecaptchaService::class)->assertValid($this->input('recaptcha_token'), 'login');
 
         $email = $this->string('email');
         $user = User::where('email', $email)->first();

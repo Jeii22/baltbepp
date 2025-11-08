@@ -107,6 +107,7 @@
             @error('recaptcha')
                 <p class="text-sm text-red-600">{{ $message }}</p>
             @enderror
+            @include('components.recaptcha-v3-info', ['action' => 'register'])
 
             <div class="flex items-start space-x-3">
                 <input id="terms" type="checkbox" name="terms" value="1" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" {{ old('terms') ? 'checked' : '' }}>

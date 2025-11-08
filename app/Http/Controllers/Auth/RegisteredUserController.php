@@ -51,18 +51,11 @@ class RegisteredUserController extends Controller
             'recaptcha_token.required' => 'reCAPTCHA verification failed. Please retry.',
         ]);
 
-        // Verify reCAPTCHA v3 score
-        $recaptchaToken = $request->string('recaptcha_token');
-        $response = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => config('services.recaptcha.secret_key'),
-            'response' => $recaptchaToken,
-            'remoteip' => $request->ip(),
-        ]);
-        $result = $response->json();
-        $score = $result['score'] ?? 0;
-        $threshold = config('services.recaptcha.score_threshold', 0.5);
-        if (!($result['success'] ?? false) || $score < $threshold) {
-            return back()->withErrors(['recaptcha' => 'reCAPTCHA verification failed.'])->withInput();
+        // Verify reCAPTCHA v3 via centralized service
+        try {
+            app(\App\Services\RecaptchaService::class)->assertValid($request->input('recaptcha_token'), 'register');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
         }
 
 

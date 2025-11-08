@@ -79,6 +79,7 @@
             </div>
 
             <x-input-error :messages="$errors->get('recaptcha')" class="mt-2" />
+            @include('components.recaptcha-v3-info', ['action' => 'login'])
 
             <div class="flex items-center justify-end mt-4">
                 <x-primary-button class="ml-3">
@@ -96,7 +97,7 @@
         });
     </script>
 
-        <!-- reCAPTCHA scripts temporarily disabled for testing -->
+    <!-- Attribution required for reCAPTCHA v3 (badge not automatically shown) -->
 
         <!-- Add a register link below the sign-in button -->
         <p class="text-center text-sm text-gray-600 mt-4">
