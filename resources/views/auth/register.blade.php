@@ -78,9 +78,10 @@
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
                 <div class="mt-1 relative">
-                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
-                           class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10"
-                           placeholder="Juan Dela Cruz">
+              <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
+                  class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10"
+                  placeholder="Juan Dela Cruz"
+                  oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s\-']/g, '')">
                     <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
                         👤
                     </span>
