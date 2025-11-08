@@ -90,34 +90,34 @@ Route::get('/customer/dashboard', function () {
     return view('user-dashboard', ['user' => auth()->user(), 'showAlert' => session('status') === 'profile-updated']);
 })->middleware(['auth', 'verified'])->name('customer.dashboard');
 
-// Admin Dashboard
+// Admin Dashboard (RBAC: admin or superadmin)
 Route::get('/admin/dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])
-    ->middleware(['auth', 'isAdmin'])
+    ->middleware(['auth', 'role:admin,superadmin'])
     ->name('admin.dashboard');
 
-// Superadmin Dashboard
+// Superadmin Dashboard (RBAC: superadmin only)
 Route::get('/superadmin/dashboard', function () {
     return view('superadmin.dashboard');
-})->middleware(['auth', 'isSuperAdmin'])->name('superadmin.dashboard');
+})->middleware(['auth', 'role:superadmin'])->name('superadmin.dashboard');
 
-Route::middleware(['auth', 'isSuperAdmin'])->group(function () {
+// Superadmin-only group (RBAC)
+Route::middleware(['auth', 'role:superadmin'])->group(function () {
     // Security Overview (Super Admin Only)
     Route::get('/admin/security/overview', [\App\Http\Controllers\AdminDashboardController::class, 'securityOverview'])
         ->name('admin.security.overview');
-    
     // Unlock User Account
     Route::post('/admin/users/{user}/unlock', function ($userId) {
         $user = \App\Models\User::findOrFail($userId);
         $user->unlockAccount();
         return back()->with('success', 'Account unlocked successfully.');
     })->name('admin.users.unlock');
-    
     // User management (admins)
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+});
 
     // Trips
     Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
