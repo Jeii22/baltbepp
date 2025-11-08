@@ -92,16 +92,16 @@ Route::get('/customer/dashboard', function () {
 
 // Admin Dashboard (RBAC: admin or superadmin)
 Route::get('/admin/dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])
-    ->middleware(['auth', 'role:admin,superadmin'])
+    ->middleware(['auth', 'role:admin,super_admin'])
     ->name('admin.dashboard');
 
 // Superadmin Dashboard (RBAC: superadmin only)
 Route::get('/superadmin/dashboard', function () {
     return view('superadmin.dashboard');
-})->middleware(['auth', 'role:superadmin'])->name('superadmin.dashboard');
+})->middleware(['auth', 'role:super_admin'])->name('superadmin.dashboard');
 
 // Superadmin-only group (RBAC)
-Route::middleware(['auth', 'role:superadmin'])->group(function () {
+Route::middleware(['auth', 'role:super_admin'])->group(function () {
     // Security Overview (Super Admin Only)
     Route::get('/admin/security/overview', [\App\Http\Controllers\AdminDashboardController::class, 'securityOverview'])
         ->name('admin.security.overview');
