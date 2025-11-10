@@ -8,6 +8,17 @@
         <form action="{{ route('admin.payment-methods.update', $method) }}" method="POST" enctype="multipart/form-data" class="space-y-4 bg-white p-6 border rounded shadow-sm">
             @csrf
             @method('PUT')
+            
+            @if($errors->any())
+                <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
+                    <ul class="list-disc list-inside">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            
             <div>
                 <label class="block text-sm font-medium mb-1">Type</label>
                 <select name="type" class="w-full border rounded px-3 py-2">

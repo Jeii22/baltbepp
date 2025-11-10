@@ -43,7 +43,18 @@ class PaymentMethodController extends Controller
             if (!File::exists($target)) {
                 File::makeDirectory($target, 0755, true);
             }
-            $data['qr_code_image'] = $request->file('qr_code_image')->store('', 'payment_qr_codes');
+            
+            try {
+                $file = $request->file('qr_code_image');
+                $filename = $file->hashName();
+                $file->storeAs('', $filename, 'payment_qr_codes');
+                $data['qr_code_image'] = $filename;
+            } catch (\Exception $e) {
+                \Log::error('QR code upload failed: ' . $e->getMessage());
+                return redirect()->back()
+                    ->withErrors(['qr_code_image' => 'Failed to upload QR code image. Please try again.'])
+                    ->withInput();
+            }
         }
 
         $method = PaymentMethod::create($data);
@@ -75,14 +86,30 @@ class PaymentMethodController extends Controller
         if ($request->hasFile('qr_code_image')) {
             // Delete old image if exists
             if ($paymentMethod->qr_code_image) {
-                Storage::disk('payment_qr_codes')->delete($paymentMethod->qr_code_image);
+                try {
+                    Storage::disk('payment_qr_codes')->delete($paymentMethod->qr_code_image);
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to delete old QR code: ' . $e->getMessage());
+                }
             }
+            
             // Ensure target directory exists: public/storage/payment_qr_codes
             $target = public_path('storage/payment_qr_codes');
             if (!File::exists($target)) {
                 File::makeDirectory($target, 0755, true);
             }
-            $data['qr_code_image'] = $request->file('qr_code_image')->store('', 'payment_qr_codes');
+            
+            try {
+                $file = $request->file('qr_code_image');
+                $filename = $file->hashName();
+                $file->storeAs('', $filename, 'payment_qr_codes');
+                $data['qr_code_image'] = $filename;
+            } catch (\Exception $e) {
+                \Log::error('QR code upload failed: ' . $e->getMessage());
+                return redirect()->back()
+                    ->withErrors(['qr_code_image' => 'Failed to upload QR code image. Please try again.'])
+                    ->withInput();
+            }
         }
 
         $paymentMethod->update($data);
