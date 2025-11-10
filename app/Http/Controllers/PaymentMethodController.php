@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 use App\Traits\LogsAdminActivity;
 
@@ -36,6 +38,11 @@ class PaymentMethodController extends Controller
         $data['is_active'] = $request->boolean('is_active');
 
         if ($request->hasFile('qr_code_image')) {
+            // Ensure target directory exists: public/storage/payment_qr_codes
+            $target = public_path('storage/payment_qr_codes');
+            if (!File::exists($target)) {
+                File::makeDirectory($target, 0755, true);
+            }
             $data['qr_code_image'] = $request->file('qr_code_image')->store('', 'payment_qr_codes');
         }
 
@@ -68,7 +75,12 @@ class PaymentMethodController extends Controller
         if ($request->hasFile('qr_code_image')) {
             // Delete old image if exists
             if ($paymentMethod->qr_code_image) {
-                \Storage::disk('payment_qr_codes')->delete($paymentMethod->qr_code_image);
+                Storage::disk('payment_qr_codes')->delete($paymentMethod->qr_code_image);
+            }
+            // Ensure target directory exists: public/storage/payment_qr_codes
+            $target = public_path('storage/payment_qr_codes');
+            if (!File::exists($target)) {
+                File::makeDirectory($target, 0755, true);
             }
             $data['qr_code_image'] = $request->file('qr_code_image')->store('', 'payment_qr_codes');
         }
@@ -85,7 +97,7 @@ class PaymentMethodController extends Controller
     public function destroy(PaymentMethod $paymentMethod)
     {
         if ($paymentMethod->qr_code_image) {
-            \Storage::disk('payment_qr_codes')->delete($paymentMethod->qr_code_image);
+            Storage::disk('payment_qr_codes')->delete($paymentMethod->qr_code_image);
         }
         $id = $paymentMethod->id;
         $paymentMethod->delete();
