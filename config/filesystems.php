@@ -59,7 +59,7 @@ return [
         'payment_qr_codes' => [
             'driver' => 'local',
             'root' => public_path('storage/payment_qr_codes'),
-            'url' => env('APP_URL').'/storage/payment_qr_codes',
+            'url' => env('APP_URL').'/public/storage/payment_qr_codes',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
