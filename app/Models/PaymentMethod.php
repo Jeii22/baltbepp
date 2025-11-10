@@ -21,4 +21,15 @@ class PaymentMethod extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Accessor for the public URL of the QR image under public/storage/payment_qr_codes
+     */
+    public function getQrCodeUrlAttribute(): ?string
+    {
+        if (!$this->qr_code_image) {
+            return null;
+        }
+        return \Storage::disk('payment_qr_codes')->url($this->qr_code_image);
+    }
 }

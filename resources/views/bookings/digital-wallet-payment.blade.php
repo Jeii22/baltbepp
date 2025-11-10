@@ -215,10 +215,10 @@
             <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm print-card">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4 text-center print-section-title">Scan QR Code to Pay</h3>
                 
-                @if($wallet->qr_code_image)
+                @if($wallet->qr_code_url)
                     <div class="flex justify-center mb-4 print-qr">
                         <div class="bg-white p-4 rounded-lg shadow-inner border-2 border-gray-100">
-                            <img src="{{ Storage::disk('payment_qr_codes')->url($wallet->qr_code_image) }}" 
+                            <img src="{{ $wallet->qr_code_url }}" 
                                  alt="{{ strtoupper($paymentMethod) }} QR Code" 
                                  class="w-64 h-64 object-contain">
                         </div>

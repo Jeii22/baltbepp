@@ -31,7 +31,7 @@
                 <label class="block text-sm font-medium mb-1">QR Code Screenshot</label>
                 @if($method->qr_code_image)
                     <div class="mb-2">
-                        <img src="{{ Storage::disk('payment_qr_codes')->url($method->qr_code_image) }}" alt="Current QR Code" class="w-24 h-24 object-cover border">
+                        <img src="{{ $method->qr_code_url }}" alt="Current QR Code" class="w-24 h-24 object-cover border">
                         <p class="text-xs text-gray-500">Current QR Code</p>
                     </div>
                 @endif
