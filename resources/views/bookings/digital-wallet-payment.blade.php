@@ -218,7 +218,7 @@
                 @if($wallet->qr_code_image)
                     <div class="flex justify-center mb-4 print-qr">
                         <div class="bg-white p-4 rounded-lg shadow-inner border-2 border-gray-100">
-                            <img src="{{ asset('public/storage/payment_qr_codes/' . $wallet->qr_code_image) }}" 
+                            <img src="{{ Storage::disk('payment_qr_codes')->url($wallet->qr_code_image) }}" 
                                  alt="{{ strtoupper($paymentMethod) }} QR Code" 
                                  class="w-64 h-64 object-contain">
                         </div>

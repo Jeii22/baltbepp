@@ -50,7 +50,7 @@
                             <td class="p-3">{{ $method->account_number }}</td>
                             <td class="p-3">
                                 @if($method->qr_code_image)
-                                    <img src="{{ asset('public/storage/payment_qr_codes/' . $method->qr_code_image) }}" alt="QR Code" class="w-16 h-16 object-cover">
+                                    <img src="{{ Storage::disk('payment_qr_codes')->url($method->qr_code_image) }}" alt="QR Code" class="w-16 h-16 object-cover">
                                 @else
                                     No QR Code
                                 @endif
