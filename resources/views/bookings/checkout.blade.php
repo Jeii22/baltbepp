@@ -84,7 +84,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ isset($wallets) && count($wallets) && old('payment_method', 'cod') && $wallets->pluck('type')->contains(old('payment_method', 'cod')) ? route('bookings.process.digital-wallet') : route('bookings.process') }}" method="POST" id="paymentForm" class="space-y-6">
+                    <form action="{{ route('bookings.process') }}" method="POST" id="paymentForm" class="space-y-6">
                         @csrf
                         
                         <!-- Payment Method Selection -->
@@ -387,6 +387,22 @@
 const wallets = @json($wallets ?? []);
 const digitalWalletTypes = wallets.map(w => w.type);
 
+// Set initial form action IMMEDIATELY (before DOMContentLoaded)
+(function() {
+    const paymentForm = document.getElementById('paymentForm');
+    if (paymentForm) {
+        const defaultSelected = document.querySelector('input[name="payment_method"]:checked');
+        if (defaultSelected) {
+            const defaultMethod = defaultSelected.value;
+            if (digitalWalletTypes.includes(defaultMethod)) {
+                paymentForm.action = '{{ route("bookings.process.digital-wallet") }}';
+            } else {
+                paymentForm.action = '{{ route("bookings.process") }}';
+            }
+        }
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', function() {
     const paymentOptions = document.querySelectorAll('.payment-option');
     const cardDetails = document.getElementById('cardDetails');
@@ -458,16 +474,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Set initial form action based on default selected payment method
-    const defaultSelected = document.querySelector('input[name="payment_method"]:checked');
-    if (defaultSelected) {
-        const defaultMethod = defaultSelected.value;
-        if (digitalWalletTypes.includes(defaultMethod)) {
+    // Ensure form action is set correctly on form submit
+    paymentForm.addEventListener('submit', function(e) {
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        const termsCheckbox = document.querySelector('#terms');
+        
+        if (!selectedMethod) {
+            console.error('No payment method selected!');
+            e.preventDefault();
+            alert('Please select a payment method');
+            return false;
+        }
+        
+        if (!termsCheckbox.checked) {
+            console.error('Terms not accepted!');
+            e.preventDefault();
+            alert('Please accept the Terms and Conditions');
+            return false;
+        }
+        
+        const method = selectedMethod.value;
+        if (digitalWalletTypes.includes(method)) {
             paymentForm.action = '{{ route("bookings.process.digital-wallet") }}';
         } else {
             paymentForm.action = '{{ route("bookings.process") }}';
         }
-    }
+        console.log('Payment method:', method);
+        console.log('Form action:', paymentForm.action);
+        console.log('Is digital wallet:', digitalWalletTypes.includes(method));
+    });
 });
 </script>
 </body>
