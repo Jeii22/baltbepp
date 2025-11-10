@@ -327,4 +327,54 @@ class PaymentService
         $prefix = strtoupper(substr($method, 0, 4));
         return $prefix . '-' . $bookingId . '-' . time() . '-' . rand(1000, 9999);
     }
+
+    /**
+     * Create a PayMongo payment from a previously authorized (chargeable) source.
+     * This is required for GCash hosted flow: source -> (user authorizes) -> source.chargeable webhook -> create payment -> payment.paid webhook.
+     */
+    public function createPayMongoPaymentFromSource(string $sourceId, Booking $booking): array
+    {
+        if (!Setting::getBool('paymongo_enabled', true)) {
+            return [
+                'success' => false,
+                'message' => 'PayMongo disabled.'
+            ];
+        }
+
+        $amountInCentavos = (int) round(($booking->total_amount ?? 0) * 100);
+
+        try {
+            $client = new PaymongoClient(env('PAYMONGO_SECRET_KEY'));
+            // Create payment from source
+            $payment = $client->payments->create([
+                'amount' => $amountInCentavos,
+                'currency' => 'PHP',
+                'source' => [
+                    'id' => $sourceId,
+                    'type' => 'source',
+                ],
+                'description' => 'Booking #' . $booking->id . ' payment',
+                'statement_descriptor' => 'BALTBEP',
+                'billing' => [
+                    'name' => $booking->full_name,
+                    'email' => $booking->email,
+                    'phone' => $booking->phone,
+                ],
+            ]);
+
+            return [
+                'success' => true,
+                'payment_id' => $payment->id ?? null,
+            ];
+        } catch (Exception $e) {
+            Log::error('PayMongo payment create failed: ' . $e->getMessage(), [
+                'booking_id' => $booking->id,
+                'source_id' => $sourceId,
+            ]);
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
 }

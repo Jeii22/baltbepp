@@ -442,22 +442,71 @@ class BookingController extends Controller
         $type = $event->type ?? '';
         $resource = $event->resource ?? [];
 
-        // For payment.paid, locate booking by source id and mark confirmed
+        // Log minimal info for debugging
+        \Log::info('PayMongo webhook received', [
+            'type' => $type,
+        ]);
+
+        // Handle source.chargeable -> create payment
+        if (str_contains($type, 'source.chargeable')) {
+            $sourceId = $resource['data']['id'] ?? null;
+            if ($sourceId) {
+                $booking = \App\Models\Booking::where('payment_reference', $sourceId)->first();
+                if ($booking) {
+                    // Create payment from chargeable source if not already confirmed
+                    $paymentService = new \App\Services\PaymentService();
+                    $create = $paymentService->createPayMongoPaymentFromSource($sourceId, $booking);
+                    if (!$create['success']) {
+                        \Log::error('Failed to create PayMongo payment from source', [
+                            'source_id' => $sourceId,
+                            'booking_id' => $booking->id,
+                            'error' => $create['message'] ?? null,
+                        ]);
+                    } else {
+                        \Log::info('PayMongo payment created', [
+                            'booking_id' => $booking->id,
+                            'payment_id' => $create['payment_id'] ?? null,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        // For payment.paid, locate booking by source/payment id and mark confirmed
         if (str_contains($type, 'payment.paid')) {
             $sourceId = $resource['data']['attributes']['source']['id'] ?? null;
             $paymentId = $resource['data']['id'] ?? null;
 
             if ($sourceId) {
-                $booking = \App\Models\Booking::where('payment_reference', $sourceId)->first();
+                $booking = \App\Models\Booking::where('payment_reference', $sourceId)
+                    ->orWhere('payment_reference', $paymentId)
+                    ->first();
                 if ($booking) {
                     $oldStatus = $booking->status;
                     $booking->update([
                         'status' => 'confirmed',
                         'payment_reference' => $paymentId ?? $sourceId,
                     ]);
-
-                    // Send confirmation email
                     $this->handleStatusChangeNotification($booking, $oldStatus, 'confirmed');
+                }
+            }
+        }
+
+        // Handle payment.failed or payment.cancelled to mark booking cancelled
+        if (str_contains($type, 'payment.failed') || str_contains($type, 'payment.cancelled')) {
+            $sourceId = $resource['data']['attributes']['source']['id'] ?? null;
+            $paymentId = $resource['data']['id'] ?? null;
+            if ($sourceId) {
+                $booking = \App\Models\Booking::where('payment_reference', $sourceId)
+                    ->orWhere('payment_reference', $paymentId)
+                    ->first();
+                if ($booking && $booking->status !== 'cancelled') {
+                    $oldStatus = $booking->status;
+                    $booking->update([
+                        'status' => 'cancelled',
+                        'payment_reference' => $paymentId ?? $sourceId,
+                    ]);
+                    $this->handleStatusChangeNotification($booking, $oldStatus, 'cancelled', 'PayMongo payment failed/cancelled');
                 }
             }
         }
