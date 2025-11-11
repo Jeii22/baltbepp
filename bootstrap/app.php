@@ -31,21 +31,16 @@ return Application::configure(basePath: dirname(__DIR__))
             'idleTimeout' => App\Http\Middleware\IdleTimeout::class,
             'securityHeaders' => App\Http\Middleware\SecurityHeaders::class,
         ]);
-        // Optionally trust proxies only when explicitly enabled via .env to fix HTTPS detection behind CDN/proxy
-        $proxies = env('TRUST_PROXIES');
-        if (!empty($proxies)) {
-            // Accept '*' or comma-separated IPs
-            \Illuminate\Support\Facades\Log::info('Trusting proxies', ['at' => $proxies]);
-            $middleware->trustProxies(at: $proxies);
-        }
-    // (Reverted) Remove global trust of all proxies; rely on default behavior
+        
+        // CRITICAL FIX: Trust all proxies to fix HTTPS detection behind hosting providers/CDN
+        // This prevents redirect loops caused by session cookie issues
+        $middleware->trustProxies(at: '*');
 
-        // Apply to web group globally
+        // Apply to web group globally - TEMPORARILY DISABLED problematic middleware
         $middleware->web(append: [
-            App\Http\Middleware\TrackLastActive::class,
-            App\Http\Middleware\CheckAccountLocked::class,
-            App\Http\Middleware\IdleTimeout::class,
             App\Http\Middleware\SecurityHeaders::class,
+            // DISABLED to fix redirect loop: TrackLastActive, CheckAccountLocked, IdleTimeout
+            // These depend on session working correctly first
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
