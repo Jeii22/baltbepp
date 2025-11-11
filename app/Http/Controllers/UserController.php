@@ -30,10 +30,43 @@ class UserController extends Controller
             'logs' => $logs,
         ]);
     }
-    public function index()
+    public function index(Request $request)
     {
-        // List all users
-        $users = User::orderByDesc('last_active_at')->paginate(10);
+        // Build query with search and filters
+        $query = User::query();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%")
+                  ->orWhere('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Role filter
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        // Status filter (active today)
+        if ($request->filled('status')) {
+            if ($request->status === 'active') {
+                $query->where('last_active_at', '>=', now()->startOfDay());
+            } elseif ($request->status === 'inactive') {
+                $query->where(function($q) {
+                    $q->where('last_active_at', '<', now()->startOfDay())
+                      ->orWhereNull('last_active_at');
+                });
+            }
+        }
+
+        // Get paginated results
+        $users = $query->orderByDesc('last_active_at')->paginate(15);
+
         return view('superadmin.users.index', compact('users'));
     }
 

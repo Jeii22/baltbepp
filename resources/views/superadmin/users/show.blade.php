@@ -80,100 +80,63 @@
                 </tbody>
             </table>
         </div>
-        
-        {{-- Location Modal --}}
-        <div id="locationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
-                <button onclick="closeLocationModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-                <h2 class="text-lg font-semibold mb-2">Login Attempt Location</h2>
-                <div id="locationDetails" class="mb-4 text-sm text-gray-700"></div>
-                <iframe id="locationMap" width="100%" height="250" frameborder="0" style="border:0" allowfullscreen></iframe>
-            </div>
-        </div>
-        
-        <script>
-        function showLocationModal(lat, lng, city, region, country, date, ip) {
-            if (!lat || !lng) return;
-            document.getElementById('locationModal').classList.remove('hidden');
-            document.getElementById('locationDetails').innerHTML = `
-                <strong>Date:</strong> ${date}<br>
-                <strong>IP Address:</strong> ${ip}<br>
-                <strong>City:</strong> ${city || '-'}<br>
-                <strong>Region:</strong> ${region || '-'}<br>
-                <strong>Country:</strong> ${country || '-'}<br>
-                <strong>Latitude:</strong> ${lat}<br>
-                <strong>Longitude:</strong> ${lng}
-            `;
-            document.getElementById('locationMap').src = 
-                `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
-        }
-        function closeLocationModal() {
-            document.getElementById('locationModal').classList.add('hidden');
-            document.getElementById('locationMap').src = '';
-        }
-        </script>
     </div>
     <div class="px-6 py-4 border-t border-gray-200">
         {{ $loginAttempts->links() }}
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const showFailedBtn = document.getElementById('showFailedBtn');
-        const showAllBtn = document.getElementById('showAllBtn');
-        const rows = document.querySelectorAll('.login-attempt-row');
 
-        showFailedBtn.addEventListener('click', function() {
-            rows.forEach(row => {
-                if (!row.classList.contains('failed')) {
-                    row.style.display = 'none';
-                } else {
-                    row.style.display = '';
-                }
-            });
-            showFailedBtn.style.display = 'none';
-            showAllBtn.style.display = '';
-        });
-
-        showAllBtn.addEventListener('click', function() {
-            rows.forEach(row => {
-                row.style.display = '';
-            });
-            showFailedBtn.style.display = '';
-            showAllBtn.style.display = 'none';
-        });
-    });
-</script>
-<!-- Modal for displaying map -->
+<!-- Location Modal -->
 <div id="locationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
-        <button onclick="closeLocationModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-        <h2 class="text-lg font-semibold mb-2">Login Attempt Location</h2>
-        <div id="locationDetails" class="mb-4 text-sm text-gray-700"></div>
-        <iframe id="locationMap" width="100%" height="250" frameborder="0" style="border:0" allowfullscreen></iframe>
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl relative">
+        <button onclick="closeLocationModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
+        <h2 class="text-xl font-semibold mb-4">Login Attempt Location</h2>
+        <div id="locationDetails" class="mb-4 text-sm text-gray-700 bg-gray-50 p-4 rounded"></div>
+        <iframe id="locationMap" width="100%" height="400" frameborder="0" style="border:0; border-radius: 8px;" allowfullscreen></iframe>
     </div>
 </div>
 
 <script>
 function showLocationModal(lat, lng, city, region, country, date, ip) {
     if (!lat || !lng) return;
-    document.getElementById('locationModal').classList.remove('hidden');
-    document.getElementById('locationDetails').innerHTML = `
-        <strong>Date:</strong> ${date}<br>
-        <strong>IP Address:</strong> ${ip}<br>
-        <strong>City:</strong> ${city || '-'}<br>
-        <strong>Region:</strong> ${region || '-'}<br>
-        <strong>Country:</strong> ${country || '-'}<br>
-        <strong>Latitude:</strong> ${lat}<br>
-        <strong>Longitude:</strong> ${lng}
+    
+    const modal = document.getElementById('locationModal');
+    const details = document.getElementById('locationDetails');
+    const map = document.getElementById('locationMap');
+    
+    modal.classList.remove('hidden');
+    details.innerHTML = `
+        <div class="grid grid-cols-2 gap-2">
+            <div><strong>Date:</strong> ${date}</div>
+            <div><strong>IP Address:</strong> ${ip}</div>
+            <div><strong>City:</strong> ${city || 'Unknown'}</div>
+            <div><strong>Region:</strong> ${region || 'Unknown'}</div>
+            <div><strong>Country:</strong> ${country || 'Unknown'}</div>
+            <div><strong>Coordinates:</strong> ${lat}, ${lng}</div>
+        </div>
     `;
-    document.getElementById('locationMap').src = 
-        `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+    map.src = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
 }
+
 function closeLocationModal() {
-    document.getElementById('locationModal').classList.add('hidden');
-    document.getElementById('locationMap').src = '';
+    const modal = document.getElementById('locationModal');
+    const map = document.getElementById('locationMap');
+    modal.classList.add('hidden');
+    map.src = '';
 }
-</script>
+
+// Close modal when clicking outside
+document.getElementById('locationModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeLocationModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeLocationModal();
+    }
+});
 </script>
 @endsection
