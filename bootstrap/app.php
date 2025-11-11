@@ -96,27 +96,26 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($request->expectsJson()) {
                     return response()->json([
                         'message' => 'An error occurred. Please try again later.',
+                        'error' => app()->hasDebugModeEnabled() ? $exception->getMessage() : null,
                     ], 500);
                 }
 
-                // Don't override validation/authorization errors
-                if ($exception instanceof ValidationException || 
-                    $exception instanceof AuthorizationException || 
+                if ($exception instanceof ValidationException ||
+                    $exception instanceof AuthorizationException ||
                     $exception instanceof HttpExceptionInterface) {
                     return null;
                 }
 
-                // Log detailed error, show generic message to user
-                \Log::channel('security')->error('Unhandled Exception', [
+                \Log::error('Unhandled Exception (500 page rendered)', [
                     'exception' => get_class($exception),
                     'message' => $exception->getMessage(),
-                    'trace' => $exception->getTraceAsString(),
                     'user_id' => auth()->id(),
                     'url' => request()->fullUrl(),
                     'ip' => request()->ip(),
                 ]);
 
-                // Original behavior: redirect back to home with a generic error message
-                return back(fallback: url('/'))->with('error', 'An unexpected error occurred. Our team has been notified.');
+                return response()->view('errors.500', [
+                    'message' => app()->hasDebugModeEnabled() ? $exception->getMessage() : 'An unexpected error occurred.'
+                ], 500);
             });
     })->create();
