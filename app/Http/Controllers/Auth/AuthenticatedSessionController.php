@@ -55,7 +55,7 @@ class AuthenticatedSessionController extends Controller
                 '2fa_user_id' => session('2fa:user:id'),
             ]);
 
-            return redirect()->route('two-factor.login')->with('success', 'We sent a verification email: confirm this login to continue.');
+            return redirect()->route('login')->with('show_2fa_modal', true)->with('success', 'We sent a verification email: confirm this login to continue.');
         }
 
         // Test environment fallback: proceed directly

@@ -68,9 +68,27 @@ class TwoFactorController extends Controller
         ]);
 
         $userId = session('2fa:user:id');
+        
+        if (!$userId) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Session expired. Please login again.'
+                ], 401);
+            }
+            return redirect()->route('login')->with('error', 'Session expired. Please login again.');
+        }
+        
         $user = User::findOrFail($userId);
 
         if (!TwoFactorCode::verify($user, $request->code, 'login')) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The verification code is invalid or has expired.'
+                ], 422);
+            }
+            
             throw ValidationException::withMessages([
                 'code' => 'The verification code is invalid or has expired.',
             ]);
@@ -97,6 +115,15 @@ class TwoFactorController extends Controller
         // Update last login
         $user->updateLastLogin($request->ip());
 
+        // Return JSON for AJAX or redirect for regular form
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Login verified successfully.',
+                'redirect' => route('dashboard')
+            ]);
+        }
+
         // Redirect to main dashboard after verification
         return redirect()->route('dashboard')->with('success', 'Your account has been verified and 2FA is now enabled.');
     }
@@ -109,6 +136,12 @@ class TwoFactorController extends Controller
         $userId = session('2fa:user:id');
         
         if (!$userId) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Session expired. Please login again.'
+                ], 401);
+            }
             return redirect()->route('login');
         }
 
@@ -119,6 +152,13 @@ class TwoFactorController extends Controller
 
         // Send notification
         $user->notify(new TwoFactorCodeNotification($twoFactorCode->code, 'login'));
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'A new verification code has been sent to your email.'
+            ]);
+        }
 
         return back()->with('success', 'A new verification code has been sent to your email.');
     }
