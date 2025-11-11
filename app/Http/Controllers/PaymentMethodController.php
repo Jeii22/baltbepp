@@ -58,11 +58,16 @@ class PaymentMethodController extends Controller
         }
 
         $method = PaymentMethod::create($data);
-        $this->logActivity('Created payment method', [
-            'payment_method_id' => $method->id,
-            'type' => $method->type,
-            'label' => $method->label
-        ]);
+        // Corrected parameter order: description (string) then metadata (array)
+        $this->logActivity(
+            'Created payment method',
+            "Created payment method {$method->label} ({$method->type})",
+            [
+                'payment_method_id' => $method->id,
+                'type' => $method->type,
+                'label' => $method->label
+            ]
+        );
         return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method added.');
     }
 
@@ -113,11 +118,15 @@ class PaymentMethodController extends Controller
         }
 
         $paymentMethod->update($data);
-        $this->logActivity('Updated payment method', [
-            'payment_method_id' => $paymentMethod->id,
-            'type' => $paymentMethod->type,
-            'label' => $paymentMethod->label
-        ]);
+        $this->logActivity(
+            'Updated payment method',
+            "Updated payment method {$paymentMethod->label} ({$paymentMethod->type})",
+            [
+                'payment_method_id' => $paymentMethod->id,
+                'type' => $paymentMethod->type,
+                'label' => $paymentMethod->label
+            ]
+        );
         return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method updated.');
     }
 
@@ -137,11 +146,15 @@ class PaymentMethodController extends Controller
         
         try {
             $paymentMethod->delete();
-            $this->logActivity('Deleted payment method', [
-                'payment_method_id' => $id,
-                'type' => $type,
-                'label' => $label
-            ]);
+            $this->logActivity(
+                'Deleted payment method',
+                "Deleted payment method {$label} ({$type})",
+                [
+                    'payment_method_id' => $id,
+                    'type' => $type,
+                    'label' => $label
+                ]
+            );
             return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method deleted.');
         } catch (\Exception $e) {
             \Log::error('Failed to delete payment method: ' . $e->getMessage());
