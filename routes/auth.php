@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\OtpPasswordResetController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,16 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password-otp', [OtpPasswordResetController::class, 'resetPassword'])
         ->name('password.reset.otp.post');
+
+    // Two-Factor Authentication routes for login
+    Route::get('two-factor-challenge', [TwoFactorController::class, 'show'])
+        ->name('two-factor.login');
+
+    Route::post('two-factor-challenge', [TwoFactorController::class, 'verify'])
+        ->name('two-factor.verify');
+
+    Route::post('two-factor-resend', [TwoFactorController::class, 'resend'])
+        ->name('two-factor.resend');
 });
 
 Route::middleware('auth')->group(function () {
