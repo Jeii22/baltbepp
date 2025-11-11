@@ -281,7 +281,9 @@ class TwoFactorController extends Controller
         if ($user->isAdmin()) {
             return route('admin.dashboard', absolute: false);
         }
-        // Default for customers
-        return route('customer.dashboard', absolute: false);
+    // Default for customers/users: send to public welcome page
+    // Add a session flag so SweetAlert appears
+    session()->flash('just_logged_in', true);
+    return route('welcome', absolute: false);
     }
 }

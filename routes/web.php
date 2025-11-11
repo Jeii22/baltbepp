@@ -117,7 +117,8 @@ Route::get('/dashboard', function () {
     if ($user->isAdmin()) {
         return redirect()->route('admin.dashboard');
     }
-    return redirect()->route('customer.dashboard');
+    // For regular users, land on the public welcome page
+    return redirect()->route('welcome');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Google OAuth for users only

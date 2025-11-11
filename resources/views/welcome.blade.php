@@ -6,6 +6,8 @@
 
     <title>Balt Bep</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
@@ -18,6 +20,23 @@
 </head>
 <body class="antialiased bg-white text-gray-800">
 
+    <!-- SweetAlert for login welcome -->
+    @auth
+        @if(session('just_logged_in'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Welcome {{ Auth::user()->name }}',
+                        text: 'Ready to take a Trip',
+                        confirmButtonColor: '#3085d6',
+                        timer: 3500,
+                        timerProgressBar: true
+                    });
+                });
+            </script>
+        @endif
+    @endauth
     <!-- Navbar -->
     <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
