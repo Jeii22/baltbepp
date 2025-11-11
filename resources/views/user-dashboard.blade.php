@@ -80,6 +80,7 @@
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <a href="{{ route('welcome') }}" class="bg-blue-600 text-white px-5 py-3 rounded-xl hover:bg-blue-700 transition shadow">Book a Trip</a>
+                    <a href="{{ route('app.download') }}" class="bg-emerald-600 text-white px-5 py-3 rounded-xl hover:bg-emerald-700 transition shadow">Download APK</a>
             </div>
         </div>
 
