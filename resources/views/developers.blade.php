@@ -91,22 +91,22 @@
 <body class="antialiased bg-white text-gray-800">
 
 
-    <!-- Hero Section with Same Background -->
-    <div class="relative bg-cover bg-center min-h-screen" style="background-image: url('/images/barko.png');">
-        <!-- Darker overlay -->
-        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
+    <!-- Hero Section with Background -->
+    <section class="relative w-full min-h-screen bg-cover bg-center bg-fixed" style="background-image: url('/images/barko.png'); background-position: center center; background-repeat: no-repeat; background-size: cover;">
+        <!-- Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70"></div>
         
         <!-- Content Container -->
-        <div class="relative z-10">
+        <div class="relative z-10 container mx-auto px-4 py-16">
             <!-- Title Section -->
-            <div class="text-center text-white px-6 pt-20 pb-16">
-                <h1 class="text-5xl md:text-6xl font-bold mb-4 drop-shadow-2xl">Meet Our Team</h1>
-                <p class="text-xl md:text-2xl italic drop-shadow-lg">The minds behind Balt Bep</p>
+            <div class="text-center text-white mb-16 pt-8">
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-2xl animate-fade-in">Meet Our Team</h1>
+                <p class="text-2xl md:text-3xl italic drop-shadow-xl text-gray-200">The minds behind Balt Bep</p>
             </div>
 
-            <!-- Floating Developer Containers -->
-            <div class="px-6 pb-20">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <!-- Floating Developer Containers Grid -->
+            <div class="max-w-7xl mx-auto pb-16">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 
                 <!-- Developer 1: Jake Rodriguez -->
                 <a href="https://www.facebook.com/kajake.rodriguez" target="_blank" class="float-animation neon-blue bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
