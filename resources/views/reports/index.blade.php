@@ -269,6 +269,13 @@
                     </svg>
                     Download CSV
                 </a>
+                <a href="{{ route('reports.export', ['type' => 'bookings', 'format' => 'sql', 'start_date' => $startDate, 'end_date' => $endDate]) }}" 
+                   class="inline-flex items-center px-3 py-2 ml-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 3h12v2H4V3zm0 4h12v2H4V7zm0 4h8v2H4v-2z"></path>
+                    </svg>
+                    Download SQL
+                </a>
             </div>
 
             <!-- Export Revenue -->
@@ -282,6 +289,13 @@
                     </svg>
                     Download CSV
                 </a>
+                <a href="{{ route('reports.export', ['type' => 'revenue', 'format' => 'sql', 'start_date' => $startDate, 'end_date' => $endDate]) }}" 
+                   class="inline-flex items-center px-3 py-2 ml-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 3h12v2H4V3zm0 4h12v2H4V7zm0 4h8v2H4v-2z"></path>
+                    </svg>
+                    Download SQL
+                </a>
             </div>
 
             <!-- Export Passengers -->
@@ -294,6 +308,13 @@
                         <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                     </svg>
                     Download CSV
+                </a>
+                <a href="{{ route('reports.export', ['type' => 'passengers', 'format' => 'sql', 'start_date' => $startDate, 'end_date' => $endDate]) }}" 
+                   class="inline-flex items-center px-3 py-2 ml-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 3h12v2H4V3zm0 4h12v2H4V7zm0 4h8v2H4v-2z"></path>
+                    </svg>
+                    Download SQL
                 </a>
             </div>
         </div>
