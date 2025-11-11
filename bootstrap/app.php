@@ -31,6 +31,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'idleTimeout' => App\Http\Middleware\IdleTimeout::class,
             'securityHeaders' => App\Http\Middleware\SecurityHeaders::class,
         ]);
+        // Trust all proxies if deployed behind CDN/load balancer to ensure correct scheme detection
+        // This helps avoid session cookie issues (secure cookies over HTTPS) and redirect loops.
+        $middleware->trustProxies(at: '*');
+
         // Apply to web group globally
         $middleware->web(append: [
             App\Http\Middleware\TrackLastActive::class,
