@@ -90,55 +90,6 @@
 </head>
 <body class="antialiased bg-white text-gray-800">
 
-    <!-- Navbar -->
-    <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false }">
-        <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
-            <!-- Logo -->
-            <a href="/" class="flex items-center space-x-2">
-                <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
-            </a>
-
-
-            <!-- Auth area -->
-            <div x-data="{ dropdownOpen: false }" class="relative">
-                @auth
-                    <button @click="dropdownOpen = !dropdownOpen" class="flex items-center space-x-2 text-white hover:text-cyan-200 transition">
-                        <span>Welcome {{ Auth::user()->name }}</span>
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-
-                    @if(Auth::user()->isSuperAdmin())
-                        <a href="{{ route('dashboard') }}" class="ml-3 bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg transition">
-                            Super Admin Dashboard
-                        </a>
-                    @elseif(Auth::user()->isAdmin())
-                        <a href="{{ route('dashboard') }}" class="ml-3 bg-green-600 hover:bg-green-700 px-3 py-1 rounded-lg transition">
-                            Admin Dashboard
-                        </a>
-                    @endif
-
-                    <!-- Dropdown Menu -->
-                    <div x-show="dropdownOpen" @click.away="dropdownOpen = false" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
-                        <a href="{{ route('customer.dashboard') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-t-lg">
-                            My Profile
-                        </a>
-                        <form method="POST" action="{{ route('logout') }}" class="border-t">
-                            @csrf
-                            <button type="submit" class="w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-b-lg">
-                                Logout
-                            </button>
-                        </form>
-                    </div>
-                @else
-                    <a href="{{ route('login') }}" class="border border-white px-4 py-2 rounded-lg text-white hover:bg-white hover:text-blue-600 transition">
-                        Sign In
-                    </a>
-                @endauth
-            </div>
-        </div>
-    </nav>
 
     <!-- Hero Section with Same Background -->
     <div class="relative bg-cover bg-center h-screen" style="background-image: url('/images/barko.png');">
@@ -170,7 +121,7 @@
                 </a>
 
                 <!-- Developer 2: Melchades Mansueto -->
-                <a href="https://www.facebook.com/melchades.mansueto" target="_blank" class="float-animation neon-purple bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
+                <a href="https://www.facebook.com/melchades.mansueto.10" target="_blank" class="float-animation neon-purple bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-purple-500">
                             <img src="{{ asset('images/developers/melchades.jpg') }}" alt="Melchades Mansueto" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -186,7 +137,7 @@
                 </a>
 
                 <!-- Developer 3: Kyle Gadiano -->
-                <a href="https://www.facebook.com/kyle.gadiano" target="_blank" class="float-animation neon-green bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
+                <a href="https://www.facebook.com/kyle.gadiano.7" target="_blank" class="float-animation neon-green bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-green-500">
                             <img src="{{ asset('images/developers/kyle.jpg') }}" alt="Kyle Gadiano" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -202,7 +153,7 @@
                 </a>
 
                 <!-- Developer 4: Rudelyn Illut -->
-                <a href="https://www.facebook.com/rudelyn.illut" target="_blank" class="float-animation neon-orange bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
+                <a href="https://www.facebook.com/rudelyn.illut.7" target="_blank" class="float-animation neon-orange bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-orange-500">
                             <img src="{{ asset('images/developers/rudelyn.jpg') }}" alt="Rudelyn Illut" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -218,7 +169,7 @@
                 </a>
 
                 <!-- Developer 5: Jona Mae Illut -->
-                <a href="https://www.facebook.com/jonamae.illut" target="_blank" class="float-animation neon-pink bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 md:col-span-2 lg:col-span-1 block cursor-pointer">
+                <a href="https://www.facebook.com/jhammyss" target="_blank" class="float-animation neon-pink bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 md:col-span-2 lg:col-span-1 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-pink-500">
                             <img src="{{ asset('images/developers/jonamae.jpg') }}" alt="Jona Mae Illut" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
