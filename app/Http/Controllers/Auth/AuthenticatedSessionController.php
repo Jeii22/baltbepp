@@ -49,7 +49,6 @@ class AuthenticatedSessionController extends Controller
             // Set session data AFTER logout
             session()->put('2fa:user:id', $userId);
             session()->put('2fa:remember', $remember);
-            session()->put('show_otp_modal', true);
             session()->save(); // Explicitly save session
 
             \Log::info('2FA session created', [
@@ -60,14 +59,8 @@ class AuthenticatedSessionController extends Controller
 
             // Regenerate only CSRF token so the meta tag matches for AJAX
             $request->session()->regenerateToken();
-
-            // Render login view directly (no redirect) with the OTP modal active
-            return view('auth.login', [
-                'showOtpModal' => true,
-                // Optional diagnostics; safe to remove later
-                'twoFactorUserId' => $userId,
-                'sessionId' => session()->getId(),
-            ])->with('success', 'A verification code was sent to your email. Enter it below to finish signing in.');
+            // Redirect to the challenge page (simple inline form OR auto-link)
+            return redirect()->route('two-factor.login')->with('success', 'A verification link & code were sent to your email. Click the link or enter the code to finish signing in.');
         }
 
         // Test environment fallback: proceed directly

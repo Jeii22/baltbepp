@@ -5,6 +5,7 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 
 class TwoFactorCodeNotification extends Notification
 {
@@ -65,8 +66,17 @@ class TwoFactorCodeNotification extends Notification
 
         if (in_array($this->type, ['registration','login'])) {
             $actionLabel = $this->type === 'login' ? 'Verify Log In' : 'Verify Account';
+            // For login: use a signed temporary auto-verify link (10 min expiry)
+            // For registration: fall back to challenge page or account verification flow
             $actionUrl = $this->type === 'login'
-                ? route('two-factor.login', ['code' => $this->code])
+                ? URL::temporarySignedRoute(
+                    'two-factor.auto',
+                    now()->addMinutes(10),
+                    [
+                        'id' => $notifiable->id,
+                        'code' => $this->code,
+                    ]
+                  )
                 : route('two-factor.login');
             $mailMessage->action($actionLabel, $actionUrl)
                 ->line('')

@@ -58,6 +58,11 @@ Route::middleware('guest')->group(function () {
 
     Route::post('two-factor-resend', [TwoFactorController::class, 'resend'])
         ->name('two-factor.resend');
+
+    // Signed auto verification link (id + code)
+    Route::get('two-factor-auto/{id}/{code}', [TwoFactorController::class, 'auto'])
+        ->middleware('signed')
+        ->name('two-factor.auto');
 });
 
 Route::middleware('auth')->group(function () {

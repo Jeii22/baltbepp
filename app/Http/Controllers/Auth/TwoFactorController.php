@@ -20,37 +20,20 @@ class TwoFactorController extends Controller
         // Check if 2FA session exists
         $userId = session('2fa:user:id');
         
+        // If session missing we still show challenge (user may use signed link that bypasses session)
         if (!$userId) {
-            \Log::warning('2FA session missing', [
+            \Log::info('2FA challenge viewed without session; awaiting signed link or fresh login', [
                 'session_id' => session()->getId(),
-                'session_data' => session()->all(),
                 'ip' => $request->ip(),
             ]);
-            
-            return redirect()->route('login')->with('error', 'Session expired. Please login again.');
         }
 
-        // Optional: Support direct link verification via code query param
+        // Support direct code param ONLY if session user exists (fallback convenience)
         $code = $request->query('code');
-        if ($code) {
+        if ($code && $userId) {
             $user = User::find($userId);
             if ($user && TwoFactorCode::verify($user, $code, 'login')) {
-                // Mark email verified if needed and enable 2FA
-                if (!$user->hasVerifiedEmail()) {
-                    $user->markEmailAsVerified();
-                }
-                if (!$user->two_factor_enabled) {
-                    $user->update(['two_factor_enabled' => true]);
-                }
-
-                // Complete login
-                Auth::login($user, session('2fa:remember', false));
-                session()->forget('2fa:remember');
-                session()->forget('2fa:user:id');
-
-                $request->session()->regenerate();
-                $user->updateLastLogin($request->ip());
-
+                $this->completeLogin($request, $user);
                 return redirect()->route('dashboard')->with('success', 'Login verified. Welcome back!');
             }
         }
@@ -240,5 +223,50 @@ class TwoFactorController extends Controller
         ]);
 
         return back()->with('success', 'Two-factor authentication has been disabled.');
+    }
+
+    /**
+     * Automatically verify via signed link (no reliance on provisional session).
+     */
+    public function auto(Request $request, $id, $code)
+    {
+        $user = User::find($id);
+        if (! $user) {
+            return redirect()->route('login')->with('error', 'Invalid verification link.');
+        }
+
+        if (! TwoFactorCode::verify($user, $code, 'login')) {
+            return redirect()->route('login')->with('error', 'The verification link is invalid or expired.');
+        }
+
+        // Complete login
+        $this->completeLogin($request, $user);
+
+        return redirect()->intended(route('dashboard', absolute: false))->with('success', 'Login verified successfully.');
+    }
+
+    /**
+     * Shared logic to finalize login after successful 2FA.
+     */
+    protected function completeLogin(Request $request, User $user): void
+    {
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+        if (! $user->two_factor_enabled) {
+            $user->update(['two_factor_enabled' => true]);
+        }
+
+        Auth::login($user, session('2fa:remember', false));
+        session()->forget('2fa:user:id');
+        session()->forget('2fa:remember');
+
+        $request->session()->regenerate();
+        $user->updateLastLogin($request->ip());
+
+        \Log::info('2FA completeLogin executed', [
+            'user_id' => $user->id,
+            'authenticated' => auth()->check(),
+        ]);
     }
 }

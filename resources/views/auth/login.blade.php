@@ -21,7 +21,6 @@
         <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
     @endif
     <style>
-        /* Ensure the official reCAPTCHA badge is visible at bottom-right */
         .grecaptcha-badge {
             visibility: visible !important;
             opacity: 1 !important;
@@ -30,43 +29,17 @@
             bottom: 12px !important;
             z-index: 9999 !important;
         }
-        
-        /* Modal styles */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 50;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            max-width: 28rem;
-            width: 90%;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
     </style>
     <script>
         function onLoginSubmit(e) {
             e.preventDefault();
             @if(config('services.recaptcha.version', 'v3') === 'v2')
-                // v2 invisible: badge appears bottom-right; callback will submit
                 if (typeof grecaptcha !== 'undefined') {
                     grecaptcha.execute();
                 } else {
                     e.target.submit();
                 }
             @else
-                // v3: execute to get score token, then submit
                 grecaptcha.ready(function() {
                     grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'login'}).then(function(token) {
                         document.getElementById('recaptcha_token').value = token;
@@ -75,8 +48,6 @@
                 });
             @endif
         }
-
-        // reCAPTCHA v2 callback receives token
         function onRecaptchaV2Login(token) {
             document.getElementById('recaptcha_token').value = token;
             var form = document.querySelector('form[action="{{ route('login') }}"]');
@@ -103,235 +74,75 @@
         </h2>
 
         <!-- Form -->
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('login') }}" class="space-y-5" novalidate>
             @csrf
             <input type="hidden" id="recaptcha_token" name="recaptcha_token">
 
-            <!-- Email Address -->
             <div>
-                <x-input-label for="email" :value="__('Email')" />
-                <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <div class="mt-1 relative">
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
+                           class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10"
+                           placeholder="you@gmail.com">
+                    <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+                        📧
+                    </span>
+                </div>
+                @error('email')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
-            <!-- Password -->
-            <div class="mt-4">
-                <x-input-label for="password" :value="__('Password')" />
-                <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <div class="mt-1 relative">
+                    <input id="password" type="password" name="password" required
+                           class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10"
+                           placeholder="Your password">
+                    <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+                        🔒
+                    </span>
+                </div>
+                @error('password')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
-            <!-- Remember Me -->
-            <div class="block mt-4">
-                <label for="remember_me" class="inline-flex items-center cursor-pointer">
-                    <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                    <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+            <div class="flex items-center justify-between">
+                <label for="remember_me" class="flex items-center">
+                    <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring focus:ring-blue-200" name="remember">
+                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
                 </label>
+
+                <a href="{{ route('password.request.otp') }}" class="text-sm text-blue-600 hover:text-blue-800">Forgot password?</a>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request.otp') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            </div>
-
-            <x-input-error :messages="$errors->get('recaptcha')" class="mt-2" />
-
-            <div class="flex items-center justify-end mt-4">
-                @if(config('services.recaptcha.version', 'v3') === 'v2')
-                    <x-primary-button class="ml-3 g-recaptcha"
+            @if(config('services.recaptcha.version', 'v3') === 'v2')
+                <button type="submit"
+                        class="w-full py-3 px-4 bg-gray-900 text-white font-semibold rounded-lg shadow hover:bg-gray-800 transition g-recaptcha"
                         data-sitekey="{{ config('services.recaptcha.site_key') }}"
                         data-callback="onRecaptchaV2Login"
                         data-size="invisible">
-                        {{ __('Log in') }}
-                    </x-primary-button>
-                @else
-                    <x-primary-button class="ml-3">
-                        {{ __('Log in') }}
-                    </x-primary-button>
-                @endif
-            </div>
-    </form>
+                    Sign in
+                </button>
+            @else
+                <button type="submit"
+                        class="w-full py-3 px-4 bg-gray-900 text-white font-semibold rounded-lg shadow hover:bg-gray-800 transition">
+                    Sign in
+                </button>
+            @endif
     <script>
-        // Attach the reCAPTCHA v3 handler to the login form
         document.addEventListener('DOMContentLoaded', function() {
             var form = document.querySelector('form[action="{{ route('login') }}"]');
-            if (form) {
-                form.addEventListener('submit', onLoginSubmit);
-            }
+            if (form) form.addEventListener('submit', onLoginSubmit);
         });
     </script>
-
-    <!-- Official reCAPTCHA badge is shown bottom-right -->
+        </form>
 
         <!-- Add a register link below the sign-in button -->
-                <!-- Add a register link below the sign-in button -->
         <p class="text-center text-sm text-gray-600 mt-4">
             Don't have an account? <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-800">Register here</a>
         </p>
     </div>
-
-    <!-- 2FA Verification Form -->
-    <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 space-y-6 mt-8">
-        <!-- Title -->
-        <h2 class="text-2xl font-bold text-center text-gray-900">
-            Verify Your Login
-        </h2>
-
-        <!-- Success Message -->
-        <div id="otpSuccess" class="hidden mb-4 p-3 bg-green-100 text-green-700 rounded-lg text-sm"></div>
-        
-        <!-- Error Message -->
-        <div id="otpError" class="hidden mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm"></div>
-
-        <!-- Verification Form -->
-        <form id="otpForm" method="POST" action="{{ route('two-factor.login') }}">
-            @csrf
-            <div class="mb-6">
-                <label for="code" class="block text-sm font-medium text-gray-700 mb-2">Verification Code</label>
-                <input 
-                    id="code" 
-                    type="text" 
-                    name="code" 
-                    maxlength="6"
-                    class="block w-full px-4 py-3 text-center text-2xl font-mono tracking-widest border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                    placeholder="000000"
-                    required 
-                    autofocus
-                    autocomplete="one-time-code"
-                >
-                <p id="codeError" class="mt-2 text-sm text-red-600 hidden"></p>
-            </div>
-
-            <button 
-                type="submit" 
-                id="verifyBtn"
-                class="w-full px-4 py-3 bg-blue-600 border border-transparent rounded-lg font-semibold text-sm text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
-            >
-                Verify Code
-            </button>
-        </form>
-
-        <!-- Resend Code -->
-        <div class="mt-6 text-center">
-            <p class="text-sm text-gray-600 mb-2">Didn't receive the code?</p>
-            <form id="resendForm" method="POST" action="{{ route('two-factor.resend') }}">
-                @csrf
-                <button 
-                    type="submit" 
-                    id="resendBtn"
-                    class="text-sm text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:underline"
-                >
-                    Resend Code
-                </button>
-            </form>
-        </div>
-
-        <!-- Back to Login -->
-        <div class="mt-4 text-center">
-            <a href="{{ route('login') }}" class="text-sm text-gray-500 hover:text-gray-700">
-                ← Back to Login
-            </a>
-        </div>
-    </div>
-
-    <script>
-        // Handle OTP form submission via AJAX
-        document.addEventListener('DOMContentLoaded', function() {
-            const otpForm = document.getElementById('otpForm');
-            if (otpForm) {
-                otpForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const code = document.getElementById('code').value;
-                    const verifyBtn = document.getElementById('verifyBtn');
-                    const errorDiv = document.getElementById('codeError');
-                    const otpError = document.getElementById('otpError');
-                    
-                    // Clear previous errors
-                    errorDiv.classList.add('hidden');
-                    otpError.classList.add('hidden');
-                    
-                    // Disable button
-                    verifyBtn.disabled = true;
-                    verifyBtn.textContent = 'Verifying...';
-                    
-                    // Submit via fetch
-                    fetch('{{ route('two-factor.login') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Accept': 'application/json'
-                        },
-                        credentials: 'same-origin',
-                        body: JSON.stringify({ code: code })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Redirect to dashboard
-                            window.location.href = data.redirect || '{{ route('dashboard') }}';
-                        } else {
-                            // Show error
-                            errorDiv.textContent = data.message || 'Invalid or expired code.';
-                            errorDiv.classList.remove('hidden');
-                            verifyBtn.disabled = false;
-                            verifyBtn.textContent = 'Verify Code';
-                        }
-                    })
-                    .catch(error => {
-                        otpError.textContent = 'An error occurred. Please try again.';
-                        otpError.classList.remove('hidden');
-                        verifyBtn.disabled = false;
-                        verifyBtn.textContent = 'Verify Code';
-                    });
-                });
-            }
-
-            // Handle resend form
-            const resendForm = document.getElementById('resendForm');
-            if (resendForm) {
-                resendForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const resendBtn = document.getElementById('resendBtn');
-                    const successDiv = document.getElementById('otpSuccess');
-                    const errorDiv = document.getElementById('otpError');
-                    
-                    resendBtn.disabled = true;
-                    resendBtn.textContent = 'Sending...';
-                    
-                    fetch('{{ route('two-factor.resend') }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Accept': 'application/json'
-                        },
-                        credentials: 'same-origin'
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            successDiv.textContent = 'A new code has been sent to your email.';
-                            successDiv.classList.remove('hidden');
-                            errorDiv.classList.add('hidden');
-                        } else {
-                            errorDiv.textContent = data.message || 'Failed to resend code.';
-                            errorDiv.classList.remove('hidden');
-                        }
-                        resendBtn.disabled = false;
-                        resendBtn.textContent = 'Resend Code';
-                    })
-                    .catch(error => {
-                        errorDiv.textContent = 'An error occurred. Please try again.';
-                        errorDiv.classList.remove('hidden');
-                        resendBtn.disabled = false;
-                        resendBtn.textContent = 'Resend Code';
-                    });
-                });
-            }
-        });
-    </script>
 </body>
 </html>
