@@ -49,7 +49,6 @@
                     @endif
 
                     <div x-show="dropdownOpen" @click.away="dropdownOpen = false" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
-                        <a href="{{ route('customer.dashboard') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-50">My Profile</a>
                         <form method="POST" action="{{ route('logout') }}" class="border-t">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-b-lg">Logout</button>
@@ -80,7 +79,6 @@
                 <p class="text-sm text-gray-500 mt-2">Member since {{ $user->created_at ? \Illuminate\Support\Carbon::parse($user->created_at)->format('M d, Y') : 'Recently' }}</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-                <a href="{{ route('customer.dashboard') }}" class="bg-white text-blue-600 px-5 py-3 rounded-xl border border-blue-200 hover:bg-blue-50 transition shadow">Back to Profile</a>
                 <a href="{{ route('welcome') }}" class="bg-blue-600 text-white px-5 py-3 rounded-xl hover:bg-blue-700 transition shadow">Book a Trip</a>
             </div>
         </div>
