@@ -18,6 +18,15 @@
             }
         }
 
+        @keyframes neonGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 20px currentColor);
+            }
+            50% {
+                filter: drop-shadow(0 0 20px currentColor) drop-shadow(0 0 40px currentColor);
+            }
+        }
+
         .float-animation {
             animation: float 3s ease-in-out infinite;
         }
@@ -37,6 +46,46 @@
         .float-animation:nth-child(5) {
             animation-delay: 2s;
         }
+
+        .neon-blue {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 40px rgba(59, 130, 246, 0.6), 0 0 60px rgba(59, 130, 246, 0.4);
+        }
+
+        .neon-blue:hover {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 1), 0 0 60px rgba(59, 130, 246, 0.8), 0 0 90px rgba(59, 130, 246, 0.6);
+        }
+
+        .neon-purple {
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.8), 0 0 40px rgba(168, 85, 247, 0.6), 0 0 60px rgba(168, 85, 247, 0.4);
+        }
+
+        .neon-purple:hover {
+            box-shadow: 0 0 30px rgba(168, 85, 247, 1), 0 0 60px rgba(168, 85, 247, 0.8), 0 0 90px rgba(168, 85, 247, 0.6);
+        }
+
+        .neon-green {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.6), 0 0 60px rgba(34, 197, 94, 0.4);
+        }
+
+        .neon-green:hover {
+            box-shadow: 0 0 30px rgba(34, 197, 94, 1), 0 0 60px rgba(34, 197, 94, 0.8), 0 0 90px rgba(34, 197, 94, 0.6);
+        }
+
+        .neon-orange {
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.8), 0 0 40px rgba(249, 115, 22, 0.6), 0 0 60px rgba(249, 115, 22, 0.4);
+        }
+
+        .neon-orange:hover {
+            box-shadow: 0 0 30px rgba(249, 115, 22, 1), 0 0 60px rgba(249, 115, 22, 0.8), 0 0 90px rgba(249, 115, 22, 0.6);
+        }
+
+        .neon-pink {
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.8), 0 0 40px rgba(236, 72, 153, 0.6), 0 0 60px rgba(236, 72, 153, 0.4);
+        }
+
+        .neon-pink:hover {
+            box-shadow: 0 0 30px rgba(236, 72, 153, 1), 0 0 60px rgba(236, 72, 153, 0.8), 0 0 90px rgba(236, 72, 153, 0.6);
+        }
     </style>
 </head>
 <body class="antialiased bg-white text-gray-800">
@@ -48,14 +97,7 @@
             <a href="/" class="flex items-center space-x-2">
                 <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
             </a>
-          
-            <!-- Nav Links -->
-            <div class="hidden md:flex space-x-8 text-white font-medium">
-                <a href="/" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200">Home</a>
-                <a href="/#book" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200">Book</a>
-                <a href="/#about-us" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200">About Us</a>
-                <a href="/#contact-us" class="px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200">Contact Us</a>
-            </div>
+
 
             <!-- Auth area -->
             <div x-data="{ dropdownOpen: false }" class="relative">
@@ -100,7 +142,7 @@
 
     <!-- Hero Section with Same Background -->
     <div class="relative bg-cover bg-center h-screen" style="background-image: url('/images/barko.png');">
-        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center">
             <div class="text-center text-white px-6 mb-20">
                 <h1 class="text-5xl md:text-6xl font-bold mb-4">Meet Our Team</h1>
                 <p class="text-xl md:text-2xl italic">The minds behind Balt Bep</p>
@@ -112,69 +154,84 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 max-w-6xl w-full mt-32">
                 
                 <!-- Developer 1: Jake Rodriguez -->
-                <div class="float-animation bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 hover:shadow-blue-500/50">
+                <a href="https://www.facebook.com/kajake.rodriguez" target="_blank" class="float-animation neon-blue bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
-                        <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center mb-4 shadow-lg">
-                            <span class="text-3xl font-bold text-white">JR</span>
+                        <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-blue-500">
+                            <img src="{{ asset('images/developers/jake.jpg') }}" alt="Jake Rodriguez" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="w-full h-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center" style="display:none;">
+                                <span class="text-3xl font-bold text-white">JR</span>
+                            </div>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-800 mb-2">Jake Rodriguez</h3>
                         <p class="text-blue-600 font-semibold mb-3">Programmer</p>
                         <div class="w-16 h-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mb-3"></div>
                         <p class="text-gray-600 text-sm">Full-stack developer crafting seamless digital experiences</p>
                     </div>
-                </div>
+                </a>
 
                 <!-- Developer 2: Melchades Mansueto -->
-                <div class="float-animation bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 hover:shadow-purple-500/50">
+                <a href="https://www.facebook.com/melchades.mansueto" target="_blank" class="float-animation neon-purple bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
-                        <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center mb-4 shadow-lg">
-                            <span class="text-3xl font-bold text-white">MM</span>
+                        <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-purple-500">
+                            <img src="{{ asset('images/developers/melchades.jpg') }}" alt="Melchades Mansueto" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="w-full h-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center" style="display:none;">
+                                <span class="text-3xl font-bold text-white">MM</span>
+                            </div>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-800 mb-2">Melchades Mansueto</h3>
                         <p class="text-purple-600 font-semibold mb-3">Designer 1</p>
                         <div class="w-16 h-1 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full mb-3"></div>
                         <p class="text-gray-600 text-sm">Creative mind bringing visual harmony to every pixel</p>
                     </div>
-                </div>
+                </a>
 
                 <!-- Developer 3: Kyle Gadiano -->
-                <div class="float-animation bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 hover:shadow-green-500/50">
+                <a href="https://www.facebook.com/kyle.gadiano" target="_blank" class="float-animation neon-green bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
-                        <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center mb-4 shadow-lg">
-                            <span class="text-3xl font-bold text-white">KG</span>
+                        <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-green-500">
+                            <img src="{{ asset('images/developers/kyle.jpg') }}" alt="Kyle Gadiano" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="w-full h-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center" style="display:none;">
+                                <span class="text-3xl font-bold text-white">KG</span>
+                            </div>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-800 mb-2">Kyle Gadiano</h3>
                         <p class="text-green-600 font-semibold mb-3">Designer 2</p>
                         <div class="w-16 h-1 bg-gradient-to-r from-green-400 to-green-600 rounded-full mb-3"></div>
                         <p class="text-gray-600 text-sm">Passionate designer creating intuitive user interfaces</p>
                     </div>
-                </div>
+                </a>
 
                 <!-- Developer 4: Rudelyn Illut -->
-                <div class="float-animation bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 hover:shadow-orange-500/50">
+                <a href="https://www.facebook.com/rudelyn.illut" target="_blank" class="float-animation neon-orange bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
-                        <div class="w-24 h-24 bg-gradient-to-br from-orange-500 to-orange-700 rounded-full flex items-center justify-center mb-4 shadow-lg">
-                            <span class="text-3xl font-bold text-white">RI</span>
+                        <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-orange-500">
+                            <img src="{{ asset('images/developers/rudelyn.jpg') }}" alt="Rudelyn Illut" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="w-full h-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center" style="display:none;">
+                                <span class="text-3xl font-bold text-white">RI</span>
+                            </div>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-800 mb-2">Rudelyn Illut</h3>
                         <p class="text-orange-600 font-semibold mb-3">Researcher 1</p>
                         <div class="w-16 h-1 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full mb-3"></div>
                         <p class="text-gray-600 text-sm">Dedicated researcher uncovering insights and solutions</p>
                     </div>
-                </div>
+                </a>
 
                 <!-- Developer 5: Jona Mae Illut -->
-                <div class="float-animation bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 hover:shadow-pink-500/50 md:col-span-2 lg:col-span-1">
+                <a href="https://www.facebook.com/jonamae.illut" target="_blank" class="float-animation neon-pink bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 md:col-span-2 lg:col-span-1 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
-                        <div class="w-24 h-24 bg-gradient-to-br from-pink-500 to-pink-700 rounded-full flex items-center justify-center mb-4 shadow-lg">
-                            <span class="text-3xl font-bold text-white">JI</span>
+                        <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-pink-500">
+                            <img src="{{ asset('images/developers/jonamae.jpg') }}" alt="Jona Mae Illut" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="w-full h-full bg-gradient-to-br from-pink-500 to-pink-700 flex items-center justify-center" style="display:none;">
+                                <span class="text-3xl font-bold text-white">JI</span>
+                            </div>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-800 mb-2">Jona Mae Illut</h3>
                         <p class="text-pink-600 font-semibold mb-3">Researcher 2</p>
                         <div class="w-16 h-1 bg-gradient-to-r from-pink-400 to-pink-600 rounded-full mb-3"></div>
                         <p class="text-gray-600 text-sm">Analytical researcher driving innovation through data</p>
                     </div>
-                </div>
+                </a>
 
             </div>
         </div>
