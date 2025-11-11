@@ -25,7 +25,7 @@
     RewriteRule ^ index.php [L]
 
     # Return 404 (not 403) for internal folders to reduce path disclosure
-    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor|storage)/ - [L,NC,R=404]
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor)/ - [L,NC,R=404]
 
     # Block direct access if someone forces /index.php explicitly
     RewriteRule ^index\.php$ - [F,L]
