@@ -233,11 +233,60 @@ document.getElementById('photo')?.addEventListener('change', function(e){
                     <a href="mailto:support@baltbep.com" class="inline-flex items-center mt-6 text-blue-600 font-semibold hover:text-blue-800">Contact Support</a>
                 </div>
             </div>
+
+            <!-- Mobile App Download Card -->
+            <div class="grid md:grid-cols-1 gap-8 mt-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-blue-100 flex flex-col md:flex-row items-start md:items-center justify-between">
+                    <div>
+                        <p class="text-sm uppercase tracking-widest text-blue-600">Mobile</p>
+                        <h3 class="text-xl font-bold text-gray-900 mt-2">Download our Android App (APK)</h3>
+                        <p class="text-gray-600 mt-3">Install the APK and sign in with your account. The app connects to this website for live schedules, fares, and bookings.</p>
+                        <p class="text-xs text-gray-500 mt-2">If your device warns about unknown apps, allow installation from your browser or files app.</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <a href="{{ route('app.download') }}" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-xl hover:bg-blue-700 transition shadow">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 12 12 16.5m0 0 4.5-4.5M12 16.5V3"/>
+                            </svg>
+                            Download APK
+                        </a>
+                        <div class="text-xs text-gray-500 mt-2">
+                            Version info: <span id="app-version">checking…</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Show APK error if present
+            @if ($errors->has('apk'))
+                Swal.fire({
+                    icon: 'info',
+                    title: 'APK Unavailable',
+                    text: @json($errors->first('apk')),
+                });
+            @endif
+
+            // Fetch app version for display
+            fetch(@json(route('app.version')))
+                .then(r => r.json())
+                .then(d => {
+                    const el = document.getElementById('app-version');
+                    if (!el) return;
+                    if (d && d.updated_at) {
+                        el.textContent = `${d.version ?? 'n/a'} (updated ${new Date(d.updated_at).toLocaleString()})`;
+                    } else {
+                        el.textContent = 'n/a';
+                    }
+                })
+                .catch(() => {
+                    const el = document.getElementById('app-version');
+                    if (el) el.textContent = 'n/a';
+                });
+
             const form = document.querySelector('form[action="{{ route('profile.update') }}"]');
             form.addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevent default form submission

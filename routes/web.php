@@ -228,6 +228,32 @@ Route::get('/welcome', function () {
     return view('welcome', compact('fares'));
 })->name('welcome');
 
+// Mobile APK download (public)
+Route::get('/download/apk', function () {
+    $path = public_path('apk/baltbep-latest.apk');
+    if (! file_exists($path)) {
+        // Gracefully notify and return to previous page
+        return back()->withErrors(['apk' => 'APK is not available yet. Please check back later.']);
+    }
+    $filename = 'BaltBep.apk';
+    return response()->download($path, $filename, [
+        'Content-Type' => 'application/vnd.android.package-archive',
+        'Content-Disposition' => 'attachment; filename="'.$filename.'"'
+    ]);
+})->name('app.download');
+
+// Mobile app version info (useful for the APK/WebView to check updates)
+Route::get('/app/version', function () {
+    $path = public_path('apk/baltbep-latest.apk');
+    $mtime = file_exists($path) ? filemtime($path) : null;
+    return response()->json([
+        'ok' => true,
+        'version' => $mtime ? date('Y.m.d.Hi', $mtime) : null,
+        'updated_at' => $mtime ? date('c', $mtime) : null,
+        'download_url' => route('app.download'),
+    ]);
+})->name('app.version');
+
 // Route for My Bookings
 Route::get('/my-bookings', function () {
     $bookings = \App\Models\Booking::with(['passengers','trip'])
