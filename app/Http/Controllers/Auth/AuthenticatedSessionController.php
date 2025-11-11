@@ -30,16 +30,30 @@ class AuthenticatedSessionController extends Controller
 
         // Always require multi-factor verification for every login (skip only for unit tests)
         if (! app()->runningUnitTests()) {
-            // Immediately log out the provisional session
-            Auth::logout();
-
-            // Store context for 2FA verification
-            $request->session()->put('2fa:user:id', $user->id);
-            $request->session()->put('2fa:remember', $request->boolean('remember'));
-
-            // Generate a fresh login OTP code and notify user
+            // Store user data BEFORE logout (to avoid losing the user object)
+            $userId = $user->id;
+            $userEmail = $user->email;
+            $remember = $request->boolean('remember');
+            
+            // Generate OTP code BEFORE logout (while we still have the user)
             $twoFactorCode = \App\Models\TwoFactorCode::createForUser($user, 'login');
+            
+            // Send notification BEFORE logout
             $user->notify(new \App\Notifications\TwoFactorCodeNotification($twoFactorCode->code, 'login'));
+            
+            // NOW logout the provisional session
+            Auth::logout();
+            
+            // Set session data AFTER logout
+            session()->put('2fa:user:id', $userId);
+            session()->put('2fa:remember', $remember);
+            session()->save(); // Explicitly save session
+            
+            \Log::info('2FA session created', [
+                'user_id' => $userId,
+                'session_id' => session()->getId(),
+                '2fa_user_id' => session('2fa:user:id'),
+            ]);
 
             return redirect()->route('two-factor.login')->with('success', 'We sent a verification email: confirm this login to continue.');
         }

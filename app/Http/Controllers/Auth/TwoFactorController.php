@@ -17,14 +17,22 @@ class TwoFactorController extends Controller
      */
     public function show(Request $request)
     {
-        if (!session('2fa:user:id')) {
-            return redirect()->route('login');
+        // Check if 2FA session exists
+        $userId = session('2fa:user:id');
+        
+        if (!$userId) {
+            \Log::warning('2FA session missing', [
+                'session_id' => session()->getId(),
+                'session_data' => session()->all(),
+                'ip' => $request->ip(),
+            ]);
+            
+            return redirect()->route('login')->with('error', 'Session expired. Please login again.');
         }
 
         // Optional: Support direct link verification via code query param
         $code = $request->query('code');
         if ($code) {
-            $userId = session('2fa:user:id');
             $user = User::find($userId);
             if ($user && TwoFactorCode::verify($user, $code, 'login')) {
                 // Mark email verified if needed and enable 2FA
