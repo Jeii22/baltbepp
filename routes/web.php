@@ -13,6 +13,18 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\DatabaseBackupController;
 
+// DIAGNOSTIC: Test route to verify server is running latest code (bypasses all middleware)
+Route::get('/test-alive', function () {
+    return response()->json([
+        'status' => 'alive',
+        'timestamp' => now()->toDateTimeString(),
+        'app_url' => config('app.url'),
+        'session_domain' => config('session.domain'),
+        'session_secure' => config('session.secure'),
+        'trust_proxies_enabled' => class_exists(\Illuminate\Http\Middleware\TrustProxies::class),
+    ]);
+});
+
 Route::get('/', function () {
     $fares = \App\Models\Fare::where('active', true)->get();
     return view('welcome', compact('fares'));
