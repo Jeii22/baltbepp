@@ -6,8 +6,11 @@
     RewriteEngine On
     RewriteBase /
 
-    # Redirect all traffic to HTTPS (optional, comment out if not using SSL)
+    # Redirect all traffic to HTTPS (proxy-aware)
+    # Only redirect when BOTH Apache doesn't see HTTPS AND the proxy header isn't HTTPS.
+    # Prevents redirect loops behind CDNs/proxies (e.g., Cloudflare/Hostinger) that terminate SSL.
     RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
     # Laravel core rewrite rules
