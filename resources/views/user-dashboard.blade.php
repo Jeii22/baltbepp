@@ -60,9 +60,14 @@
         </div>
     </nav>
 
-    <div class="relative bg-cover bg-center h-[50vh]" style="background-image: url('{{ asset('images/barko.png') }}');">
-        
-    </div>
+    
+    <!-- Hero Section -->
+        <div class="relative bg-cover bg-center h-[80vh]" style="background-image: url('/images/barko.png');">
+            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <div class="text-center text-white px-6">
+                </div>
+            </div>
+        </div>
 
     <div class="relative -mt-40 max-w-5xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl ring-1 ring-black/5 p-8 md:p-10">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
