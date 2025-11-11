@@ -8,6 +8,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Preload hero image to avoid flash and ensure availability -->
+    <link rel="preload" as="image" href="{{ asset('images/barko.png') }}">
 </head>
 @php
     $user = auth()->user();
@@ -60,14 +62,10 @@
         </div>
     </nav>
 
-    
-    <!-- Hero Section -->
-        <div class="relative bg-cover bg-center h-[80vh]" style="background-image: url('/images/barko.png');">
-            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                <div class="text-center text-white px-6">
-                </div>
-            </div>
-        </div>
+    <!-- Hero section with inline styles to guarantee visibility even if Tailwind arbitrary values are purged -->
+    <div class="relative" style="background-image: url('{{ asset('images/barko.png') }}'); background-size: cover; background-position: center; min-height: 50vh;">
+        <div class="absolute inset-0 bg-black/40"></div>
+    </div>
 
     <div class="relative -mt-40 max-w-5xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl ring-1 ring-black/5 p-8 md:p-10">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
