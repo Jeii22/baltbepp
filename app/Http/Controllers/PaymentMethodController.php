@@ -124,13 +124,29 @@ class PaymentMethodController extends Controller
     public function destroy(PaymentMethod $paymentMethod)
     {
         if ($paymentMethod->qr_code_image) {
-            Storage::disk('payment_qr_codes')->delete($paymentMethod->qr_code_image);
+            try {
+                Storage::disk('payment_qr_codes')->delete($paymentMethod->qr_code_image);
+            } catch (\Exception $e) {
+                \Log::warning('Failed to delete QR code file: ' . $e->getMessage());
+            }
         }
+        
         $id = $paymentMethod->id;
-        $paymentMethod->delete();
-        $this->logActivity('Deleted payment method', [
-            'payment_method_id' => $id
-        ]);
-        return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method deleted.');
+        $type = $paymentMethod->type;
+        $label = $paymentMethod->label;
+        
+        try {
+            $paymentMethod->delete();
+            $this->logActivity('Deleted payment method', [
+                'payment_method_id' => $id,
+                'type' => $type,
+                'label' => $label
+            ]);
+            return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method deleted.');
+        } catch (\Exception $e) {
+            \Log::error('Failed to delete payment method: ' . $e->getMessage());
+            return redirect()->route('admin.payment-methods.index')
+                ->withErrors(['error' => 'Failed to delete payment method. Please try again.']);
+        }
     }
 }
