@@ -81,7 +81,18 @@ class TwoFactorController extends Controller
         
         $user = User::findOrFail($userId);
 
+        // Extra diagnostic logging
+        \Log::info('2FA verify attempt', [
+            'user_id' => $user->id,
+            'code_provided' => $request->code,
+            'has_existing_codes' => TwoFactorCode::where('user_id',$user->id)->exists(),
+        ]);
+
         if (!TwoFactorCode::verify($user, $request->code, 'login')) {
+            \Log::warning('2FA verify failed', [
+                'user_id' => $user->id,
+                'code_provided' => $request->code,
+            ]);
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
@@ -93,6 +104,10 @@ class TwoFactorController extends Controller
                 'code' => 'The verification code is invalid or has expired.',
             ]);
         }
+
+        \Log::info('2FA verify success', [
+            'user_id' => $user->id,
+        ]);
 
         // Clear 2FA session data
         session()->forget('2fa:user:id');
@@ -111,6 +126,12 @@ class TwoFactorController extends Controller
         session()->forget('2fa:remember');
 
         $request->session()->regenerate();
+
+        // Confirm session regeneration and auth
+        \Log::info('2FA post-login', [
+            'user_id' => $user->id,
+            'authenticated' => auth()->check(),
+        ]);
 
         // Update last login
         $user->updateLastLogin($request->ip());

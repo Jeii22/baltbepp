@@ -56,7 +56,10 @@ class AuthenticatedSessionController extends Controller
             ]);
 
             // Redirect to login with query parameter to show modal
-            return redirect()->route('login', ['show_otp' => '1'])->with('success', 'We sent a verification email: confirm this login to continue.');
+            // Use a dedicated flag in session to avoid query param stripping by proxies
+            session()->put('show_otp_modal', true);
+            session()->save();
+            return redirect()->route('login')->with('success', 'We sent a verification email: confirm this login to continue.');
         }
 
         // Test environment fallback: proceed directly

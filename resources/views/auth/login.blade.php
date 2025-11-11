@@ -260,13 +260,12 @@
             window.history.replaceState({}, '', url);
         }
 
-        // Check if we should show the modal (from query parameter)
+        // Check if we should show the modal (from session flash via server-side)
+        @if(session('show_otp_modal'))
         window.addEventListener('load', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('show_otp') === '1') {
-                showOtpModal();
-            }
+            showOtpModal();
         });
+        @endif
 
         // Handle OTP form submission via AJAX
         document.addEventListener('DOMContentLoaded', function() {
@@ -296,6 +295,7 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             'Accept': 'application/json'
                         },
+                        credentials: 'same-origin',
                         body: JSON.stringify({ code: code })
                     })
                     .then(response => response.json())
@@ -338,7 +338,8 @@
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             'Accept': 'application/json'
-                        }
+                        },
+                        credentials: 'same-origin'
                     })
                     .then(response => response.json())
                     .then(data => {
