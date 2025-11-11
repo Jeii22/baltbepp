@@ -47,6 +47,36 @@ Route::get('/test-session', function () {
     ]);
 });
 
+// DIAGNOSTIC: Test mail configuration
+Route::get('/test-mail', function () {
+    try {
+        $mailConfig = [
+            'mailer' => config('mail.default'),
+            'host' => config('mail.mailers.smtp.host'),
+            'port' => config('mail.mailers.smtp.port'),
+            'from_address' => config('mail.from.address'),
+            'from_name' => config('mail.from.name'),
+        ];
+        
+        // Try to send a test email
+        \Mail::raw('This is a test email from BaltBep', function($message) {
+            $message->to('test@example.com')
+                    ->subject('Test Email - BaltBep');
+        });
+        
+        return response()->json([
+            'status' => 'Email sent successfully',
+            'config' => $mailConfig,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'Email failed',
+            'error' => $e->getMessage(),
+            'config' => $mailConfig ?? null,
+        ], 500);
+    }
+});
+
 Route::get('/', function () {
     $fares = \App\Models\Fare::where('active', true)->get();
     return view('welcome', compact('fares'));
