@@ -88,30 +88,33 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         // Catch-all for unexpected errors (hide stack traces, show user-friendly message)
-        $exceptions->renderable(function (Throwable $exception, $request) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'message' => 'An error occurred. Please try again later.',
+            $exceptions->renderable(function (Throwable $exception, $request) {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'message' => 'An error occurred. Please try again later.',
+                    ], 500);
+                }
+
+                // Don't override validation/authorization errors
+                if ($exception instanceof ValidationException || 
+                    $exception instanceof AuthorizationException || 
+                    $exception instanceof HttpExceptionInterface) {
+                    return null;
+                }
+
+                // Log detailed error, show generic message to user
+                \Log::channel('security')->error('Unhandled Exception', [
+                    'exception' => get_class($exception),
+                    'message' => $exception->getMessage(),
+                    'trace' => $exception->getTraceAsString(),
+                    'user_id' => auth()->id(),
+                    'url' => request()->fullUrl(),
+                    'ip' => request()->ip(),
+                ]);
+
+                // Render a static error page instead of redirecting to avoid redirect loops
+                return response()->view('errors.500', [
+                    'message' => 'An unexpected error occurred. Please try again later.'
                 ], 500);
-            }
-
-            // Don't override validation/authorization errors
-            if ($exception instanceof ValidationException || 
-                $exception instanceof AuthorizationException || 
-                $exception instanceof HttpExceptionInterface) {
-                return null;
-            }
-
-            // Log detailed error, show generic message to user
-            \Log::channel('security')->error('Unhandled Exception', [
-                'exception' => get_class($exception),
-                'message' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
-                'user_id' => auth()->id(),
-                'url' => request()->fullUrl(),
-                'ip' => request()->ip(),
-            ]);
-
-            return back(fallback: url('/'))->with('error', 'An unexpected error occurred. Our team has been notified.');
-        });
+            });
     })->create();
