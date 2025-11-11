@@ -31,9 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'idleTimeout' => App\Http\Middleware\IdleTimeout::class,
             'securityHeaders' => App\Http\Middleware\SecurityHeaders::class,
         ]);
-        // Trust all proxies if deployed behind CDN/load balancer to ensure correct scheme detection
-        // This helps avoid session cookie issues (secure cookies over HTTPS) and redirect loops.
-        $middleware->trustProxies(at: '*');
+    // (Reverted) Remove global trust of all proxies; rely on default behavior
 
         // Apply to web group globally
         $middleware->web(append: [
@@ -116,9 +114,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     'ip' => request()->ip(),
                 ]);
 
-                // Render a static error page instead of redirecting to avoid redirect loops
-                return response()->view('errors.500', [
-                    'message' => 'An unexpected error occurred. Please try again later.'
-                ], 500);
+                // Original behavior: redirect back to home with a generic error message
+                return back(fallback: url('/'))->with('error', 'An unexpected error occurred. Our team has been notified.');
             });
     })->create();

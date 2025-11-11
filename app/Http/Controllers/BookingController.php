@@ -10,7 +10,7 @@ use App\Services\PaymentService;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-// Cookie persistence removed: rely on session only for booking summary
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Validation\Rule;
 use App\Mail\BookingConfirmedMail;
 use App\Mail\BookingRejectedMail;
@@ -128,8 +128,15 @@ class BookingController extends Controller
             'grand_total' => $totalFare * ($inboundTrip ? 2 : 1),
         ];
 
-        // Store this step in session for checkout persistence
+        // Store this step in session and cookie for checkout persistence
         session(['booking.summary' => $summaryData]);
+        Cookie::queue(
+            Cookie::make(
+                'booking_summary',
+                json_encode($summaryData),
+                config('session.lifetime', 120)
+            )
+        );
 
         return view('bookings.summary', [
             'outboundTrip' => $outboundTrip,
@@ -146,8 +153,19 @@ class BookingController extends Controller
     {
         $data = session('booking.summary');
         if (!$data) {
-            return redirect()->route('bookings.create', ['trip' => $request->input('trip_id') ?? null])
-                ->with('error', 'Your booking session has expired. Please start your booking again.');
+            $cookieData = $request->cookies->get('booking_summary');
+            if ($cookieData) {
+                $cookieData = json_decode($cookieData, true);
+                if (is_array($cookieData)) {
+                    session(['booking.summary' => $cookieData]);
+                    $data = $cookieData;
+                }
+            }
+
+            if (!$data) {
+                return redirect()->route('bookings.create', ['trip' => $request->input('trip_id') ?? null])
+                    ->with('error', 'Your booking session has expired. Please start your booking again.');
+            }
         }
 
         // Determine trips from session data
@@ -182,8 +200,19 @@ class BookingController extends Controller
     {
         $data = session('booking.summary');
         if (!$data) {
-            return redirect()->route('bookings.create', ['trip' => $request->input('trip_id') ?? null])
-                ->with('error', 'Your booking session has expired. Please start your booking again.');
+            $cookieData = $request->cookies->get('booking_summary');
+            if ($cookieData) {
+                $cookieData = json_decode($cookieData, true);
+                if (is_array($cookieData)) {
+                    session(['booking.summary' => $cookieData]);
+                    $data = $cookieData;
+                }
+            }
+
+            if (!$data) {
+                return redirect()->route('bookings.create', ['trip' => $request->input('trip_id') ?? null])
+                    ->with('error', 'Your booking session has expired. Please start your booking again.');
+            }
         }
 
         // Get available wallets
