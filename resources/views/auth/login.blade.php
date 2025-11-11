@@ -85,7 +85,7 @@
                            class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10"
                            placeholder="you@gmail.com">
                     <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-                        📧
+                        
                     </span>
                 </div>
                 @error('email')
@@ -100,7 +100,7 @@
                            class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 pl-10"
                            placeholder="Your password">
                     <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-                        🔒
+                        
                     </span>
                 </div>
                 @error('password')
