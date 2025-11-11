@@ -49,7 +49,9 @@ return [
     */
 
     // Encrypt session data by default unless explicitly disabled
-    'encrypt' => env('SESSION_ENCRYPT', true),
+    // NOTE: For production troubleshooting, you can temporarily set SESSION_ENCRYPT=false
+    // in .env if session issues persist (not recommended long-term)
+    'encrypt' => env('SESSION_ENCRYPT', false),
 
     /*
     |--------------------------------------------------------------------------

@@ -25,6 +25,28 @@ Route::get('/test-alive', function () {
     ]);
 });
 
+// DIAGNOSTIC: Test session functionality
+Route::get('/test-session', function () {
+    // Try to set and get a session value
+    $testValue = 'test_' . time();
+    session()->put('diagnostic_test', $testValue);
+    $retrieved = session()->get('diagnostic_test');
+    
+    return response()->json([
+        'session_working' => $retrieved === $testValue,
+        'set_value' => $testValue,
+        'retrieved_value' => $retrieved,
+        'session_id' => session()->getId(),
+        'session_driver' => config('session.driver'),
+        'session_domain' => config('session.domain'),
+        'session_secure' => config('session.secure'),
+        'session_same_site' => config('session.same_site'),
+        'session_http_only' => config('session.http_only'),
+        'https_detected' => request()->secure(),
+        'forwarded_proto' => request()->header('X-Forwarded-Proto'),
+    ]);
+});
+
 Route::get('/', function () {
     $fares = \App\Models\Fare::where('active', true)->get();
     return view('welcome', compact('fares'));

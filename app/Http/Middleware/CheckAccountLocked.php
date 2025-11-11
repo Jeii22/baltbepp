@@ -15,7 +15,8 @@ class CheckAccountLocked
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && $request->user()->isLocked()) {
+        // Only check lock status for authenticated users
+        if (auth()->check() && $request->user() && $request->user()->isLocked()) {
             $lockedUntil = \Carbon\Carbon::parse($request->user()->locked_until);
             $minutes = now()->diffInMinutes($lockedUntil);
             
