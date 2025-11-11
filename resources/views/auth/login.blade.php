@@ -18,7 +18,7 @@
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     @else
         <!-- Google reCAPTCHA v3 -->
-        <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_PUBLIC_KEY') }}"></script>
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
     @endif
     <style>
         /* Ensure the official reCAPTCHA badge is visible at bottom-right */
@@ -44,7 +44,7 @@
             @else
                 // v3: execute to get score token, then submit
                 grecaptcha.ready(function() {
-                    grecaptcha.execute('{{ env('RECAPTCHA_PUBLIC_KEY') }}', {action: 'login'}).then(function(token) {
+                    grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'login'}).then(function(token) {
                         document.getElementById('recaptcha_token').value = token;
                         e.target.submit();
                     });

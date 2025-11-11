@@ -46,6 +46,12 @@ MAIL_FROM_NAME="${APP_NAME}"
 # Security
 IDLE_TIMEOUT_MINUTES=30
 
+# Google reCAPTCHA (REQUIRED for login/register)
+RECAPTCHA_PUBLIC_KEY=your_recaptcha_site_key
+RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+RECAPTCHA_VERSION=v3
+RECAPTCHA_SCORE_THRESHOLD=0.5
+
 # PayMongo (if using payment gateway)
 PAYMONGO_SECRET_KEY=your_paymongo_secret_key
 PAYMONGO_PUBLIC_KEY=your_paymongo_public_key
