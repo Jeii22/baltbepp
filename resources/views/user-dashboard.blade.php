@@ -62,9 +62,13 @@
         </div>
     </nav>
 
-    <!-- Hero section with inline styles to guarantee visibility even if Tailwind arbitrary values are purged -->
-    <div class="relative" style="background-image: url('{{ asset('images/barko.png') }}'); background-size: cover; background-position: center; min-height: 50vh;">
-        <div class="absolute inset-0 bg-black/20"></div>
+    <!-- Hero section with overlayed welcome text -->
+    <div class="relative flex items-center justify-center" style="background-image: url('{{ asset('images/barko.png') }}'); background-size: cover; background-position: center; min-height: 50vh;">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent"></div>
+        <div class="relative z-10 text-center text-white px-6">
+            <h1 class="text-4xl md:text-5xl font-bold drop-shadow-lg">Welcome back, {{ $user->display_name ?? $user->name }}!</h1>
+            <p class="mt-3 text-2xl font-light drop-shadow">Ready to take a trip?</p>
+        </div>
     </div>
 
     <div class="relative -mt-40 max-w-5xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl ring-1 ring-black/5 p-8 md:p-10">
