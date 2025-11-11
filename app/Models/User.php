@@ -124,12 +124,12 @@ class User extends Authenticatable
     }
 
     /**
-     * Lock the account
+     * Lock the account for a number of seconds (default 30 minutes = 1800s)
      */
-    public function lockAccount(int $minutes = 30): void
+    public function lockAccount(int $seconds = 1800): void
     {
         $this->update([
-            'locked_until' => now()->addMinutes($minutes),
+            'locked_until' => now()->addSeconds($seconds),
         ]);
     }
 
@@ -151,9 +151,9 @@ class User extends Authenticatable
     {
         $this->increment('failed_login_attempts');
 
-        // Lock account after 3 failed attempts
+        // Lock account after 3 failed attempts (for 10 seconds as requested)
         if ($this->failed_login_attempts >= 3) {
-            $this->lockAccount(30);
+            $this->lockAccount(10);
         }
     }
 

@@ -15,6 +15,11 @@ use Illuminate\Validation\ValidationException;
 class LoginRequest extends FormRequest
 {
     /**
+     * Number of seconds before a throttled login attempt key is available again.
+     */
+    private const LOGIN_ATTEMPT_DECAY_SECONDS = 10;
+
+    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
@@ -92,14 +97,22 @@ class LoginRequest extends FormRequest
         // Check if account is locked
         if ($user && $user->isLocked()) {
             $lockedUntil = \Carbon\Carbon::parse($user->locked_until);
-            $minutes = now()->diffInMinutes($lockedUntil);
+            $secondsRemaining = now()->diffInSeconds($lockedUntil, false);
+            // Guard against negative seconds if clock skew
+            if ($secondsRemaining < 0) {
+                $secondsRemaining = 0;
+            }
+            $messageTime = $secondsRemaining < 60
+                ? $secondsRemaining . ' seconds'
+                : ceil($secondsRemaining / 60) . ' minutes';
             throw ValidationException::withMessages([
-                'email' => "Your account has been locked due to multiple failed login attempts. Please try again in {$minutes} minutes.",
+                'email' => "Your account has been locked due to multiple failed login attempts. Please try again in {$messageTime}.",
             ]);
         }
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+            // Record a hit with a 10-second decay window
+            RateLimiter::hit($this->throttleKey(), self::LOGIN_ATTEMPT_DECAY_SECONDS);
 
             // Increment failed attempts for the user
             if ($user) {
@@ -159,14 +172,14 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        // Reduced to 3 attempts to match account lockout
+        // Allow 3 attempts; on 4th show throttle (cooldown now aligned with short lock period)
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 3)) {
             return;
         }
 
         event(new Lockout($this));
 
-        $seconds = RateLimiter::availableIn($this->throttleKey());
+        $seconds = RateLimiter::availableIn($this->throttleKey()); // should now reflect the 10-second decay
 
         // Flag session as locked for UI feedback
         session(['status' => 'locked']);
