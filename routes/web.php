@@ -82,6 +82,10 @@ Route::get('/', function () {
     return view('welcome', compact('fares'));
 });
 
+Route::get('/developers', function () {
+    return view('developers');
+})->name('developers');
+
 Route::get('/privacy-policy', function () {
     return view('privacy-policy');
 })->name('privacy-policy');
