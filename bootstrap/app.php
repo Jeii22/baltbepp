@@ -36,11 +36,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // This prevents redirect loops caused by session cookie issues
         $middleware->trustProxies(at: '*');
 
-        // Apply to web group globally - TEMPORARILY DISABLED problematic middleware
+        // Apply to web group globally
         $middleware->web(append: [
             App\Http\Middleware\SecurityHeaders::class,
-            // DISABLED to fix redirect loop: TrackLastActive, CheckAccountLocked, IdleTimeout
-            // These depend on session working correctly first
+            App\Http\Middleware\TrackLastActive::class,
+            App\Http\Middleware\CheckAccountLocked::class,
+            App\Http\Middleware\IdleTimeout::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

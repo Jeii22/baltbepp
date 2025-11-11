@@ -202,8 +202,8 @@ return [
     |
     */
 
-    // Stricter default to mitigate CSRF
-    'same_site' => env('SESSION_SAME_SITE', 'strict'),
+    // Use lax for compatibility with login flows and redirects (strict can break auth)
+    'same_site' => env('SESSION_SAME_SITE', 'lax'),
 
     /*
     |--------------------------------------------------------------------------
