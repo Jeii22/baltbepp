@@ -80,10 +80,6 @@
                         <a href="{{ route('customer.dashboard') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-t-lg">
                             My Profile
                         </a>
-                        <!-- My Bookings -->
-                        <a href="{{ route('bookings.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-50">
-                            My Bookings
-                        </a>
                         <!-- Logout -->
                         <form method="POST" action="{{ route('logout') }}" class="border-t">
                             @csrf
