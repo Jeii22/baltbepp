@@ -254,14 +254,19 @@
             document.getElementById('otp_code').value = '';
             document.getElementById('otpError').classList.add('hidden');
             document.getElementById('otpSuccess').classList.add('hidden');
+            // Remove query parameter from URL
+            const url = new URL(window.location);
+            url.searchParams.delete('show_otp');
+            window.history.replaceState({}, '', url);
         }
 
-        // Check if we should show the modal (after redirect from login)
-        @if(session('show_2fa_modal'))
-            window.addEventListener('load', function() {
+        // Check if we should show the modal (from query parameter)
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('show_otp') === '1') {
                 showOtpModal();
-            });
-        @endif
+            }
+        });
 
         // Handle OTP form submission via AJAX
         document.addEventListener('DOMContentLoaded', function() {
