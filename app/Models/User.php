@@ -73,7 +73,8 @@ class User extends Authenticatable
      */
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super_admin';
+        $normalized = strtolower(str_replace([' ', '-'], '_', trim($this->role ?? '')));
+        return in_array($normalized, ['super_admin']);
     }
 
     /**
@@ -81,7 +82,8 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        $normalized = strtolower(str_replace([' ', '-'], '_', trim($this->role ?? '')));
+        return in_array($normalized, ['admin','super_admin']);
     }
 
     /**

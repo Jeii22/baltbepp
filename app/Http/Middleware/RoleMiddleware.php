@@ -19,8 +19,12 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
+        // Normalize roles (accept case/format variants)
+        $userRole = strtolower(str_replace([' ', '-'], '_', trim((string) $request->user()->role)));
+        $allowed = array_map(function($r){ return strtolower(str_replace([' ', '-'], '_', trim($r))); }, $roles);
+
         // Check if user has any of the allowed roles
-        if (!in_array($request->user()->role, $roles)) {
+        if (!in_array($userRole, $allowed)) {
             abort(403, 'Unauthorized access. You do not have permission to access this resource.');
         }
 

@@ -68,12 +68,18 @@ class SuperAdminLoginController extends Controller
 
         $request->session()->regenerate();
 
-        // Redirect based on role
+        // Redirect based on role (use normalized checks)
         if ($user->isSuperAdmin()) {
+            \Log::info('SuperAdmin login success', ['user_id' => $user->id, 'role' => $user->role]);
             return redirect()->route('superadmin.dashboard')->with('success', 'Welcome back, Super Administrator!');
         }
-
-        return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Administrator!');
+        if ($user->isAdmin()) {
+            \Log::info('Admin login success', ['user_id' => $user->id, 'role' => $user->role]);
+            return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Administrator!');
+        }
+        // Fallback: non-admin roles shouldn't reach here
+        \Log::warning('Unexpected role through SuperAdminLoginController', ['user_id' => $user->id, 'role' => $user->role]);
+        return redirect()->route('dashboard')->with('info', 'Logged in. Limited access.');
     }
 
     protected function ensureIsNotRateLimited(Request $request): void

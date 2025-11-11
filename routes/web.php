@@ -111,15 +111,13 @@ Route::get('/booking-status/{booking}', [BookingController::class, 'status'])->n
 
 Route::get('/dashboard', function () {
     $user = auth()->user();
-    
     if ($user->isSuperAdmin()) {
-        return view('dashboard');
-    } elseif ($user->isAdmin()) {
-        return view('dashboard');
-    } else {
-        // Regular users can also access dashboard or redirect to home
-        return redirect()->route('welcome');
+        return redirect()->route('superadmin.dashboard');
     }
+    if ($user->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('customer.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Google OAuth for users only

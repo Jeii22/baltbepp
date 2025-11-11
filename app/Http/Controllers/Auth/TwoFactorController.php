@@ -34,7 +34,7 @@ class TwoFactorController extends Controller
             $user = User::find($userId);
             if ($user && TwoFactorCode::verify($user, $code, 'login')) {
                 $this->completeLogin($request, $user);
-                return redirect()->route('dashboard')->with('success', 'Login verified. Welcome back!');
+                return redirect()->to($this->targetUrlFor($user))->with('success', 'Login verified. Welcome back!');
             }
         }
 
@@ -124,12 +124,12 @@ class TwoFactorController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Login verified successfully.',
-                'redirect' => route('dashboard')
+                'redirect' => $this->targetUrlFor($user)
             ]);
         }
 
-        // Redirect to main dashboard after verification
-        return redirect()->route('dashboard')->with('success', 'Your account has been verified and 2FA is now enabled.');
+        // Redirect based on role
+        return redirect()->to($this->targetUrlFor($user))->with('success', 'Your account has been verified and 2FA is now enabled.');
     }
 
     /**
@@ -242,7 +242,7 @@ class TwoFactorController extends Controller
         // Complete login
         $this->completeLogin($request, $user);
 
-        return redirect()->intended(route('dashboard', absolute: false))->with('success', 'Login verified successfully.');
+    return redirect()->intended($this->targetUrlFor($user))->with('success', 'Login verified successfully.');
     }
 
     /**
@@ -268,5 +268,20 @@ class TwoFactorController extends Controller
             'user_id' => $user->id,
             'authenticated' => auth()->check(),
         ]);
+    }
+
+    /**
+     * Decide target URL based on role, using named routes but relative urls to avoid APP_URL issues.
+     */
+    protected function targetUrlFor(User $user): string
+    {
+        if ($user->isSuperAdmin()) {
+            return route('superadmin.dashboard', absolute: false);
+        }
+        if ($user->isAdmin()) {
+            return route('admin.dashboard', absolute: false);
+        }
+        // Default for customers
+        return route('customer.dashboard', absolute: false);
     }
 }
