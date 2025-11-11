@@ -31,6 +31,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'idleTimeout' => App\Http\Middleware\IdleTimeout::class,
             'securityHeaders' => App\Http\Middleware\SecurityHeaders::class,
         ]);
+        // Optionally trust proxies only when explicitly enabled via .env to fix HTTPS detection behind CDN/proxy
+        $proxies = env('TRUST_PROXIES');
+        if (!empty($proxies)) {
+            // Accept '*' or comma-separated IPs
+            \Illuminate\Support\Facades\Log::info('Trusting proxies', ['at' => $proxies]);
+            $middleware->trustProxies(at: $proxies);
+        }
     // (Reverted) Remove global trust of all proxies; rely on default behavior
 
         // Apply to web group globally
