@@ -60,7 +60,7 @@
         </div>
     </nav>
 
-    <div class="relative bg-cover bg-center h-[50vh]" style="background-image: url('/images/barko.png');">
+    <div class="relative bg-cover bg-center h-[50vh]" style="background-image: url('{{ asset('images/barko.png') }}');">
         
     </div>
 
