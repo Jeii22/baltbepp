@@ -92,17 +92,21 @@
 
 
     <!-- Hero Section with Same Background -->
-    <div class="relative bg-cover bg-center h-screen" style="background-image: url('/images/barko.png');">
-        <div class="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center">
-            <div class="text-center text-white px-6 mb-20">
-                <h1 class="text-5xl md:text-6xl font-bold mb-4">Meet Our Team</h1>
-                <p class="text-xl md:text-2xl italic">The minds behind Balt Bep</p>
+    <div class="relative bg-cover bg-center min-h-screen" style="background-image: url('/images/barko.png');">
+        <!-- Darker overlay -->
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
+        
+        <!-- Content Container -->
+        <div class="relative z-10">
+            <!-- Title Section -->
+            <div class="text-center text-white px-6 pt-20 pb-16">
+                <h1 class="text-5xl md:text-6xl font-bold mb-4 drop-shadow-2xl">Meet Our Team</h1>
+                <p class="text-xl md:text-2xl italic drop-shadow-lg">The minds behind Balt Bep</p>
             </div>
-        </div>
 
-        <!-- Floating Developer Containers -->
-        <div class="absolute inset-0 flex items-center justify-center">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 max-w-6xl w-full mt-32">
+            <!-- Floating Developer Containers -->
+            <div class="px-6 pb-20">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 
                 <!-- Developer 1: Jake Rodriguez -->
                 <a href="https://www.facebook.com/kajake.rodriguez" target="_blank" class="float-animation neon-blue bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
@@ -184,6 +188,7 @@
                     </div>
                 </a>
 
+                </div>
             </div>
         </div>
     </div>
