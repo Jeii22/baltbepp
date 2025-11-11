@@ -21,8 +21,11 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Handle an incoming authentication request.
+     *
+     * On successful primary credential authentication, generate and send a one-time 2FA code,
+     * then render the login view with the OTP modal active (no redirect) to preserve session/CSRF.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request) // return type intentionally omitted: can be View or RedirectResponse
     {
         // Perform credential authentication (logs user in temporarily)
         $request->authenticate();
@@ -32,7 +35,6 @@ class AuthenticatedSessionController extends Controller
         if (! app()->runningUnitTests()) {
             // Store user data BEFORE logout (to avoid losing the user object)
             $userId = $user->id;
-            $userEmail = $user->email;
             $remember = $request->boolean('remember');
             
             // Generate OTP code BEFORE logout (while we still have the user)
@@ -47,19 +49,25 @@ class AuthenticatedSessionController extends Controller
             // Set session data AFTER logout
             session()->put('2fa:user:id', $userId);
             session()->put('2fa:remember', $remember);
+            session()->put('show_otp_modal', true);
             session()->save(); // Explicitly save session
-            
+
             \Log::info('2FA session created', [
                 'user_id' => $userId,
                 'session_id' => session()->getId(),
                 '2fa_user_id' => session('2fa:user:id'),
             ]);
 
-            // Redirect to login with query parameter to show modal
-            // Use a dedicated flag in session to avoid query param stripping by proxies
-            session()->put('show_otp_modal', true);
-            session()->save();
-            return redirect()->route('login')->with('success', 'We sent a verification email: confirm this login to continue.');
+            // Regenerate only CSRF token so the meta tag matches for AJAX
+            $request->session()->regenerateToken();
+
+            // Render login view directly (no redirect) with the OTP modal active
+            return view('auth.login', [
+                'showOtpModal' => true,
+                // Optional diagnostics; safe to remove later
+                'twoFactorUserId' => $userId,
+                'sessionId' => session()->getId(),
+            ])->with('success', 'A verification code was sent to your email. Enter it below to finish signing in.');
         }
 
         // Test environment fallback: proceed directly
