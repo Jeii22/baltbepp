@@ -246,7 +246,7 @@ class BookingController extends Controller
                 'payment_reference' => $paymentStatus['payment_reference'] ?? null
             ]);
 
-            // Keep session so user can come back if needed
+            // Keep session so user can come back if neededasdasdasd
             return view('payments.gcash', [
                 'booking' => $booking,
                 'checkoutUrl' => $paymentStatus['redirect_url'],
