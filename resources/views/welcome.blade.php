@@ -278,7 +278,7 @@
         <input type="hidden" name="student" id="studentField" value="0">
 
         <button class="bg-blue-600 text-white font-medium rounded-lg px-4 sm:px-6 py-2.5 sm:py-3 w-full hover:bg-blue-700 active:bg-blue-800 transition shadow text-sm sm:text-base" id="searchTripsBtn">
-            Search Trips
+            <span class="text-lg sm:text-xl font-bold tracking-wide">Search Trips</span>
         </button>
         <p class="mt-2 text-xs text-gray-400 text-center">By continuing, you agree to our terms.</p>
     </form>
