@@ -12,6 +12,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\DatabaseBackupController;
+use App\Http\Controllers\ContactController;
 
 // DIAGNOSTIC: Test route to verify server is running latest code (bypasses all middleware)
 Route::get('/test-alive', function () {
@@ -236,6 +237,14 @@ Route::get('/welcome', function () {
     $fares = \App\Models\Fare::where('active', true)->get();
     return view('welcome', compact('fares'));
 })->name('welcome');
+
+// Contact form submission
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+
+// Mark contact message as read (admin only)
+Route::patch('/contact/{id}/mark-read', [ContactController::class, 'markAsRead'])
+    ->middleware(['auth', 'admin'])
+    ->name('contact.mark-read');
 
 // Mobile APK download (public)
 Route::get('/download/apk', function () {

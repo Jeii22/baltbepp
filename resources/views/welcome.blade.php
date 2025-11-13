@@ -579,28 +579,53 @@
                 <!-- Contact Form -->
                 <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg">
                     <h3 class="text-lg sm:text-xl font-bold text-blue-700 mb-4 sm:mb-6">Send us a Message</h3>
-                    <form class="space-y-4 sm:space-y-6">
+                    
+                    @if(session('contact_success'))
+                        <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg">
+                            <strong>✓ Message sent successfully!</strong> We'll get back to you soon.
+                        </div>
+                    @endif
+                    
+                    @if(session('contact_error'))
+                        <div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
+                            <strong>✗ Error:</strong> {{ session('contact_error') }}
+                        </div>
+                    @endif
+                    
+                    @if($errors->any())
+                        <div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
+                            <strong>Please fix the following errors:</strong>
+                            <ul class="list-disc list-inside mt-2">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    
+                    <form action="{{ route('contact.submit') }}" method="POST" class="space-y-4 sm:space-y-6">
+                        @csrf
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                <input type="text" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your first name">
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">First Name <span class="text-red-500">*</span></label>
+                                <input type="text" name="first_name" value="{{ old('first_name') }}" required class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your first name">
                             </div>
                             <div>
-                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                <input type="text" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your last name">
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Last Name <span class="text-red-500">*</span></label>
+                                <input type="text" name="last_name" value="{{ old('last_name') }}" required class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your last name">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="your.email@example.com">
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Email <span class="text-red-500">*</span></label>
+                            <input type="email" name="email" value="{{ old('email') }}" required class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="your.email@example.com">
                         </div>
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Subject</label>
-                            <input type="text" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="What is this about?">
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Subject <span class="text-red-500">*</span></label>
+                            <input type="text" name="subject" value="{{ old('subject') }}" required class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="What is this about?">
                         </div>
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Message</label>
-                            <textarea rows="4" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Tell us how we can help you..."></textarea>
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Message <span class="text-red-500">*</span></label>
+                            <textarea rows="4" name="message" required class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Tell us how we can help you...">{{ old('message') }}</textarea>
                         </div>
                         <button type="submit" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition font-medium">
                             Send Message
@@ -1034,6 +1059,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 icon: 'success',
                 timer: 2000,
                 showConfirmButton: false
+            });
+        });
+    </script>
+@endif
+
+@if(session('contact_success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Message Sent!',
+                text: 'Thank you for contacting us. We will get back to you soon!',
+                confirmButtonColor: '#2563eb',
+                timer: 4000,
+                timerProgressBar: true
+            });
+        });
+    </script>
+@endif
+
+@if(session('contact_error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ session('contact_error') }}',
+                confirmButtonColor: '#dc2626'
             });
         });
     </script>

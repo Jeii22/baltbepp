@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Trip;
 use App\Models\User;
+use App\Models\ContactMessage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -40,6 +41,9 @@ class ReportController extends Controller
         // Get recent bookings
         $recentBookings = $this->getRecentBookings($start, $end);
         
+        // Get contact messages (feedback)
+        $contactMessages = ContactMessage::orderBy('created_at', 'desc')->paginate(10);
+        
         return view('reports.index', compact(
             'stats',
             'bookingTrends',
@@ -47,6 +51,7 @@ class ReportController extends Controller
             'popularRoutes',
             'paymentMethods',
             'recentBookings',
+            'contactMessages',
             'startDate',
             'endDate'
         ));

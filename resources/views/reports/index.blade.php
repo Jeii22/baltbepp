@@ -319,6 +319,80 @@
             </div>
         </div>
     </div>
+
+    <!-- Customer Feedback Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Customer Feedback & Messages</h3>
+            <span class="text-sm text-gray-600">Total: {{ $contactMessages->total() }}</span>
+        </div>
+        
+        @if($contactMessages->count() > 0)
+            <div class="space-y-4">
+                @foreach($contactMessages as $message)
+                    <div class="border border-gray-200 rounded-lg p-4 {{ $message->is_read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200' }}">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-semibold text-gray-900">{{ $message->full_name }}</h4>
+                                    @if(!$message->is_read)
+                                        <span class="px-2 py-1 bg-blue-600 text-white text-xs rounded-full">New</span>
+                                    @endif
+                                </div>
+                                <p class="text-sm text-gray-600">{{ $message->email }}</p>
+                            </div>
+                            <span class="text-xs text-gray-500">{{ $message->created_at->format('M d, Y h:i A') }}</span>
+                        </div>
+                        
+                        <div class="mt-3 space-y-2">
+                            <div>
+                                <span class="text-xs font-semibold text-gray-600">Subject:</span>
+                                <p class="text-sm text-gray-800 mt-1">{{ $message->subject }}</p>
+                            </div>
+                            
+                            <div>
+                                <span class="text-xs font-semibold text-gray-600">Message:</span>
+                                <p class="text-sm text-gray-700 mt-1 whitespace-pre-wrap">{{ $message->message }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between">
+                            <a href="mailto:{{ $message->email }}" 
+                               class="inline-flex items-center text-sm text-blue-600 hover:text-blue-700">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                </svg>
+                                Reply via Email
+                            </a>
+                            
+                            @if(!$message->is_read)
+                                <form action="{{ route('contact.mark-read', $message->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="text-sm text-gray-600 hover:text-gray-700">
+                                        Mark as Read
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            
+            <!-- Pagination -->
+            <div class="mt-6">
+                {{ $contactMessages->appends(['start_date' => $startDate, 'end_date' => $endDate])->links() }}
+            </div>
+        @else
+            <div class="text-center py-8">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                </svg>
+                <p class="text-gray-500">No customer feedback received yet</p>
+            </div>
+        @endif
+    </div>
 </div>
 
 <!-- Chart.js -->
