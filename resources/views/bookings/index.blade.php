@@ -237,6 +237,14 @@
                     <div x-show="showPassengers" x-collapse class="mt-3 rounded-lg border border-gray-200 p-4 bg-gray-50 max-h-96 overflow-y-auto">
                         <div class="text-gray-700 font-medium mb-3">Passenger List</div>
                         
+                        <!-- Debug info -->
+                        <div x-show="true" class="mb-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">
+                            <div>Debug: Passengers count = <span x-text="selected?.passengers ? selected.passengers.length : 0"></span></div>
+                            <div x-show="selected?.passengers && selected.passengers.length > 0">
+                                First passenger: <span x-text="JSON.stringify(selected.passengers[0])"></span>
+                            </div>
+                        </div>
+                        
                         <!-- Check if passengers data exists -->
                         <template x-if="selected?.passengers && selected.passengers.length > 0">
                             <div class="space-y-3">
