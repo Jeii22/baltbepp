@@ -255,7 +255,7 @@
                             class="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
                             @click="showPassengers = !showPassengers">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                        View Passenger Details
+                        View Passenger Lists
                     </button>
                     <div x-show="showPassengers" x-collapse class="mt-3 rounded-lg border border-gray-200 p-4 bg-gray-50 max-h-96 overflow-y-auto">
                         <div class="text-gray-700 font-medium mb-3">Passenger List</div>
