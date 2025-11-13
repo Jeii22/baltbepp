@@ -40,7 +40,7 @@
     <!-- Navbar -->
     <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="flex items-center py-2 md:py-3">
+            <div class="flex items-center justify-between py-2 md:py-3 w-full">
                 <!-- Logo (Left) -->
                 <div class="flex-shrink-0 w-1/4">
                     <a href="/" class="flex items-center space-x-2">
@@ -59,7 +59,7 @@
                 </div>
 
                 <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center ml-auto">
+                <div class="md:hidden flex-1 flex justify-end items-center">
                     <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 border border-white rounded-lg text-white bg-transparent hover:bg-white/10 focus:outline-none font-medium transition">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.208a2.25 2.25 0 01-2.25 2.042h-10.5A2.25 2.25 0 014.5 20.458v-.208z" />
