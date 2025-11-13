@@ -59,12 +59,15 @@
                 </div>
 
                 <!-- Mobile menu button -->
-                <a href="{{ route('login') }}" class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2 border border-white rounded-lg text-white bg-transparent hover:bg-white/10 focus:outline-none ml-auto font-medium transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.208a2.25 2.25 0 01-2.25 2.042h-10.5A2.25 2.25 0 014.5 20.458v-.208z" />
-                    </svg>
-                    Sign in
-                </a>
+                <div class="md:hidden flex items-center gap-2 ml-auto">
+                    <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 border border-white rounded-lg text-white bg-transparent hover:bg-white/10 focus:outline-none font-medium transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.208a2.25 2.25 0 01-2.25 2.042h-10.5A2.25 2.25 0 014.5 20.458v-.208z" />
+                        </svg>
+                        Sign in
+                    </a>
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-4 py-2 border border-white rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none font-medium transition">Sign up</a>
+                </div>
 
                 <!-- Desktop Auth Buttons (Right) -->
                 <div class="hidden md:flex items-center justify-end space-x-2 lg:space-x-3 w-1/4">
