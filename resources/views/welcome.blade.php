@@ -138,18 +138,17 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-        <div class="relative bg-cover bg-center h-[60vh] sm:h-[70vh] md:h-[80vh]" style="background-image: url('/images/barko.png');">
-            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                <div class="text-center text-white px-4 sm:px-6">
+    <!-- Hero + Centered Search Box -->
+    <section class="relative">
+        <div class="relative bg-cover bg-center" style="background-image: url('{{ asset('images/barko.png') }}');">
+            <div class="absolute inset-0 bg-black/50"></div>
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center text-center text-white h-[65vh] sm:h-[70vh] md:h-[75vh] space-y-6">
+                <div>
                     <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">Take you where the sea takes your destination</h1>
-                    <p class="mt-2 text-lg sm:text-xl md:text-2xl italic">Adventures await!</p>
+                    <p class="mt-3 text-lg sm:text-xl md:text-2xl italic">Adventures await!</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Trip Search Box -->
-<div id="book" class="relative -mt-32 sm:-mt-48 md:-mt-64 max-w-5xl mx-4 sm:mx-6 md:mx-auto bg-white/95 md:bg-white/90 backdrop-blur-md rounded-xl md:rounded-2xl shadow-xl md:shadow-2xl ring-1 ring-black/5 p-4 sm:p-6 md:p-8">
+                <!-- Trip Search Box (Centered) -->
+                <div id="book" class="w-full max-w-5xl bg-white/95 md:bg-white/90 backdrop-blur-md rounded-xl md:rounded-2xl shadow-xl md:shadow-2xl ring-1 ring-black/5 p-4 sm:p-6 md:p-8">
     <h2 class="text-xl sm:text-2xl font-bold mb-2 text-gray-800">Where's your next adventure?</h2>
     <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Let's make your next trip one to remember, book now!</p>
 
@@ -183,8 +182,8 @@
                     <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▾</span>
                 </div>
             </div>
-            <!-- Swap Button (only show on sm+) -->
-            <div class="flex sm:flex-col justify-center items-center sm:pb-1">
+            <!-- Swap Button (hidden on mobile, visible from sm+) -->
+            <div class="hidden sm:flex sm:flex-col justify-center items-center sm:pb-1">
                 <button type="button" id="tripArrow" class="mt-1 sm:mt-0 cursor-pointer text-lg sm:text-xl bg-blue-100 text-blue-600 px-4 py-2 rounded-full shadow hover:bg-blue-200" title="Swap" aria-label="Swap origin and destination">⇆</button>
             </div>
             <!-- To -->
@@ -278,7 +277,10 @@
         </button>
         <p class="mt-2 text-xs text-gray-400 text-center">By continuing, you agree to our terms.</p>
     </form>
-</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
 
 
