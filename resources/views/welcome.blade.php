@@ -40,12 +40,24 @@
     <!-- Navbar -->
     <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center py-2 md:py-3">
+            <div class="flex items-center justify-between py-2 md:py-3">
                 <!-- Logo -->
-                <a href="/" class="flex items-center space-x-2">
-                    <img src="{{ asset('images/baltbep-logo.png') }}" class="h-8 md:h-10" alt="BaltBep Logo">
-                </a>
+                <div class="flex-shrink-0">
+                    <a href="/" class="flex items-center space-x-2">
+                        <img src="{{ asset('images/baltbep-logo.png') }}" class="h-12 md:h-14" alt="BaltBep Logo">
+                    </a>
+                </div>
               
+                <!-- Desktop Nav Links (Centered) -->
+                <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-4 lg:space-x-6 text-white font-medium">
+                    <a href="#book" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Book</a>
+                    <a href="#promos" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Promos</a>
+                    <a href="#routes" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Routes</a>
+                    <a href="#why-choose-us" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Why Us</a>
+                    <a href="#about-us" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">About</a>
+                    <a href="#contact-us" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Contact</a>
+                </div>
+
                 <!-- Mobile menu button -->
                 <button @click="open = !open" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-white/20 focus:outline-none">
                     <svg class="h-6 w-6" :class="{'hidden': open, 'block': !open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,49 +68,41 @@
                     </svg>
                 </button>
 
-                <!-- Desktop Nav Links -->
-                <div class="hidden md:flex space-x-4 lg:space-x-8 text-white font-medium">
-                    <a href="#book" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Book</a>
-                    <a href="#promos" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Promos</a>
-                    <a href="#routes" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Routes</a>
-                    <a href="#why-choose-us" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Why Us</a>
-                    <a href="#about-us" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">About</a>
-                    <a href="#contact-us" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Contact</a>
-                </div>
-
-                <!-- Desktop Auth -->
-                <div x-data="{ dropdownOpen: false }" class="relative hidden md:block">
+                <!-- Desktop Auth Buttons (Right Side) -->
+                <div class="hidden md:flex items-center space-x-2 lg:space-x-3">
                     @auth
-                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center space-x-2 text-white hover:text-cyan-200 transition text-sm lg:text-base">
-                            <span class="hidden lg:inline">Welcome {{ Auth::user()->name }}</span>
-                            <span class="lg:hidden">{{ Str::limit(Auth::user()->name, 10) }}</span>
-                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
+                        <div x-data="{ dropdownOpen: false }" class="relative">
+                            <button @click="dropdownOpen = !dropdownOpen" class="flex items-center space-x-2 text-white hover:text-cyan-200 transition text-sm lg:text-base">
+                                <span class="hidden lg:inline">Welcome {{ Auth::user()->name }}</span>
+                                <span class="lg:hidden">{{ Str::limit(Auth::user()->name, 10) }}</span>
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div x-show="dropdownOpen" @click.away="dropdownOpen = false" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50" x-cloak>
+                                <a href="{{ route('customer.dashboard') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-t-lg">
+                                    My Profile
+                                </a>
+                                <form method="POST" action="{{ route('logout') }}" class="border-t">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-b-lg">
+                                        Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
 
                         @if(Auth::user()->isSuperAdmin())
-                            <a href="{{ route('dashboard') }}" class="ml-2 lg:ml-3 bg-blue-600 hover:bg-blue-700 px-2 lg:px-3 py-1 rounded-lg transition text-xs lg:text-sm">
+                            <a href="{{ route('dashboard') }}" class="bg-blue-600 hover:bg-blue-700 px-2 lg:px-3 py-2 rounded-lg transition text-xs lg:text-sm text-white">
                                 Dashboard
                             </a>
                         @elseif(Auth::user()->isAdmin())
-                            <a href="{{ route('dashboard') }}" class="ml-2 lg:ml-3 bg-green-600 hover:bg-green-700 px-2 lg:px-3 py-1 rounded-lg transition text-xs lg:text-sm">
+                            <a href="{{ route('dashboard') }}" class="bg-green-600 hover:bg-green-700 px-2 lg:px-3 py-2 rounded-lg transition text-xs lg:text-sm text-white">
                                 Dashboard
                             </a>
                         @endif
-
-                        <!-- Dropdown Menu -->
-                        <div x-show="dropdownOpen" @click.away="dropdownOpen = false" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50" x-cloak>
-                            <a href="{{ route('customer.dashboard') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-t-lg">
-                                My Profile
-                            </a>
-                            <form method="POST" action="{{ route('logout') }}" class="border-t">
-                                @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-50 rounded-b-lg">
-                                    Logout
-                                </button>
-                            </form>
-                        </div>
                     @else
                         <a href="{{ route('login') }}" class="border border-white px-3 lg:px-4 py-2 rounded-lg text-white hover:bg-white hover:text-blue-600 transition text-sm lg:text-base">
                             Sign In
@@ -130,7 +134,7 @@
                         </div>
                     @else
                         <div class="border-t border-white/20 pt-2">
-                            <a href="{{ route('login') }}" @click="open = false" class="block px-3 py-2 rounded-md text-center bg-white text-blue-600 hover:bg-gray-100">Sign In</a>
+                            <a href="{{ route('login') }}" @click="open = false" class="block px-3 py-2 rounded-md text-center bg-white text-blue-600 hover:bg-gray-100 font-medium">Sign In</a>
                         </div>
                     @endauth
                 </div>
