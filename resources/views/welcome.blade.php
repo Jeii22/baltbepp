@@ -61,11 +61,11 @@
                 <!-- Mobile menu button -->
                 <div class="md:hidden flex-1 flex justify-end items-center gap-2">
                     <!-- Download APK button - Hidden when viewed in APK -->
-                    <a href="{{ asset('downloads/Balt Bep APK.apk') }}" download="BaltBep.apk" class="download-apk-btn inline-flex items-center justify-center px-4 py-2 border border-white rounded-lg text-white bg-transparent hover:bg-white/10 focus:outline-none font-medium transition" title="Download APK" aria-label="Download APK">
+                    <button onclick="confirmApkDownload()" class="download-apk-btn inline-flex items-center justify-center px-4 py-2 border border-white rounded-lg text-white bg-transparent hover:bg-white/10 focus:outline-none font-medium transition" title="Download APK" aria-label="Download APK">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                    </a>
+                    </button>
                     <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 border border-white rounded-lg text-white bg-transparent hover:bg-white/10 focus:outline-none font-medium transition">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.208a2.25 2.25 0 01-2.25 2.042h-10.5A2.25 2.25 0 014.5 20.458v-.208z" />
@@ -1087,6 +1087,40 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // SweetAlert confirmation for APK download
+    function confirmApkDownload() {
+        Swal.fire({
+            title: 'Download BaltBep APK?',
+            text: 'You are about to download the BaltBep Android app.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, download it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Create a temporary link to trigger download
+                const link = document.createElement('a');
+                link.href = "{{ asset('downloads/Balt Bep APK.apk') }}";
+                link.download = 'BaltBep.apk';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show success message
+                Swal.fire({
+                    title: 'Download Started!',
+                    text: 'Your APK download has started. Check your downloads folder.',
+                    icon: 'success',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    confirmButtonColor: '#3085d6'
+                });
+            }
+        });
+    }
 </script>
 
 </body>
