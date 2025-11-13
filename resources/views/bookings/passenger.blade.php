@@ -96,7 +96,7 @@
                         <h3 class="text-lg font-semibold text-blue-900 mb-3">Passenger Summary</h3>
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                             @php
-                                $adultCount = $criteria['adult'] ?? 1;
+                                $adultCount = $criteria['adult'] ?? 0;
                                 $childCount = $criteria['child'] ?? 0;
                                 $infantCount = $criteria['infant'] ?? 0;
                                 $pwdCount = $criteria['pwd'] ?? 0;
@@ -705,6 +705,38 @@
                 input.addEventListener('input', updateFareCalculation);
                 input.addEventListener('change', updateFareCalculation);
             });
+            // Prevent proceeding if no passengers
+            function checkPassengerCount() {
+                const adult = parseInt(document.querySelector('input[name="adult"]').value) || 0;
+                const child = parseInt(document.querySelector('input[name="child"]').value) || 0;
+                const infant = parseInt(document.querySelector('input[name="infant"]').value) || 0;
+                const pwd = parseInt(document.querySelector('input[name="pwd"]').value) || 0;
+                const student = parseInt(document.querySelector('input[name="student"]').value) || 0;
+                const total = adult + child + infant + pwd + student;
+                const proceedBtn = document.getElementById('proceedSummaryBtn');
+                if (proceedBtn) {
+                    if (total < 1) {
+                        proceedBtn.setAttribute('disabled', 'disabled');
+                        proceedBtn.classList.add('opacity-60','cursor-not-allowed');
+                    } else {
+                        // Only enable if email is verified too
+                        if (document.getElementById('contactEmailVerifiedField')?.value === '1') {
+                            proceedBtn.removeAttribute('disabled');
+                            proceedBtn.classList.remove('opacity-60','cursor-not-allowed');
+                        }
+                    }
+                }
+            }
+
+            // Watch for changes in passenger count hidden fields
+            ['adult','child','infant','pwd','student'].forEach(function(type) {
+                const el = document.querySelector('input[name="'+type+'"]');
+                if (el) {
+                    el.addEventListener('input', checkPassengerCount);
+                    el.addEventListener('change', checkPassengerCount);
+                }
+            });
+            checkPassengerCount();
             // Contact email verification logic
             const emailInput = document.querySelector('input[name="contact_email"]');
             const sendBtn = document.getElementById('sendContactEmailCodeBtn');
@@ -828,6 +860,18 @@
             const form = document.getElementById('passengerForm');
             if (form) {
                 form.addEventListener('submit', (e) => {
+                    // Prevent submit if no passengers
+                    const adult = parseInt(document.querySelector('input[name="adult"]').value) || 0;
+                    const child = parseInt(document.querySelector('input[name="child"]').value) || 0;
+                    const infant = parseInt(document.querySelector('input[name="infant"]').value) || 0;
+                    const pwd = parseInt(document.querySelector('input[name="pwd"]').value) || 0;
+                    const student = parseInt(document.querySelector('input[name="student"]').value) || 0;
+                    const total = adult + child + infant + pwd + student;
+                    if (total < 1) {
+                        e.preventDefault();
+                        alert('Please select at least one passenger to proceed.');
+                        return false;
+                    }
                     if (!verifiedField || verifiedField.value !== '1') {
                         e.preventDefault();
                         setStatus('Please verify the contact email before proceeding.', 'error');
