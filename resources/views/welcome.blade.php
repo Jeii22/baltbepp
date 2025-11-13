@@ -40,10 +40,10 @@
     <!-- Navbar -->
     <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center py-2 md:py-3">
+            <div class="flex justify-between items-center py-3 md:py-4">
                 <!-- Logo -->
                 <a href="/" class="flex items-center space-x-2">
-                    <img src="{{ asset('images/baltbep-logo.png') }}" class="h-10 md:h-12" alt="BaltBep Logo">
+                    <img src="{{ asset('images/baltbep-logo.png') }}" class="h-14 md:h-20" alt="BaltBep Logo">
                 </a>
               
                 <!-- Mobile menu button -->
@@ -139,7 +139,7 @@
     </nav>
 
     <!-- Hero Section -->
-        <div class="relative bg-cover bg-center h-[60vh] sm:h-[70vh] md:h-[80vh]" style="background-image: url({{ asset('images/barko.png') }});">
+        <div class="relative bg-cover bg-center h-[60vh] sm:h-[70vh] md:h-[80vh]" style="background-image: url('/images/barko.png');">
             <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <div class="text-center text-white px-4 sm:px-6">
                     <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">Take you where the sea takes your destination</h1>
@@ -156,42 +156,40 @@
     <!-- Trip Type -->
     <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div class="inline-flex rounded-lg bg-gray-100 p-1 w-full sm:w-auto">
-            <label class="flex items-center justify-center flex-1 sm:flex-none px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow" data-checked="true">
+            <label class="flex items-center justify-center flex-1 sm:flex-none px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow">
                 <input type="radio" name="tripType" value="oneway" class="tripType hidden" checked>
                 One-way
             </label>
-            <label class="flex items-center justify-center flex-1 sm:flex-none px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow">
-                <input type="radio" name="tripType" value="round" class="tripType hidden">
+            <label class="flex items-center justify-center flex-1 sm:flex-none px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow" data-checked="true">
+                <input type="radio" name="tripType" value="round" class="tripType hidden" >
                 Round Trip
             </label>
         </div>
-        <p class="text-xs text-gray-500 hidden sm:block">Swap ports with the arrow. Return Date appears for round trips.</p>
+        <p class="text-xs text-gray-500">Swap ports with the arrow. Return Date appears for round trips.</p>
     </div>
 
-    <!-- Redesigned Input Layout -->
-    <div class="space-y-4">
-        <!-- Row 1: From / Swap / To (Desktop), stacked on mobile -->
-        <div class="flex flex-col sm:flex-row sm:items-end gap-3">
-            <!-- From -->
-            <div class="flex-1">
+    <!-- Grid for Inputs -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 items-center">
+
+        <!-- From / To -->
+        <div class="sm:col-span-2 grid grid-cols-7 gap-2 sm:gap-3 items-center">
+            <div class="col-span-3">
                 <label class="text-xs font-semibold text-gray-600 mb-1 block">From</label>
                 <div class="relative">
-                    <select id="fromSelect" class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
+                    <select id="fromSelect" class="border rounded-lg px-3 sm:px-4 py-2 sm:py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
                         <option value="Bantayan" selected>Bantayan</option>
                         <option value="Cadiz">Cadiz</option>
                     </select>
                     <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▾</span>
                 </div>
             </div>
-            <!-- Swap Button (hidden on mobile, visible from sm+) -->
-            <div class="hidden sm:flex sm:flex-col justify-center items-center sm:pb-1">
-                <button type="button" id="tripArrow" class="mt-1 sm:mt-0 cursor-pointer text-lg sm:text-xl bg-blue-100 text-blue-600 px-4 py-2 rounded-full shadow hover:bg-blue-200" title="Swap" aria-label="Swap origin and destination">⇆</button>
+            <div class="col-span-1 flex justify-center items-end pb-1">
+                <button type="button" id="tripArrow" class="cursor-pointer text-lg sm:text-xl bg-blue-100 text-blue-600 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full shadow hover:bg-blue-200" title="Swap" aria-label="Swap origin and destination">⇆</button>
             </div>
-            <!-- To -->
-            <div class="flex-1">
+            <div class="col-span-3">
                 <label class="text-xs font-semibold text-gray-600 mb-1 block">To</label>
                 <div class="relative">
-                    <select id="toSelect" class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
+                    <select id="toSelect" class="border rounded-lg px-3 sm:px-4 py-2 sm:py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
                         <option value="Bantayan">Bantayan</option>
                         <option value="Cadiz" selected>Cadiz</option>
                     </select>
@@ -200,62 +198,73 @@
             </div>
         </div>
 
-        <!-- Row 2: Departure Date & Passengers (Return Date appears if needed) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <!-- Departure Date -->
-            <div>
-                <label for="departure_date" class="text-xs sm:text-sm font-semibold mb-1 block">Departure Date</label>
-                <input type="date" id="departure_date" name="departure_date" class="border border-gray-300 rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:bg-white">
-            </div>
-            <!-- Passengers -->
-            <div class="relative">
-                <label class="text-xs sm:text-sm font-semibold mb-1 block">Passengers</label>
-                <button type="button" id="passengerDropdownBtn" class="border border-gray-300 rounded-lg px-3 sm:px-4 py-3 w-full text-left text-sm sm:text-base bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:bg-white">
-                    <span id="totalPassengers">Walay Pasahero</span>
-                </button>
-                <!-- Dropdown (unchanged) -->
-                <div id="passengerDropdown" class="hidden absolute z-20 mt-2 w-[calc(100vw-2rem)] max-w-md sm:w-80 bg-white border rounded-xl shadow-lg p-3 sm:p-4 left-0 right-0 mx-auto sm:left-auto sm:right-auto sm:mx-0">
+        <!-- Passengers -->
+        <div class="relative sm:col-span-2 lg:col-span-1">
+            <label class="text-xs sm:text-sm font-semibold mb-1 block">Passengers</label>
+            <button type="button" id="passengerDropdownBtn" 
+                class="border rounded-lg px-3 sm:px-4 py-2 sm:py-3 w-full text-left text-sm sm:text-base focus:ring-2 focus:ring-blue-500">
+                <span id="totalPassengers">Walay Pasahero</span>
+            </button>
+
+            <!-- Dropdown -->
+            <div id="passengerDropdown" 
+                 class="hidden absolute z-20 mt-2 w-[calc(100vw-2rem)] max-w-md sm:w-80 bg-white border rounded-xl shadow-lg p-3 sm:p-4 left-0 right-0 mx-auto sm:left-auto sm:right-auto sm:mx-0">
+
+                @php
+                    $passengerTypeMap = [
+                        'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 0],
+                        'Child (2-11)' => ['key' => 'child', 'label' => 'Child', 'description' => 'Ages 2-11', 'default' => 0],
+                        'Infant' => ['key' => 'infant', 'label' => 'Infant', 'description' => 'Under 2', 'default' => 0],
+                        'Senior Citizen / PWD' => ['key' => 'pwd', 'label' => 'PWD/Senior', 'description' => 'Persons With Disability / Senior Citizens', 'default' => 0],
+                        'Student' => ['key' => 'student', 'label' => 'Student', 'description' => 'With valid student ID', 'default' => 0],
+                    ];
+                    $fareLookup = $fares->keyBy('passenger_type');
+                @endphp
+
+                @foreach($passengerTypeMap as $fareType => $typeInfo)
                     @php
-                        $passengerTypeMap = [
-                            'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 0],
-                            'Child (2-11)' => ['key' => 'child', 'label' => 'Child', 'description' => 'Ages 2-11', 'default' => 0],
-                            'Infant' => ['key' => 'infant', 'label' => 'Infant', 'description' => 'Under 2', 'default' => 0],
-                            'Senior Citizen / PWD' => ['key' => 'pwd', 'label' => 'PWD/Senior', 'description' => 'Persons With Disability / Senior Citizens', 'default' => 0],
-                            'Student' => ['key' => 'student', 'label' => 'Student', 'description' => 'With valid student ID', 'default' => 0],
-                        ];
-                        $fareLookup = $fares->keyBy('passenger_type');
+                        $fareEntry = $fareLookup->get($fareType);
+                        $price = $fareEntry ? $fareEntry->price : 0;
                     @endphp
-                    @foreach($passengerTypeMap as $fareType => $typeInfo)
-                        @php
-                            $fareEntry = $fareLookup->get($fareType);
-                            $price = $fareEntry ? $fareEntry->price : 0;
-                        @endphp
-                        <div class="flex items-center justify-between gap-2 {{ !$loop->last ? 'mb-3' : '' }}">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between gap-1">
-                                    <p class="font-semibold text-xs sm:text-sm truncate">{{ $typeInfo['label'] }}</p>
-                                    <p class="text-xs font-medium text-green-600 whitespace-nowrap">₱{{ number_format($price, 0) }}</p>
-                                </div>
-                                <p class="text-[10px] sm:text-xs text-gray-500 truncate">{{ $typeInfo['description'] }}</p>
+                    <div class="flex items-center justify-between gap-2 {{ !$loop->last ? 'mb-3' : '' }}">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-1">
+                                <p class="font-semibold text-xs sm:text-sm truncate">{{ $typeInfo['label'] }}</p>
+                                <p class="text-xs font-medium text-green-600 whitespace-nowrap">₱{{ number_format($price, 0) }}</p>
                             </div>
-                            <div class="flex items-center flex-shrink-0">
-                                <button type="button" class="decrement bg-gray-200 px-1.5 sm:px-2 py-1 rounded-l hover:bg-gray-300 text-xs sm:text-sm" data-type="{{ $typeInfo['key'] }}">-</button>
-                                <span id="{{ $typeInfo['key'] }}Count" class="px-1.5 sm:px-3 font-semibold min-w-[1.5rem] sm:min-w-[2rem] text-center text-xs sm:text-sm">{{ $typeInfo['default'] }}</span>
-                                <button type="button" class="increment bg-blue-600 text-white px-1.5 sm:px-2 py-1 rounded-r hover:bg-blue-700 text-xs sm:text-sm" data-type="{{ $typeInfo['key'] }}">+</button>
-                            </div>
+                            <p class="text-[10px] sm:text-xs text-gray-500 truncate">{{ $typeInfo['description'] }}</p>
                         </div>
-                    @endforeach
-                    <div class="border-t pt-2 sm:pt-3 mt-2 sm:mt-3">
-                        <p class="text-[10px] sm:text-xs text-gray-500">⚠ Max 10 passengers only (adults, children & PWD).</p>
-                        <p class="text-[10px] sm:text-xs text-gray-400 mt-1">💡 Prices shown are base fares per person.</p>
+                        <div class="flex items-center flex-shrink-0">
+                            <button type="button" class="decrement bg-gray-200 px-1.5 sm:px-2 py-1 rounded-l hover:bg-gray-300 text-xs sm:text-sm" data-type="{{ $typeInfo['key'] }}">-</button>
+                            <span id="{{ $typeInfo['key'] }}Count" class="px-1.5 sm:px-3 font-semibold min-w-[1.5rem] sm:min-w-[2rem] text-center text-xs sm:text-sm">{{ $typeInfo['default'] }}</span>
+                            <button type="button" class="increment bg-blue-600 text-white px-1.5 sm:px-2 py-1 rounded-r hover:bg-blue-700 text-xs sm:text-sm" data-type="{{ $typeInfo['key'] }}">+</button>
+                        </div>
                     </div>
+                @endforeach
+
+                <div class="border-t pt-2 sm:pt-3 mt-2 sm:mt-3">
+                    <p class="text-[10px] sm:text-xs text-gray-500">
+                        ⚠ Max 10 passengers only (adults, children & PWD).
+                    </p>
+                    <p class="text-[10px] sm:text-xs text-gray-400 mt-1">
+                        💡 Prices shown are base fares per person.
+                    </p>
                 </div>
             </div>
-            <!-- Return Date (Round Trip) -->
-            <div id="returnDateContainer" class="hidden sm:col-span-2">
-                <label for="return_date" class="text-xs sm:text-sm font-semibold mb-1 block">Return Date</label>
-                <input type="date" id="return_date" name="return_date" class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500">
-            </div>
+        </div>
+
+        <!-- Date -->
+        <div class="sm:col-span-2 lg:col-span-1">
+            <label for="departure_date" class="text-xs sm:text-sm font-semibold mb-1 block">Departure Date</label>
+            <input type="date" id="departure_date" name="departure_date" 
+                   class="border rounded-lg px-3 sm:px-4 py-2 sm:py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Return Date (only for Round Trip) -->
+        <div id="returnDateContainer" class="hidden sm:col-span-2 lg:col-span-1">
+            <label for="return_date" class="text-xs sm:text-sm font-semibold mb-1 block">Return Date</label>
+            <input type="date" id="return_date" name="return_date" 
+                   class="border rounded-lg px-3 sm:px-4 py-2 sm:py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500">
         </div>
     </div>
 
@@ -263,7 +272,7 @@
     <form action="{{ route('booking.schedule') }}" method="GET" class="mt-4 sm:mt-6">
         <input type="hidden" name="origin" id="originField">
         <input type="hidden" name="destination" id="destinationField">
-        <input type="hidden" name="tripType" id="tripTypeField" value="oneway">
+        <input type="hidden" name="tripType" id="tripTypeField" value="round">
         <input type="hidden" name="departure_date" id="departureField">
         <input type="hidden" name="return_date" id="returnField">
         <!-- Set default to 0 for adult -->
@@ -607,10 +616,8 @@
     document.addEventListener("DOMContentLoaded", function () {
         const tripTypes = document.querySelectorAll(".tripType");
         const arrow = document.getElementById("tripArrow");
-        // Redesigned: single set of selects with IDs
-        const fromSelect = document.getElementById('fromSelect');
-        const toSelect = document.getElementById('toSelect');
-        
+        const fromSelect = document.getElementById("fromSelect");
+        const toSelect = document.getElementById("toSelect");
         const returnDateContainer = document.getElementById("returnDateContainer");
 
         const departureInput = document.getElementById("departure_date");
@@ -623,18 +630,10 @@
         const departureField = document.getElementById("departureField");
         const returnField = document.getElementById("returnField");
 
-        // Change listeners for new single selects
-        if (fromSelect) {
-            fromSelect.addEventListener('change', updateHiddenBasics);
-        }
-        if (toSelect) {
-            toSelect.addEventListener('change', updateHiddenBasics);
-        }
-
         function updateHiddenBasics() {
-            if (fromSelect) originField.value = fromSelect.value;
-            if (toSelect) destinationField.value = toSelect.value;
-            const checked = Array.from(tripTypes).find(t => t.checked)?.value || 'oneway';
+            originField.value = fromSelect.value;
+            destinationField.value = toSelect.value;
+            const checked = Array.from(tripTypes).find(t => t.checked)?.value || 'round';
             tripTypeField.value = checked;
             departureField.value = departureInput.value;
             returnField.value = returnInput ? returnInput.value : '';
@@ -655,18 +654,12 @@
         }
 
         function setRoundTripUI(isRound) {
-            if (arrow) {
-                if (isRound) {
-                    arrow.textContent = "⇆";
-                } else {
-                    arrow.textContent = "→";
-                }
-            }
-            
             if (isRound) {
+                arrow.textContent = "⇆";
                 returnDateContainer.classList.remove("hidden");
                 syncReturnMin();
             } else {
+                arrow.textContent = "→";
                 returnDateContainer.classList.add("hidden");
                 if (returnInput) {
                     returnInput.value = "";
@@ -676,34 +669,16 @@
             updateHiddenBasics();
         }
 
-    // Initialize with new layout
-    setRoundTripUI(Array.from(tripTypes).find(t => t.checked)?.value === 'round');
-    updateHiddenBasics();
-
-        // Update visual state of trip type buttons
-        function updateTripTypeUI() {
-            document.querySelectorAll('label:has(.tripType)').forEach(label => {
-                const input = label.querySelector('.tripType');
-                if (input.checked) {
-                    label.setAttribute('data-checked', 'true');
-                    label.classList.add('bg-white', 'shadow');
-                } else {
-                    label.removeAttribute('data-checked');
-                    label.classList.remove('bg-white', 'shadow');
-                }
-            });
-        }
+        // Initialize
+        setRoundTripUI(Array.from(tripTypes).find(t => t.checked)?.value === 'round');
+        updateHiddenBasics();
 
         // React to trip type changes
         tripTypes.forEach(type => {
             type.addEventListener("change", () => {
                 setRoundTripUI(type.value === "round");
-                updateTripTypeUI();
             });
         });
-
-        // Initialize trip type UI
-        updateTripTypeUI();
 
         // Keep return date in range when departure changes
         if (departureInput) {
@@ -717,28 +692,12 @@
         }
 
         // Swap From/To on arrow click
-        if (arrow) {
-            arrow.addEventListener("click", () => {
-                const fromSelect = fromSelectMobile || fromSelectDesktop;
-                const toSelect = toSelectMobile || toSelectDesktop;
-                
-                const tmp = fromSelect.value;
-                fromSelect.value = toSelect.value;
-                toSelect.value = tmp;
-                
-                // Sync both mobile and desktop
-                if (fromSelectMobile && fromSelectDesktop) {
-                    fromSelectMobile.value = fromSelect.value;
-                    fromSelectDesktop.value = fromSelect.value;
-                }
-                if (toSelectMobile && toSelectDesktop) {
-                    toSelectMobile.value = toSelect.value;
-                    toSelectDesktop.value = toSelect.value;
-                }
-                
-                updateHiddenBasics();
-            });
-        }
+        arrow.addEventListener("click", () => {
+            const tmp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = tmp;
+            updateHiddenBasics();
+        });
 
         // Keep hidden fields updated on dropdown changes
         fromSelect.addEventListener("change", updateHiddenBasics);
