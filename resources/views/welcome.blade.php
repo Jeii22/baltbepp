@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Balt Bep</title>
-    <link rel="preload" as="image" href="{{ asset('images/barko.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -139,17 +138,18 @@
         </div>
     </nav>
 
-    <!-- Hero + Centered Search Box -->
-    <section class="relative">
-        <div class="relative bg-cover bg-center" style="background-image: url('{{ asset('images/barko.png') }}');">
-            <div class="absolute inset-0 bg-black/50"></div>
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center text-center text-white h-[65vh] sm:h-[70vh] md:h-[75vh] space-y-6">
-                <div>
+    <!-- Hero Section -->
+        <div class="relative bg-cover bg-center h-[60vh] sm:h-[70vh] md:h-[80vh]" style="background-image: url('/images/barko.png');">
+            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <div class="text-center text-white px-4 sm:px-6">
                     <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">Take you where the sea takes your destination</h1>
-                    <p class="mt-3 text-lg sm:text-xl md:text-2xl italic">Adventures await!</p>
+                    <p class="mt-2 text-lg sm:text-xl md:text-2xl italic">Adventures await!</p>
                 </div>
-                <!-- Trip Search Box (Centered) -->
-                <div id="book" class="w-full max-w-5xl bg-white/95 md:bg-white/90 backdrop-blur-md rounded-xl md:rounded-2xl shadow-xl md:shadow-2xl ring-1 ring-black/5 p-4 sm:p-6 md:p-8">
+            </div>
+        </div>
+
+        <!-- Trip Search Box -->
+<div id="book" class="relative -mt-32 sm:-mt-48 md:-mt-64 max-w-5xl mx-4 sm:mx-6 md:mx-auto bg-white/95 md:bg-white/90 backdrop-blur-md rounded-xl md:rounded-2xl shadow-xl md:shadow-2xl ring-1 ring-black/5 p-4 sm:p-6 md:p-8">
     <h2 class="text-xl sm:text-2xl font-bold mb-2 text-gray-800">Where's your next adventure?</h2>
     <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Let's make your next trip one to remember, book now!</p>
 
@@ -176,22 +176,22 @@
             <div class="flex-1">
                 <label class="text-xs font-semibold text-gray-600 mb-1 block">From</label>
                 <div class="relative">
-                    <select id="fromSelect" class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
+                    <select class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
                         <option value="Bantayan" selected>Bantayan</option>
                         <option value="Cadiz">Cadiz</option>
                     </select>
                     <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▾</span>
                 </div>
             </div>
-            <!-- Swap Button (hidden on mobile, visible from sm+) -->
-            <div class="hidden sm:flex sm:flex-col justify-center items-center sm:pb-1">
+            <!-- Swap Button (only show on sm+) -->
+            <div class="flex sm:flex-col justify-center items-center sm:pb-1">
                 <button type="button" id="tripArrow" class="mt-1 sm:mt-0 cursor-pointer text-lg sm:text-xl bg-blue-100 text-blue-600 px-4 py-2 rounded-full shadow hover:bg-blue-200" title="Swap" aria-label="Swap origin and destination">⇆</button>
             </div>
             <!-- To -->
             <div class="flex-1">
                 <label class="text-xs font-semibold text-gray-600 mb-1 block">To</label>
                 <div class="relative">
-                    <select id="toSelect" class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
+                    <select class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
                         <option value="Bantayan">Bantayan</option>
                         <option value="Cadiz" selected>Cadiz</option>
                     </select>
@@ -278,10 +278,7 @@
         </button>
         <p class="mt-2 text-xs text-gray-400 text-center">By continuing, you agree to our terms.</p>
     </form>
-                </div>
-            </div>
-        </div>
-    </section>
+</div>
 
 
 
@@ -610,9 +607,12 @@
     document.addEventListener("DOMContentLoaded", function () {
         const tripTypes = document.querySelectorAll(".tripType");
         const arrow = document.getElementById("tripArrow");
-        // Redesigned: single set of selects with IDs
-        const fromSelect = document.getElementById('fromSelect');
-        const toSelect = document.getElementById('toSelect');
+        
+        // Get all select elements (mobile and desktop)
+        const fromSelectMobile = document.querySelector('.sm\\:hidden select#fromSelect');
+        const toSelectMobile = document.querySelector('.sm\\:hidden select#toSelect');
+        const fromSelectDesktop = document.querySelector('.hidden.sm\\:block select');
+        const toSelectDesktop = document.querySelectorAll('.hidden.sm\\:block select')[1];
         
         const returnDateContainer = document.getElementById("returnDateContainer");
 
@@ -626,17 +626,48 @@
         const departureField = document.getElementById("departureField");
         const returnField = document.getElementById("returnField");
 
-        // Change listeners for new single selects
-        if (fromSelect) {
-            fromSelect.addEventListener('change', updateHiddenBasics);
+        // Sync mobile and desktop selects
+        function syncSelects() {
+            if (fromSelectMobile && fromSelectDesktop) {
+                fromSelectDesktop.value = fromSelectMobile.value;
+            }
+            if (toSelectMobile && toSelectDesktop) {
+                toSelectDesktop.value = toSelectMobile.value;
+            }
         }
-        if (toSelect) {
-            toSelect.addEventListener('change', updateHiddenBasics);
+
+        // Add change listeners to sync selects
+        if (fromSelectMobile) {
+            fromSelectMobile.addEventListener('change', function() {
+                if (fromSelectDesktop) fromSelectDesktop.value = this.value;
+                updateHiddenBasics();
+            });
+        }
+        if (toSelectMobile) {
+            toSelectMobile.addEventListener('change', function() {
+                if (toSelectDesktop) toSelectDesktop.value = this.value;
+                updateHiddenBasics();
+            });
+        }
+        if (fromSelectDesktop) {
+            fromSelectDesktop.addEventListener('change', function() {
+                if (fromSelectMobile) fromSelectMobile.value = this.value;
+                updateHiddenBasics();
+            });
+        }
+        if (toSelectDesktop) {
+            toSelectDesktop.addEventListener('change', function() {
+                if (toSelectMobile) toSelectMobile.value = this.value;
+                updateHiddenBasics();
+            });
         }
 
         function updateHiddenBasics() {
-            if (fromSelect) originField.value = fromSelect.value;
-            if (toSelect) destinationField.value = toSelect.value;
+            const fromSelect = fromSelectMobile || fromSelectDesktop;
+            const toSelect = toSelectMobile || toSelectDesktop;
+            
+            originField.value = fromSelect.value;
+            destinationField.value = toSelect.value;
             const checked = Array.from(tripTypes).find(t => t.checked)?.value || 'oneway';
             tripTypeField.value = checked;
             departureField.value = departureInput.value;
@@ -679,9 +710,10 @@
             updateHiddenBasics();
         }
 
-    // Initialize with new layout
-    setRoundTripUI(Array.from(tripTypes).find(t => t.checked)?.value === 'round');
-    updateHiddenBasics();
+        // Initialize
+        setRoundTripUI(Array.from(tripTypes).find(t => t.checked)?.value === 'round');
+        updateHiddenBasics();
+        syncSelects();
 
         // Update visual state of trip type buttons
         function updateTripTypeUI() {
@@ -719,12 +751,26 @@
             returnInput.addEventListener("change", updateHiddenBasics);
         }
 
-        // Swap From/To on arrow click (updated for single select set)
-        if (arrow && fromSelect && toSelect) {
+        // Swap From/To on arrow click
+        if (arrow) {
             arrow.addEventListener("click", () => {
+                const fromSelect = fromSelectMobile || fromSelectDesktop;
+                const toSelect = toSelectMobile || toSelectDesktop;
+                
                 const tmp = fromSelect.value;
                 fromSelect.value = toSelect.value;
                 toSelect.value = tmp;
+                
+                // Sync both mobile and desktop
+                if (fromSelectMobile && fromSelectDesktop) {
+                    fromSelectMobile.value = fromSelect.value;
+                    fromSelectDesktop.value = fromSelect.value;
+                }
+                if (toSelectMobile && toSelectDesktop) {
+                    toSelectMobile.value = toSelect.value;
+                    toSelectDesktop.value = toSelect.value;
+                }
+                
                 updateHiddenBasics();
             });
         }
