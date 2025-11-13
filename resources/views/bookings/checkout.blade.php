@@ -19,7 +19,7 @@
     <nav class="absolute top-0 left-0 w-full z-20 bg-transparent">
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
             <a href="/" class="flex items-center space-x-2">
-                <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
+                <img src="{{ asset('images/baltbep-logo.png') }}" class="h-12" alt="BaltBep Logo">
             </a>
             <div class="hidden md:flex space-x-8 text-white font-medium">
                 <a href="{{ route('welcome') }}#book" class="hover:text-cyan-200">Book</a>

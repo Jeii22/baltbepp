@@ -43,7 +43,7 @@
             <div class="flex justify-between items-center py-2 md:py-3">
                 <!-- Logo -->
                 <a href="/" class="flex items-center space-x-2">
-                    <img src="{{ asset('images/baltbep-logo.png') }}" class="h-10 md:h-12" alt="BaltBep Logo">
+                    <img src="{{ asset('images/baltbep-logo.png') }}" class="h-8 md:h-10" alt="BaltBep Logo">
                 </a>
               
                 <!-- Mobile menu button -->

@@ -20,7 +20,7 @@
     <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false, dropdownOpen: false }">
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
             <a href="/" class="flex items-center space-x-2">
-                <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
+                <img src="{{ asset('images/baltbep-logo.png') }}" class="h-12" alt="BaltBep Logo">
             </a>
             <button @click="open = !open" class="md:hidden text-white p-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

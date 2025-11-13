@@ -14,7 +14,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
             <!-- Logo -->
             <a href="/" class="flex items-center space-x-2">
-                <img src="{{ asset('images/baltbep-logo.png') }}" class="h-20" alt="BaltBep Logo">
+                <img src="{{ asset('images/baltbep-logo.png') }}" class="h-12" alt="BaltBep Logo">
             </a>
             <!-- Nav Links -->
             <div class="hidden md:flex space-x-8 text-white font-medium">
