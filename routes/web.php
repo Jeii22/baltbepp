@@ -105,6 +105,11 @@ Route::post('/bookings/summary', [BookingController::class, 'summary'])->name('b
 Route::match(['GET','POST'], '/bookings/checkout', [BookingController::class, 'checkout'])->name('bookings.checkout');
 Route::post('/bookings/process', [BookingController::class, 'process'])->name('bookings.process');
 Route::post('/bookings/process-digital-wallet', [BookingController::class, 'processDigitalWallet'])->name('bookings.process.digital-wallet');
+// Contact Email Verification (booking flow)
+Route::post('/booking/contact-email/send', [\App\Http\Controllers\BookingContactEmailVerificationController::class, 'send'])
+    ->name('booking.contact_email.send');
+Route::post('/booking/contact-email/verify', [\App\Http\Controllers\BookingContactEmailVerificationController::class, 'verify'])
+    ->name('booking.contact_email.verify');
 
 // PayMongo GCash routes
 Route::get('/payments/paymongo/gcash/success/{booking}', [BookingController::class, 'paymongoSuccess'])->name('payments.paymongo.gcash.success');

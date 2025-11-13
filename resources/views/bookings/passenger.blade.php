@@ -399,6 +399,20 @@
                                 <label class="text-sm font-semibold text-gray-700">Contact Email <span class="text-red-500">*</span></label>
                                 <input type="email" name="contact_email" class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" placeholder="juan@example.com" required>
                                 <p class="text-xs text-gray-500 mt-1">Booking confirmation and updates will be sent here</p>
+                                <div class="mt-3 space-y-2" id="contactEmailVerificationBlock">
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                                        <button type="button" id="sendContactEmailCodeBtn" class="inline-flex items-center px-4 py-2 rounded-md bg-cyan-600 text-white text-sm font-medium hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                            <span id="sendCodeBtnText">Send Verification Code</span>
+                                        </button>
+                                        <div class="flex-1 flex items-center gap-2" id="contactCodeInputWrapper" style="display:none;">
+                                            <input type="text" inputmode="numeric" maxlength="6" pattern="[0-9]*" id="contactEmailCodeInput" class="flex-1 border border-cyan-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" placeholder="Enter 6-digit code">
+                                            <button type="button" id="verifyContactEmailBtn" class="px-4 py-2 rounded-md bg-green-600 text-white text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed">Verify</button>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs" id="contactEmailStatus" aria-live="polite"></p>
+                                    <input type="hidden" name="contact_email_verified" id="contactEmailVerifiedField" value="0">
+                                </div>
                             </div>
                             
                             <div>
@@ -461,7 +475,7 @@
                             </svg>
                             Back to Schedule
                         </a>
-                        <button type="submit" class="inline-flex items-center px-8 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 shadow-lg transition-colors">
+                        <button type="submit" class="inline-flex items-center px-8 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 shadow-lg transition-colors" id="proceedSummaryBtn" disabled>
                             Proceed to Summary
                             <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -691,6 +705,136 @@
                 input.addEventListener('input', updateFareCalculation);
                 input.addEventListener('change', updateFareCalculation);
             });
+            // Contact email verification logic
+            const emailInput = document.querySelector('input[name="contact_email"]');
+            const sendBtn = document.getElementById('sendContactEmailCodeBtn');
+            const verifyBtn = document.getElementById('verifyContactEmailBtn');
+            const codeWrapper = document.getElementById('contactCodeInputWrapper');
+            const codeInput = document.getElementById('contactEmailCodeInput');
+            const statusEl = document.getElementById('contactEmailStatus');
+            const verifiedField = document.getElementById('contactEmailVerifiedField');
+            const proceedBtn = document.getElementById('proceedSummaryBtn');
+
+            function setStatus(msg, type='info') {
+                statusEl.textContent = msg;
+                statusEl.className = 'text-xs mt-1 ' + (type === 'error' ? 'text-red-600' : type === 'success' ? 'text-green-600' : 'text-gray-600');
+            }
+
+            function disableProceedIfUnverified() {
+                if (!proceedBtn) return;
+                if (verifiedField && verifiedField.value !== '1') {
+                    proceedBtn.setAttribute('disabled', 'disabled');
+                    proceedBtn.classList.add('opacity-60','cursor-not-allowed');
+                } else {
+                    proceedBtn.removeAttribute('disabled');
+                    proceedBtn.classList.remove('opacity-60','cursor-not-allowed');
+                }
+            }
+            disableProceedIfUnverified();
+
+            if (emailInput) {
+                emailInput.addEventListener('input', () => {
+                    if (verifiedField) verifiedField.value = '0';
+                    disableProceedIfUnverified();
+                    if (codeWrapper) codeWrapper.style.display = 'none';
+                    if (sendBtn) sendBtn.disabled = false;
+                    const btnText = document.getElementById('sendCodeBtnText');
+                    if (btnText) btnText.textContent = 'Send Verification Code';
+                    setStatus('Email changed. Please send a new verification code.');
+                });
+            }
+
+            if (sendBtn) {
+                sendBtn.addEventListener('click', async () => {
+                    const email = emailInput ? emailInput.value.trim() : '';
+                    if (!email) { setStatus('Enter an email first.', 'error'); return; }
+                    sendBtn.disabled = true;
+                    const btnText = document.getElementById('sendCodeBtnText');
+                    if (btnText) btnText.textContent = 'Sending...';
+                    setStatus('Sending code...', 'info');
+                    try {
+                        const res = await fetch("{{ route('booking.contact_email.send') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ email })
+                        });
+                        const data = await res.json();
+                        if (!res.ok || !data.ok) {
+                            setStatus(data.message || 'Failed to send code.', 'error');
+                            sendBtn.disabled = false;
+                            if (btnText) btnText.textContent = 'Send Verification Code';
+                            return;
+                        }
+                        setStatus('Code sent! Check your inbox. Expires in 10 minutes.', 'success');
+                        if (codeWrapper) codeWrapper.style.display = 'flex';
+                        if (codeInput) codeInput.focus();
+                        if (btnText) btnText.textContent = 'Resend Code';
+                        // allow resend
+                        sendBtn.disabled = false;
+                    } catch (e) {
+                        setStatus('Network error sending code.', 'error');
+                        sendBtn.disabled = false;
+                        const btnText2 = document.getElementById('sendCodeBtnText');
+                        if (btnText2) btnText2.textContent = 'Send Verification Code';
+                    }
+                });
+            }
+
+            if (verifyBtn) {
+                verifyBtn.addEventListener('click', async () => {
+                    const email = emailInput ? emailInput.value.trim() : '';
+                    const code = codeInput ? codeInput.value.trim() : '';
+                    if (code.length !== 6) { setStatus('Enter the 6-digit code.', 'error'); return; }
+                    verifyBtn.disabled = true;
+                    verifyBtn.textContent = 'Verifying...';
+                    setStatus('Verifying...', 'info');
+                    try {
+                        const res = await fetch("{{ route('booking.contact_email.verify') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ email, code })
+                        });
+                        const data = await res.json();
+                        if (!res.ok || !data.ok) {
+                            setStatus(data.message || 'Invalid code.', 'error');
+                            verifyBtn.disabled = false;
+                            verifyBtn.textContent = 'Verify';
+                            return;
+                        }
+                        if (verifiedField) verifiedField.value = '1';
+                        setStatus('Email verified ✔ You may proceed.', 'success');
+                        verifyBtn.textContent = 'Verified';
+                        verifyBtn.disabled = true;
+                        if (codeInput) codeInput.disabled = true;
+                        if (emailInput) emailInput.readOnly = true;
+                        disableProceedIfUnverified();
+                    } catch (e) {
+                        setStatus('Network error verifying code.', 'error');
+                        verifyBtn.disabled = false;
+                        verifyBtn.textContent = 'Verify';
+                    }
+                });
+            }
+
+            // Block form submission if not verified
+            const form = document.getElementById('passengerForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    if (!verifiedField || verifiedField.value !== '1') {
+                        e.preventDefault();
+                        setStatus('Please verify the contact email before proceeding.', 'error');
+                        disableProceedIfUnverified();
+                    }
+                });
+            }
         });
     </script>
 

@@ -84,7 +84,16 @@ class BookingController extends Controller
             'special_requests' => 'sometimes|nullable|string|max:1000',
             'contact_preferences' => 'sometimes|nullable|array',
             'contact_preferences.*' => 'in:email,sms,call',
+            // Contact email verification flag must be present
+            'contact_email_verified' => 'required|in:1',
         ]);
+
+        // Server-side enforcement of contact email verification to prevent bypass
+        $sessionVerified = session('booking_contact_email_verified');
+        $sessionEmail = session('booking_contact_email');
+        if (!$sessionVerified || !$sessionEmail || strtolower($sessionEmail) !== strtolower($validated['contact_email'])) {
+            return back()->withErrors(['contact_email' => 'Please verify the contact email before proceeding.'])->withInput();
+        }
 
         // Get trips
         $outboundTrip = Trip::findOrFail($validated['trip_id']);
