@@ -127,7 +127,7 @@
             <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <div class="text-center text-white px-6">
                     <h1 class="text-4xl md:text-5xl font-bold">Take you where the sea takes your destination</h1>
-                    <p class="mt-2 text-2xl italic">Adventures await!</p>
+                    <p class="mt-2 text-2xl italic">Adventure Imo mama</p>
                 </div>
             </div>
         </div>
