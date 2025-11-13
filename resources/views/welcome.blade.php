@@ -183,8 +183,8 @@
                     <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▾</span>
                 </div>
             </div>
-            <!-- Swap Button (hidden on mobile, visible from sm+) -->
-            <div class="hidden sm:flex sm:flex-col justify-center items-center sm:pb-1">
+            <!-- Swap Button (only show on sm+) -->
+            <div class="flex sm:flex-col justify-center items-center sm:pb-1">
                 <button type="button" id="tripArrow" class="mt-1 sm:mt-0 cursor-pointer text-lg sm:text-xl bg-blue-100 text-blue-600 px-4 py-2 rounded-full shadow hover:bg-blue-200" title="Swap" aria-label="Swap origin and destination">⇆</button>
             </div>
             <!-- To -->
