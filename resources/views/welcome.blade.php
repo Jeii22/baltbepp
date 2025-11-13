@@ -40,16 +40,16 @@
     <!-- Navbar -->
     <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="flex items-center justify-between py-2 md:py-3">
-                <!-- Logo -->
-                <div class="flex-shrink-0">
+            <div class="flex items-center py-2 md:py-3">
+                <!-- Logo (Left) -->
+                <div class="flex-shrink-0 w-1/4">
                     <a href="/" class="flex items-center space-x-2">
                         <img src="{{ asset('images/baltbep-logo.png') }}" class="h-12 md:h-14" alt="BaltBep Logo">
                     </a>
                 </div>
               
-                <!-- Desktop Nav Links (Centered) -->
-                <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-4 lg:space-x-6 text-white font-medium">
+                <!-- Desktop Nav Links (Center) -->
+                <div class="hidden md:flex flex-1 justify-center space-x-4 lg:space-x-6 text-white font-medium">
                     <a href="#book" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Book</a>
                     <a href="#promos" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Promos</a>
                     <a href="#routes" class="px-2 lg:px-3 py-2 rounded-lg hover:bg-white/20 hover:text-cyan-200 transition-all duration-200 smooth-scroll text-sm lg:text-base">Routes</a>
@@ -59,7 +59,7 @@
                 </div>
 
                 <!-- Mobile menu button -->
-                <button @click="open = !open" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-white/20 focus:outline-none">
+                <button @click="open = !open" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-white/20 focus:outline-none ml-auto">
                     <svg class="h-6 w-6" :class="{'hidden': open, 'block': !open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -68,8 +68,8 @@
                     </svg>
                 </button>
 
-                <!-- Desktop Auth Buttons (Right Side) -->
-                <div class="hidden md:flex items-center space-x-2 lg:space-x-3">
+                <!-- Desktop Auth Buttons (Right) -->
+                <div class="hidden md:flex items-center justify-end space-x-2 lg:space-x-3 w-1/4">
                     @auth
                         <div x-data="{ dropdownOpen: false }" class="relative">
                             <button @click="dropdownOpen = !dropdownOpen" class="flex items-center space-x-2 text-white hover:text-cyan-200 transition text-sm lg:text-base">
