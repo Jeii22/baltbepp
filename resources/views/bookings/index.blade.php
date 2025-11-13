@@ -1,7 +1,20 @@
 @extends('layouts.superadmin')
 
 @section('content')
-<div class="p-6 space-y-6" x-data="{ showModal: false, selected: null, showPassengers: false }">
+<div class="p-6 space-y-6"
+     x-data="{
+         showModal: false,
+         selected: null,
+         showPassengers: false,
+         get passengerArray() {
+             if (!this.selected || !this.selected.passengers) return [];
+             if (Array.isArray(this.selected.passengers)) return this.selected.passengers;
+             return Object.keys(this.selected.passengers)
+                 .sort((a, b) => Number(a) - Number(b))
+                 .map(k => this.selected.passengers[k]);
+         }
+     }"
+>
     <script>
     function getPassengerArray(passengers) {
         if (!passengers) return [];
@@ -247,18 +260,10 @@
                     <div x-show="showPassengers" x-collapse class="mt-3 rounded-lg border border-gray-200 p-4 bg-gray-50 max-h-96 overflow-y-auto">
                         <div class="text-gray-700 font-medium mb-3">Passenger List</div>
                         
-                        <!-- Debug info -->
-                        <div x-show="true" class="mb-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">
-                            <div>Debug: Passengers count = <span x-text="getPassengerArray(selected?.passengers).length"></span></div>
-                            <div x-show="getPassengerArray(selected?.passengers).length > 0">
-                                First passenger: <span x-text="JSON.stringify(getPassengerArray(selected.passengers)[0])"></span>
-                            </div>
-                        </div>
-
-                        <!-- Check if passengers data exists -->
-                        <template x-if="getPassengerArray(selected?.passengers).length > 0">
+                        <!-- Passenger details rendering -->
+                        <template x-if="passengerArray.length > 0">
                             <div class="space-y-3">
-                                <template x-for="(passenger, index) in getPassengerArray(selected.passengers)" :key="index">
+                                <template x-for="(passenger, index) in passengerArray" :key="index">
                                     <div class="bg-white p-3 rounded-lg border border-gray-200">
                                         <div class="flex items-start justify-between">
                                             <div class="flex-1">
@@ -305,6 +310,9 @@
                                     </div>
                                 </template>
                             </div>
+                        </template>
+                        <template x-if="passengerArray.length === 0">
+                            <div class="text-gray-500 italic">No passenger details available for this booking.</div>
                         </template>
                         
                         <!-- Fallback if no passenger data -->
