@@ -96,16 +96,22 @@ class BookingController extends Controller
             return back()->withErrors(['contact_email' => 'Please verify the contact email before proceeding.'])->withInput();
         }
 
-        // Handle student ID photo uploads
+        // Handle student ID photo uploads and store file paths
         if ($request->hasFile('passengers')) {
             foreach ($request->file('passengers') as $index => $passengerFiles) {
                 if (isset($passengerFiles['student_id_photo'])) {
                     $file = $passengerFiles['student_id_photo'];
                     $fileName = 'student_id_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
                     $filePath = $file->storeAs('student_ids', $fileName, 'public');
+                    // Store the file path, not the UploadedFile object
                     $validated['passengers'][$index]['student_id_photo_path'] = $filePath;
                 }
             }
+        }
+
+        // Remove ALL UploadedFile objects from validated data to prevent serialization errors
+        foreach ($validated['passengers'] as $index => $passenger) {
+            unset($validated['passengers'][$index]['student_id_photo']);
         }
 
         // Get trips

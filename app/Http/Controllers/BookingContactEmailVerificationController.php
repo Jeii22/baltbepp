@@ -22,15 +22,7 @@ class BookingContactEmailVerificationController extends Controller
 
         $email = strtolower($validated['email']);
 
-        // Rate limit basic: allow only one send every 60 seconds per email in session
-        $lastSentAt = session("booking_contact_email_last_sent_at_$email");
-        if ($lastSentAt && now()->diffInSeconds($lastSentAt) < 60) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Please wait a moment before requesting a new code.',
-                'retry_after' => 60 - now()->diffInSeconds($lastSentAt),
-            ], 429);
-        }
+        // Rate limit removed: allow unlimited requests for a new code
 
         // Generate 6-digit numeric code
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
