@@ -551,22 +551,26 @@
                     
                     <!-- Social Media -->
                     <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg">
-                        <h3 class="text-lg sm:text-xl font-bold text-blue-700 mb-4">Follow Us</h3>
-                        <div class="flex space-x-3 sm:space-x-4">
-                            <a href="https://web.facebook.com/baltbepshippingexpress" class="bg-blue-800 text-white p-2.5 sm:p-3 rounded-full hover:bg-blue-900 transition" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <h3 class="text-lg sm:text-xl font-bold text-blue-700 mb-4 sm:mb-6">Follow Us</h3>
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                            <a href="https://web.facebook.com/baltbepshippingexpress" 
+                               class="flex items-center justify-center gap-3 bg-blue-800 text-white px-6 py-3 sm:py-4 rounded-lg hover:bg-blue-900 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg" 
+                               target="_blank" 
+                               rel="noopener noreferrer" 
+                               aria-label="Facebook">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                 </svg>
+                                <span class="font-semibold text-sm sm:text-base">Facebook</span>
                             </a>
-                            <a href="mailto:support@baltbep.com" class="bg-blue-600 text-white p-2.5 sm:p-3 rounded-full hover:bg-blue-700 transition" aria-label="Email">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M2 4h20a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V6a2 2 0 012-2zm10 7l10-5H2l10 5zm-2.236-.132L2 8.118V18h20V8.118l-7.764 2.75a4 4 0 01-4.472 0z"/>
-                                </svg>
-                            </a>
-                            <a href="tel:+639498833551" class="bg-green-600 text-white p-2.5 sm:p-3 rounded-full hover:bg-green-700 transition" aria-label="Call us">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
+                        
+                            <a href="tel:+639498833551" 
+                               class="flex items-center justify-center gap-3 bg-green-600 text-white px-6 py-3 sm:py-4 rounded-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg" 
+                               aria-label="Call us">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M2.003 5.884l3.682-.737a1 1 0 011.115.595l1.516 3.538a1 1 0 01-.23 1.09l-2.21 2.1a16.053 16.053 0 007.257 7.257l2.1-2.21a1 1 0 011.09-.23l3.538 1.516a1 1 0 01.595 1.115l-.737 3.682A1 1 0 0118.25 24C8.175 24 0 15.825 0 5.75a1 1 0 011.003-1.003z"/>
                                 </svg>
+                                <span class="font-semibold text-sm sm:text-base">Call Us</span>
                             </a>
                         </div>
                     </div>
