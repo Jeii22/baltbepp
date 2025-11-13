@@ -44,7 +44,7 @@
                 <!-- Logo (Left) -->
                 <div class="flex-shrink-0 w-1/4">
                     <a href="/" class="flex items-center space-x-2">
-                        <img src="{{ asset('images/baltbep-logo.png') }}" class="h-12 md:h-14" alt="BaltBep Logo">
+                        <img src="{{ asset('images/baltbep-logo.png') }}" class="h-18 md:h-22" alt="BaltBep Logo">
                     </a>
                 </div>
               
@@ -59,14 +59,12 @@
                 </div>
 
                 <!-- Mobile menu button -->
-                <button @click="open = !open" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-white/20 focus:outline-none ml-auto">
-                    <svg class="h-6 w-6" :class="{'hidden': open, 'block': !open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                <a href="{{ route('login') }}" class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2 border border-white rounded-lg text-white bg-transparent hover:bg-white/10 focus:outline-none ml-auto font-medium transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.208a2.25 2.25 0 01-2.25 2.042h-10.5A2.25 2.25 0 014.5 20.458v-.208z" />
                     </svg>
-                    <svg class="h-6 w-6" :class="{'block': open, 'hidden': !open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                    Sign in
+                </a>
 
                 <!-- Desktop Auth Buttons (Right) -->
                 <div class="hidden md:flex items-center justify-end space-x-2 lg:space-x-3 w-1/4">
@@ -112,33 +110,7 @@
             </div>
 
             <!-- Mobile menu -->
-            <div x-show="open" @click.away="open = false" class="md:hidden" x-cloak>
-                <div class="px-2 pt-2 pb-3 space-y-1 bg-black/50 backdrop-blur-md rounded-lg mb-2">
-                    <a href="#book" @click="open = false" class="block px-3 py-2 rounded-md text-white hover:bg-white/20">Book</a>
-                    <a href="#promos" @click="open = false" class="block px-3 py-2 rounded-md text-white hover:bg-white/20">Promos</a>
-                    <a href="#routes" @click="open = false" class="block px-3 py-2 rounded-md text-white hover:bg-white/20">Routes</a>
-                    <a href="#why-choose-us" @click="open = false" class="block px-3 py-2 rounded-md text-white hover:bg-white/20">Why Us</a>
-                    <a href="#about-us" @click="open = false" class="block px-3 py-2 rounded-md text-white hover:bg-white/20">About</a>
-                    <a href="#contact-us" @click="open = false" class="block px-3 py-2 rounded-md text-white hover:bg-white/20">Contact</a>
-                    
-                    @auth
-                        <div class="border-t border-white/20 pt-2">
-                            <a href="{{ route('customer.dashboard') }}" @click="open = false" class="block px-3 py-2 rounded-md text-white hover:bg-white/20">My Profile</a>
-                            @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
-                                <a href="{{ route('dashboard') }}" @click="open = false" class="block px-3 py-2 rounded-md text-white hover:bg-white/20">Dashboard</a>
-                            @endif
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="w-full text-left px-3 py-2 rounded-md text-white hover:bg-white/20">Logout</button>
-                            </form>
-                        </div>
-                    @else
-                        <div class="border-t border-white/20 pt-2">
-                            <a href="{{ route('login') }}" @click="open = false" class="block px-3 py-2 rounded-md text-center bg-white text-blue-600 hover:bg-gray-100 font-medium">Sign In</a>
-                        </div>
-                    @endauth
-                </div>
-            </div>
+            <!-- No mobile dropdown, only direct Sign In button above -->
         </div>
     </nav>
 
