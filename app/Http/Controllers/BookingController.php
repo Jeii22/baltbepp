@@ -239,7 +239,8 @@ class BookingController extends Controller
         $tripId = $data['trip_id'] ?? $data['outbound_trip_id'];
         $trip = Trip::findOrFail($tripId);
 
-        $booking = \App\Models\Booking::create([
+        // Build base booking data
+        $bookingData = [
             'user_id' => auth()->id(),
             'trip_id' => $trip->id,
             'origin' => $trip->origin,
@@ -256,11 +257,22 @@ class BookingController extends Controller
             'total_amount' => $data['grand_total'] ?? $data['subtotal'] ?? 0,
             'payment_method' => $request->payment_method,
             'status' => 'pending',
-            'meta' => [
+        ];
+
+        // Only include meta if column exists (prevents SQL error on environments not yet migrated)
+        if (\Illuminate\Support\Facades\Schema::hasColumn('bookings', 'meta')) {
+            $bookingData['meta'] = [
                 'passengers' => $data['passengers'] ?? [],
                 'contact_info' => $data['contact_info'] ?? [],
-            ],
-        ]);
+            ];
+        } else {
+            \Log::warning('Meta column missing on bookings table; passenger details not stored.', [
+                'trip_id' => $trip->id,
+                'counts' => $data['counts'] ?? []
+            ]);
+        }
+
+        $booking = \App\Models\Booking::create($bookingData);
 
         // This method now only handles PayMongo/Card/COD payments
         // Digital wallets are handled by processDigitalWallet method
