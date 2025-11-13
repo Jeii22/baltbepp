@@ -35,7 +35,7 @@ class TripController extends Controller
             'departure_date' => 'required|date',
             'return_date' => 'nullable|date|after_or_equal:departure_date',
             'tripType' => 'required|in:round,oneway',
-            'adult' => 'nullable|integer|min:1',
+            'adult' => 'nullable|integer|min:0',
             'child' => 'nullable|integer|min:0',
             'infant' => 'nullable|integer|min:0',
             'pwd' => 'nullable|integer|min:0',

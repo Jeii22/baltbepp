@@ -169,7 +169,7 @@
                                 <div class="text-gray-600 space-y-1 mt-1">
                                     @php
                                         $passengerTypes = [
-                                            'adult' => ['count' => $criteria['adult'] ?? 1, 'label' => 'Adult', 'fare' => $fareAliases['adult'] ?? 900],
+                                            'adult' => ['count' => $criteria['adult'] ?? 0, 'label' => 'Adult', 'fare' => $fareAliases['adult'] ?? 900],
                                             'child' => ['count' => $criteria['child'] ?? 0, 'label' => 'Child', 'fare' => $fareAliases['child'] ?? 450],
                                             'infant' => ['count' => $criteria['infant'] ?? 0, 'label' => 'Infant', 'fare' => $fareAliases['infant'] ?? 0],
                                             'pwd' => ['count' => $criteria['pwd'] ?? 0, 'label' => 'PWD/Senior', 'fare' => $fareAliases['pwd'] ?? 720],
@@ -277,7 +277,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
                     <div>
                         <label class="text-xs font-semibold text-gray-600">Adult</label>
-                        <input type="number" min="1" id="edit_adult" name="adult" class="border rounded-lg px-3 py-2 w-full" value="1">
+                        <input type="number" min="0" id="edit_adult" name="adult" class="border rounded-lg px-3 py-2 w-full" value="0">
                     </div>
                     <div>
                         <label class="text-xs font-semibold text-gray-600">Child</label>
@@ -325,7 +325,7 @@
             tripType: @json($criteria['tripType']),
             departure_date: @json($criteria['departure_date']),
             return_date: @json($criteria['return_date'] ?? ''),
-            adult: @json($criteria['adult'] ?? 1),
+            adult: @json($criteria['adult'] ?? 0),
             child: @json($criteria['child'] ?? 0),
             infant: @json($criteria['infant'] ?? 0),
             pwd: @json($criteria['pwd'] ?? 0),
@@ -435,7 +435,7 @@
         // --- Selection handling ---
         const selection = { outbound: null, inbound: null };
         const counts = {
-            adult: Number(params.adult) || 1,
+            adult: Number(params.adult) || 0,
             child: Number(params.child) || 0,
             infant: Number(params.infant) || 0,
             pwd: Number(params.pwd) || 0,

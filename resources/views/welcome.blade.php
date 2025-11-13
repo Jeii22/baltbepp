@@ -176,7 +176,7 @@
             <label class="text-sm font-semibold mb-1 block">Passengers</label>
             <button type="button" id="passengerDropdownBtn" 
                 class="border rounded-lg px-4 py-3 w-full text-left focus:ring-2 focus:ring-blue-500">
-                <span id="totalPassengers">1 Adult</span>
+                <span id="totalPassengers">Walay Pasahero</span>
             </button>
 
             <!-- Dropdown -->
@@ -185,7 +185,7 @@
 
                 @php
                     $passengerTypeMap = [
-                        'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 1],
+                        'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 0],
                         'Child (2-11)' => ['key' => 'child', 'label' => 'Child', 'description' => 'Ages 2-11', 'default' => 0],
                         'Infant' => ['key' => 'infant', 'label' => 'Infant', 'description' => 'Under 2', 'default' => 0],
                         'Senior Citizen / PWD' => ['key' => 'pwd', 'label' => 'PWD/Senior', 'description' => 'Persons With Disability / Senior Citizens', 'default' => 0],
@@ -234,13 +234,14 @@
         <input type="hidden" name="tripType" id="tripTypeField" value="round">
         <input type="hidden" name="departure_date" id="departureField">
         <input type="hidden" name="return_date" id="returnField">
-        <input type="hidden" name="adult" id="adultField" value="1">
+        <!-- Set default to 0 for adult -->
+        <input type="hidden" name="adult" id="adultField" value="0">
         <input type="hidden" name="child" id="childField" value="0">
         <input type="hidden" name="infant" id="infantField" value="0">
         <input type="hidden" name="pwd" id="pwdField" value="0">
         <input type="hidden" name="student" id="studentField" value="0">
 
-        <button class="bg-blue-600 text-white font-medium rounded-lg px-6 py-3 w-full hover:bg-blue-700 active:bg-blue-800 transition shadow">
+        <button class="bg-blue-600 text-white font-medium rounded-lg px-6 py-3 w-full hover:bg-blue-700 active:bg-blue-800 transition shadow" id="searchTripsBtn">
             Search Trips
         </button>
         <p class="mt-2 text-xs text-gray-400 text-center">By continuing, you agree to our terms.</p>
@@ -706,6 +707,9 @@
                 const type = btn.getAttribute("data-type");
                 const isIncrement = btn.classList.contains("increment");
                 
+                console.log(`Button clicked: ${isIncrement ? 'increment' : 'decrement'} ${type}`);
+                console.log('Counts before:', {...counts});
+                
                 if (isIncrement) {
                     // Check total passenger limit (excluding infants from count)
                     const totalCountablePassengers = Object.keys(counts)
@@ -714,11 +718,17 @@
                     
                     if (totalCountablePassengers < 10) {
                         counts[type]++;
+                        console.log(`Incremented ${type} to ${counts[type]}`);
+                    } else {
+                        console.log('Max passenger limit reached (10)');
                     }
                 } else {
-                    // Prevent decrementing below 0, and keep at least 1 adult
-                    if (counts[type] > 0 && !(type === "adult" && counts.adult === 1)) {
+                    // Prevent decrementing below 0
+                    if (counts[type] > 0) {
                         counts[type]--;
+                        console.log(`Decremented ${type} to ${counts[type]}`);
+                    } else {
+                        console.log(`Cannot decrement ${type} below 0`);
                     }
                 }
 
@@ -729,19 +739,18 @@
                 }
                 updateTotal();
                 updateHiddenFields();
+                console.log('Counts after:', {...counts});
             });
         });
 
         function updateTotal() {
             let displayParts = [];
-            
             @foreach($passengerTypeMap as $typeInfo)
                 if (counts['{{ $typeInfo['key'] }}'] > 0) {
                     displayParts.push(`${counts['{{ $typeInfo['key'] }}']} {{ $typeInfo['label'] }}`);
                 }
             @endforeach
-            
-            totalDisplay.textContent = displayParts.length > 0 ? displayParts.join(', ') : '1 Adult';
+            totalDisplay.textContent = displayParts.length > 0 ? displayParts.join(', ') : 'Walay Pasahero';
         }
 
         function updateHiddenFields() {
@@ -750,6 +759,7 @@
                 const field = document.getElementById(type + "Field");
                 if (field) {
                     field.value = counts[type];
+                    console.log(`Updated hidden field ${type}Field to ${counts[type]}`);
                 }
             });
         }
@@ -805,6 +815,80 @@
 @endauth
 
 <script>
+    // SweetAlert2 validation for passenger selection
+    console.log('Passenger validation script loaded');
+    
+    window.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded fired');
+        
+        // Find the form by the search button's parent form
+        const searchBtn = document.getElementById('searchTripsBtn');
+        console.log('Search button found:', searchBtn);
+        
+        const searchForm = searchBtn ? searchBtn.closest('form') : null;
+        console.log('Search form found:', searchForm);
+        
+        if (searchForm) {
+            console.log('Adding submit listener to form');
+            searchForm.addEventListener('submit', function(e) {
+                console.log('Form submit event triggered!');
+                // Log all hidden field values for debugging
+                const adultField = document.getElementById('adultField');
+                const childField = document.getElementById('childField');
+                const infantField = document.getElementById('infantField');
+                const pwdField = document.getElementById('pwdField');
+                const studentField = document.getElementById('studentField');
+                console.log('Hidden field values:', {
+                    adult: adultField ? adultField.value : null,
+                    child: childField ? childField.value : null,
+                    infant: infantField ? infantField.value : null,
+                    pwd: pwdField ? pwdField.value : null,
+                    student: studentField ? studentField.value : null
+                });
+                const adult = parseInt(adultField?.value) || 0;
+                const child = parseInt(childField?.value) || 0;
+                const infant = parseInt(infantField?.value) || 0;
+                const pwd = parseInt(pwdField?.value) || 0;
+                const student = parseInt(studentField?.value) || 0;
+                const total = adult + child + infant + pwd + student;
+                
+                console.log('Form submit - Passenger counts:', {adult, child, infant, pwd, student, total});
+                
+                // Check for departure date
+                const departureDate = document.getElementById('departureField')?.value;
+                if (!departureDate) {
+                    console.log('No departure date selected, preventing submission');
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'When are we going to sail?',
+                        text: 'Add a departure date so we can set sail!',
+                        confirmButtonColor: '#3085d6',
+                        footer: '<span style="color:#888">Pick your sailing date! ⛵</span>'
+                    });
+                    return false;
+                }
+                
+                if (total < 1) {
+                    console.log('No passengers selected, preventing submission');
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Wanna sail the sea without you?',
+                        text: 'Select your type of Passenger before searching for trips!',
+                        confirmButtonColor: '#3085d6',
+                        footer: '<span style="color:#888">No one sails alone! 🚢</span>'
+                    });
+                    return false;
+                }
+                // Allow form to submit if we have passengers
+                console.log('Form validation passed, submitting with passengers:', total);
+                return true;
+            });
+        } else {
+            console.error('Search form not found! Search button:', searchBtn);
+        }
+    });
 // Smooth scrolling for navigation links
 document.addEventListener('DOMContentLoaded', function() {
     // Add smooth scrolling to all links with smooth-scroll class

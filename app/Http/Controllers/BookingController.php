@@ -74,6 +74,7 @@ class BookingController extends Controller
             'passengers.*.student_id' => 'sometimes|nullable|string|max:50',
             'passengers.*.school' => 'sometimes|nullable|string|max:200',
             'passengers.*.id_number' => 'sometimes|nullable|string|max:50',
+            'passengers.*.student_id_photo' => 'sometimes|nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
             
             // Contact information
             'contact_name' => 'required|string|max:120',
@@ -93,6 +94,18 @@ class BookingController extends Controller
         $sessionEmail = session('booking_contact_email');
         if (!$sessionVerified || !$sessionEmail || strtolower($sessionEmail) !== strtolower($validated['contact_email'])) {
             return back()->withErrors(['contact_email' => 'Please verify the contact email before proceeding.'])->withInput();
+        }
+
+        // Handle student ID photo uploads
+        if ($request->hasFile('passengers')) {
+            foreach ($request->file('passengers') as $index => $passengerFiles) {
+                if (isset($passengerFiles['student_id_photo'])) {
+                    $file = $passengerFiles['student_id_photo'];
+                    $fileName = 'student_id_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+                    $filePath = $file->storeAs('student_ids', $fileName, 'public');
+                    $validated['passengers'][$index]['student_id_photo_path'] = $filePath;
+                }
+            }
         }
 
         // Get trips

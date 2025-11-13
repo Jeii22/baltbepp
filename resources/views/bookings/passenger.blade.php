@@ -84,7 +84,7 @@
         <div class="grid md:grid-cols-3 gap-6 mt-6">
             <!-- Passenger Forms -->
             <div class="md:col-span-2">
-                <form id="passengerForm" action="{{ route('bookings.summary') }}" method="POST" class="space-y-8">
+                <form id="passengerForm" action="{{ route('bookings.summary') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                     @csrf
                     <input type="hidden" name="trip_id" value="{{ $outboundTrip->id }}">
                     @if(isset($inboundTrip) && $inboundTrip)
@@ -364,6 +364,15 @@
                                 <div>
                                     <label class="text-sm font-semibold text-gray-700">School/University <span class="text-red-500">*</span></label>
                                     <input type="text" name="passengers[{{ $passengerIndex }}][school]" class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="University of the Philippines" required>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="text-sm font-semibold text-gray-700">Student ID Photo <span class="text-red-500">*</span></label>
+                                    <p class="text-xs text-gray-500 mb-2">Upload a clear photo of your student ID (front side). Accepted formats: JPG, PNG, PDF. Max size: 2MB</p>
+                                    <input type="file" 
+                                           name="passengers[{{ $passengerIndex }}][student_id_photo]" 
+                                           class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-gray-300 rounded-lg cursor-pointer" 
+                                           accept="image/jpeg,image/jpg,image/png,application/pdf"
+                                           required>
                                 </div>
                             </div>
                             
