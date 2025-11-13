@@ -214,11 +214,11 @@
             <!-- Passengers -->
             <div class="relative">
                 <label class="text-xs sm:text-sm font-semibold mb-1 block">Passengers</label>
-                <button type="button" id="passengerDropdownBtn" class="border border-gray-300 rounded-lg px-3 sm:px-4 py-3 w-full text-left text-sm sm:text-base bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                <button type="button" id="passengerDropdownBtn" class="border border-gray-300 rounded-lg px-3 sm:px-4 py-3 w-full text-left text-sm sm:text-base bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:bg-white hover:bg-white transition">
                     <span id="totalPassengers">Walay Pasahero</span>
                 </button>
-                <!-- Dropdown (unchanged) -->
-                <div id="passengerDropdown" class="hidden absolute z-20 mt-2 w-[calc(100vw-2rem)] max-w-md sm:w-80 bg-white border rounded-xl shadow-lg p-3 sm:p-4 left-0 right-0 mx-auto sm:left-auto sm:right-auto sm:mx-0">
+                <!-- Dropdown -->
+                <div id="passengerDropdown" class="hidden absolute z-30 mt-2 w-full sm:w-96 bg-white border-2 border-gray-200 rounded-xl shadow-2xl p-4 sm:p-5 left-0 right-0">
                     @php
                         $passengerTypeMap = [
                             'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 0],
@@ -234,24 +234,24 @@
                             $fareEntry = $fareLookup->get($fareType);
                             $price = $fareEntry ? $fareEntry->price : 0;
                         @endphp
-                        <div class="flex items-center justify-between gap-2 {{ !$loop->last ? 'mb-3' : '' }}">
+                        <div class="flex items-center justify-between gap-3 {{ !$loop->last ? 'mb-4 pb-3 border-b border-gray-100' : '' }}">
                             <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between gap-1">
-                                    <p class="font-semibold text-xs sm:text-sm truncate">{{ $typeInfo['label'] }}</p>
-                                    <p class="text-xs font-medium text-green-600 whitespace-nowrap">₱{{ number_format($price, 0) }}</p>
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <p class="font-semibold text-sm sm:text-base text-gray-800">{{ $typeInfo['label'] }}</p>
+                                    <p class="text-sm sm:text-base font-semibold text-green-600 whitespace-nowrap">₱{{ number_format($price, 0) }}</p>
                                 </div>
-                                <p class="text-[10px] sm:text-xs text-gray-500 truncate">{{ $typeInfo['description'] }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500">{{ $typeInfo['description'] }}</p>
                             </div>
-                            <div class="flex items-center flex-shrink-0">
-                                <button type="button" class="decrement bg-gray-200 px-1.5 sm:px-2 py-1 rounded-l hover:bg-gray-300 text-xs sm:text-sm" data-type="{{ $typeInfo['key'] }}">-</button>
-                                <span id="{{ $typeInfo['key'] }}Count" class="px-1.5 sm:px-3 font-semibold min-w-[1.5rem] sm:min-w-[2rem] text-center text-xs sm:text-sm">{{ $typeInfo['default'] }}</span>
-                                <button type="button" class="increment bg-blue-600 text-white px-1.5 sm:px-2 py-1 rounded-r hover:bg-blue-700 text-xs sm:text-sm" data-type="{{ $typeInfo['key'] }}">+</button>
+                            <div class="flex items-center flex-shrink-0 bg-gray-50 rounded-lg border border-gray-200">
+                                <button type="button" class="decrement bg-gray-100 hover:bg-gray-200 active:bg-gray-300 px-3 sm:px-4 py-2 sm:py-3 rounded-l-lg transition text-base sm:text-lg font-bold text-gray-700" data-type="{{ $typeInfo['key'] }}">−</button>
+                                <span id="{{ $typeInfo['key'] }}Count" class="px-4 sm:px-5 py-2 sm:py-3 font-bold min-w-[3rem] text-center text-base sm:text-lg bg-white">{{ $typeInfo['default'] }}</span>
+                                <button type="button" class="increment bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-3 sm:px-4 py-2 sm:py-3 rounded-r-lg transition text-base sm:text-lg font-bold" data-type="{{ $typeInfo['key'] }}">+</button>
                             </div>
                         </div>
                     @endforeach
-                    <div class="border-t pt-2 sm:pt-3 mt-2 sm:mt-3">
-                        <p class="text-[10px] sm:text-xs text-gray-500">⚠ Max 10 passengers only (adults, children & PWD).</p>
-                        <p class="text-[10px] sm:text-xs text-gray-400 mt-1">💡 Prices shown are base fares per person.</p>
+                    <div class="border-t-2 border-gray-200 pt-3 sm:pt-4 mt-3 sm:mt-4 bg-blue-50 -mx-4 sm:-mx-5 px-4 sm:px-5 py-3 rounded-b-xl">
+                        <p class="text-xs sm:text-sm text-gray-700 font-medium">⚠️ Maximum 10 passengers (adults, children & PWD)</p>
+                        <p class="text-xs sm:text-sm text-gray-600 mt-1">💡 Prices shown are base fares per person</p>
                     </div>
                 </div>
             </div>
