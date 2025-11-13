@@ -2,6 +2,16 @@
 
 @section('content')
 <div class="p-6 space-y-6" x-data="{ showModal: false, selected: null, showPassengers: false }">
+    <script>
+    function getPassengerArray(passengers) {
+        if (!passengers) return [];
+        if (Array.isArray(passengers)) return passengers;
+        // If object with numeric keys, convert to array
+        return Object.keys(passengers)
+            .sort((a, b) => Number(a) - Number(b))
+            .map(k => passengers[k]);
+    }
+    </script>
     <!-- Title -->
     <div class="flex items-center justify-between">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Booking Management - Super Admin</h1>
@@ -239,16 +249,16 @@
                         
                         <!-- Debug info -->
                         <div x-show="true" class="mb-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">
-                            <div>Debug: Passengers count = <span x-text="selected?.passengers ? selected.passengers.length : 0"></span></div>
-                            <div x-show="selected?.passengers && selected.passengers.length > 0">
-                                First passenger: <span x-text="JSON.stringify(selected.passengers[0])"></span>
+                            <div>Debug: Passengers count = <span x-text="getPassengerArray(selected?.passengers).length"></span></div>
+                            <div x-show="getPassengerArray(selected?.passengers).length > 0">
+                                First passenger: <span x-text="JSON.stringify(getPassengerArray(selected.passengers)[0])"></span>
                             </div>
                         </div>
-                        
+
                         <!-- Check if passengers data exists -->
-                        <template x-if="selected?.passengers && selected.passengers.length > 0">
+                        <template x-if="getPassengerArray(selected?.passengers).length > 0">
                             <div class="space-y-3">
-                                <template x-for="(passenger, index) in selected.passengers" :key="index">
+                                <template x-for="(passenger, index) in getPassengerArray(selected.passengers)" :key="index">
                                     <div class="bg-white p-3 rounded-lg border border-gray-200">
                                         <div class="flex items-start justify-between">
                                             <div class="flex-1">
@@ -263,7 +273,6 @@
                                                 <div class="text-sm text-gray-500 mt-1">
                                                     DOB: <span x-text="passenger.birth_date"></span>
                                                 </div>
-                                                
                                                 <!-- Student-specific info -->
                                                 <template x-if="passenger.type === 'student'">
                                                     <div class="mt-2 p-2 bg-indigo-50 rounded border border-indigo-200">
@@ -282,7 +291,6 @@
                                                         </div>
                                                     </div>
                                                 </template>
-                                                
                                                 <!-- PWD-specific info -->
                                                 <template x-if="passenger.type === 'pwd' && passenger.id_number">
                                                     <div class="mt-2 text-xs text-gray-600">
