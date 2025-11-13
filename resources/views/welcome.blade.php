@@ -40,10 +40,10 @@
     <!-- Navbar -->
     <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center py-3 md:py-4">
+            <div class="flex justify-between items-center py-2 md:py-3">
                 <!-- Logo -->
                 <a href="/" class="flex items-center space-x-2">
-                    <img src="{{ asset('images/baltbep-logo.png') }}" class="h-14 md:h-20" alt="BaltBep Logo">
+                    <img src="{{ asset('images/baltbep-logo.png') }}" class="h-8 md:h-10" alt="BaltBep Logo">
                 </a>
               
                 <!-- Mobile menu button -->
@@ -154,42 +154,44 @@
     <p class="text-gray-600 mb-6">Let’s make your next trip one to remember, book now!</p>
 
     <!-- Trip Type -->
-    <div class="flex flex-wrap items-center gap-4 mb-6">
-        <div class="inline-flex rounded-lg bg-gray-100 p-1">
-            <label class="flex items-center px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow">
+    <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <div class="inline-flex rounded-lg bg-gray-100 p-1 w-full sm:w-auto">
+            <label class="flex items-center justify-center flex-1 sm:flex-none px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow" data-checked="true">
                 <input type="radio" name="tripType" value="oneway" class="tripType hidden" checked>
                 One-way
             </label>
-            <label class="flex items-center px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow" data-checked="true">
-                <input type="radio" name="tripType" value="round" class="tripType hidden" >
+            <label class="flex items-center justify-center flex-1 sm:flex-none px-3 py-2 rounded-md cursor-pointer text-sm font-medium transition data-[checked=true]:bg-white data-[checked=true]:shadow">
+                <input type="radio" name="tripType" value="round" class="tripType hidden">
                 Round Trip
             </label>
         </div>
-        <p class="text-xs text-gray-500">Swap ports with the arrow. Return Date appears for round trips.</p>
+        <p class="text-xs text-gray-500 hidden sm:block">Swap ports with the arrow. Return Date appears for round trips.</p>
     </div>
 
-    <!-- Grid for Inputs -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
-
-        <!-- From / To -->
-        <div class="col-span-2 grid grid-cols-7 gap-3 items-center">
-            <div class="col-span-3">
+    <!-- Redesigned Input Layout -->
+    <div class="space-y-4">
+        <!-- Row 1: From / Swap / To (Desktop), stacked on mobile -->
+        <div class="flex flex-col sm:flex-row sm:items-end gap-3">
+            <!-- From -->
+            <div class="flex-1">
                 <label class="text-xs font-semibold text-gray-600 mb-1 block">From</label>
                 <div class="relative">
-                    <select id="fromSelect" class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                    <select id="fromSelect" class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
                         <option value="Bantayan" selected>Bantayan</option>
                         <option value="Cadiz">Cadiz</option>
                     </select>
                     <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▾</span>
                 </div>
             </div>
-            <div class="col-span-1 flex justify-center items-end pb-1">
-                <button type="button" id="tripArrow" class="cursor-pointer text-xl bg-blue-100 text-blue-600 px-3 py-2 rounded-full shadow hover:bg-blue-200" title="Swap" aria-label="Swap origin and destination">⇆</button>
+            <!-- Swap Button (hidden on mobile, visible from sm+) -->
+            <div class="hidden sm:flex sm:flex-col justify-center items-center sm:pb-1">
+                <button type="button" id="tripArrow" class="mt-1 sm:mt-0 cursor-pointer text-lg sm:text-xl bg-blue-100 text-blue-600 px-4 py-2 rounded-full shadow hover:bg-blue-200" title="Swap" aria-label="Swap origin and destination">⇆</button>
             </div>
-            <div class="col-span-3">
+            <!-- To -->
+            <div class="flex-1">
                 <label class="text-xs font-semibold text-gray-600 mb-1 block">To</label>
                 <div class="relative">
-                    <select id="toSelect" class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                    <select id="toSelect" class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500 appearance-none">
                         <option value="Bantayan">Bantayan</option>
                         <option value="Cadiz" selected>Cadiz</option>
                     </select>
@@ -198,81 +200,70 @@
             </div>
         </div>
 
-        <!-- Date -->
-        <div>
-            <label for="departure_date" class="text-sm font-semibold mb-1 block">Departure Date</label>
-            <input type="date" id="departure_date" name="departure_date" 
-                   class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500">
-        </div>
-
-        <!-- Return Date (only for Round Trip) -->
-        <div id="returnDateContainer" class="hidden">
-            <label for="return_date" class="text-sm font-semibold mb-1 block">Return Date</label>
-            <input type="date" id="return_date" name="return_date" 
-                   class="border rounded-lg px-4 py-3 w-full focus:ring-2 focus:ring-blue-500">
-        </div>
-
-        <!-- Passengers -->
-        <div class="relative">
-            <label class="text-sm font-semibold mb-1 block">Passengers</label>
-            <button type="button" id="passengerDropdownBtn" 
-                class="border rounded-lg px-4 py-3 w-full text-left focus:ring-2 focus:ring-blue-500">
-                <span id="totalPassengers">Walay Pasahero</span>
-            </button>
-
-            <!-- Dropdown -->
-            <div id="passengerDropdown" 
-                 class="hidden absolute z-20 mt-2 w-80 bg-white border rounded-xl shadow-lg p-4">
-
-                @php
-                    $passengerTypeMap = [
-                        'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 0],
-                        'Child (2-11)' => ['key' => 'child', 'label' => 'Child', 'description' => 'Ages 2-11', 'default' => 0],
-                        'Infant' => ['key' => 'infant', 'label' => 'Infant', 'description' => 'Under 2', 'default' => 0],
-                        'Senior Citizen / PWD' => ['key' => 'pwd', 'label' => 'PWD/Senior', 'description' => 'Persons With Disability / Senior Citizens', 'default' => 0],
-                        'Student' => ['key' => 'student', 'label' => 'Student', 'description' => 'With valid student ID', 'default' => 0],
-                    ];
-                    $fareLookup = $fares->keyBy('passenger_type');
-                @endphp
-
-                @foreach($passengerTypeMap as $fareType => $typeInfo)
+        <!-- Row 2: Departure Date & Passengers (Return Date appears if needed) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Departure Date -->
+            <div>
+                <label for="departure_date" class="text-xs sm:text-sm font-semibold mb-1 block">Departure Date</label>
+                <input type="date" id="departure_date" name="departure_date" class="border border-gray-300 rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:bg-white">
+            </div>
+            <!-- Passengers -->
+            <div class="relative">
+                <label class="text-xs sm:text-sm font-semibold mb-1 block">Passengers</label>
+                <button type="button" id="passengerDropdownBtn" class="border border-gray-300 rounded-lg px-3 sm:px-4 py-3 w-full text-left text-sm sm:text-base bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                    <span id="totalPassengers">Walay Pasahero</span>
+                </button>
+                <!-- Dropdown (unchanged) -->
+                <div id="passengerDropdown" class="hidden absolute z-20 mt-2 w-[calc(100vw-2rem)] max-w-md sm:w-80 bg-white border rounded-xl shadow-lg p-3 sm:p-4 left-0 right-0 mx-auto sm:left-auto sm:right-auto sm:mx-0">
                     @php
-                        $fareEntry = $fareLookup->get($fareType);
-                        $price = $fareEntry ? $fareEntry->price : 0;
+                        $passengerTypeMap = [
+                            'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 0],
+                            'Child (2-11)' => ['key' => 'child', 'label' => 'Child', 'description' => 'Ages 2-11', 'default' => 0],
+                            'Infant' => ['key' => 'infant', 'label' => 'Infant', 'description' => 'Under 2', 'default' => 0],
+                            'Senior Citizen / PWD' => ['key' => 'pwd', 'label' => 'PWD/Senior', 'description' => 'Persons With Disability / Senior Citizens', 'default' => 0],
+                            'Student' => ['key' => 'student', 'label' => 'Student', 'description' => 'With valid student ID', 'default' => 0],
+                        ];
+                        $fareLookup = $fares->keyBy('passenger_type');
                     @endphp
-                    <div class="flex items-center justify-between {{ !$loop->last ? 'mb-3' : '' }}">
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <p class="font-semibold">{{ $typeInfo['label'] }}</p>
-                                <p class="text-sm font-medium text-green-600">₱{{ number_format($price, 0) }}</p>
+                    @foreach($passengerTypeMap as $fareType => $typeInfo)
+                        @php
+                            $fareEntry = $fareLookup->get($fareType);
+                            $price = $fareEntry ? $fareEntry->price : 0;
+                        @endphp
+                        <div class="flex items-center justify-between gap-2 {{ !$loop->last ? 'mb-3' : '' }}">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between gap-1">
+                                    <p class="font-semibold text-xs sm:text-sm truncate">{{ $typeInfo['label'] }}</p>
+                                    <p class="text-xs font-medium text-green-600 whitespace-nowrap">₱{{ number_format($price, 0) }}</p>
+                                </div>
+                                <p class="text-[10px] sm:text-xs text-gray-500 truncate">{{ $typeInfo['description'] }}</p>
                             </div>
-                            <p class="text-xs text-gray-500">{{ $typeInfo['description'] }}</p>
+                            <div class="flex items-center flex-shrink-0">
+                                <button type="button" class="decrement bg-gray-200 px-1.5 sm:px-2 py-1 rounded-l hover:bg-gray-300 text-xs sm:text-sm" data-type="{{ $typeInfo['key'] }}">-</button>
+                                <span id="{{ $typeInfo['key'] }}Count" class="px-1.5 sm:px-3 font-semibold min-w-[1.5rem] sm:min-w-[2rem] text-center text-xs sm:text-sm">{{ $typeInfo['default'] }}</span>
+                                <button type="button" class="increment bg-blue-600 text-white px-1.5 sm:px-2 py-1 rounded-r hover:bg-blue-700 text-xs sm:text-sm" data-type="{{ $typeInfo['key'] }}">+</button>
+                            </div>
                         </div>
-                        <div class="flex items-center ml-4">
-                            <button type="button" class="decrement bg-gray-200 px-2 py-1 rounded-l hover:bg-gray-300" data-type="{{ $typeInfo['key'] }}">-</button>
-                            <span id="{{ $typeInfo['key'] }}Count" class="px-3 font-semibold min-w-[2rem] text-center">{{ $typeInfo['default'] }}</span>
-                            <button type="button" class="increment bg-blue-600 text-white px-2 py-1 rounded-r hover:bg-blue-700" data-type="{{ $typeInfo['key'] }}">+</button>
-                        </div>
+                    @endforeach
+                    <div class="border-t pt-2 sm:pt-3 mt-2 sm:mt-3">
+                        <p class="text-[10px] sm:text-xs text-gray-500">⚠ Max 10 passengers only (adults, children & PWD).</p>
+                        <p class="text-[10px] sm:text-xs text-gray-400 mt-1">💡 Prices shown are base fares per person.</p>
                     </div>
-                @endforeach
-
-                <div class="border-t pt-3 mt-3">
-                    <p class="text-xs text-gray-500">
-                        ⚠ Max 10 passengers only (adults, children & PWD).
-                    </p>
-                    <p class="text-xs text-gray-400 mt-1">
-                        💡 Prices shown are base fares per person.
-                    </p>
                 </div>
+            </div>
+            <!-- Return Date (Round Trip) -->
+            <div id="returnDateContainer" class="hidden sm:col-span-2">
+                <label for="return_date" class="text-xs sm:text-sm font-semibold mb-1 block">Return Date</label>
+                <input type="date" id="return_date" name="return_date" class="border rounded-lg px-3 sm:px-4 py-3 w-full text-sm sm:text-base focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
     </div>
 
     <!-- Search Button - Outside Grid -->
-    <form action="{{ route('booking.schedule') }}" method="GET" class="mt-6">
+    <form action="{{ route('booking.schedule') }}" method="GET" class="mt-4 sm:mt-6">
         <input type="hidden" name="origin" id="originField">
         <input type="hidden" name="destination" id="destinationField">
-        <input type="hidden" name="tripType" id="tripTypeField" value="round">
+        <input type="hidden" name="tripType" id="tripTypeField" value="oneway">
         <input type="hidden" name="departure_date" id="departureField">
         <input type="hidden" name="return_date" id="returnField">
         <!-- Set default to 0 for adult -->
@@ -282,7 +273,7 @@
         <input type="hidden" name="pwd" id="pwdField" value="0">
         <input type="hidden" name="student" id="studentField" value="0">
 
-        <button class="bg-blue-600 text-white font-medium rounded-lg px-6 py-3 w-full hover:bg-blue-700 active:bg-blue-800 transition shadow" id="searchTripsBtn">
+        <button class="bg-blue-600 text-white font-medium rounded-lg px-4 sm:px-6 py-2.5 sm:py-3 w-full hover:bg-blue-700 active:bg-blue-800 transition shadow text-sm sm:text-base" id="searchTripsBtn">
             Search Trips
         </button>
         <p class="mt-2 text-xs text-gray-400 text-center">By continuing, you agree to our terms.</p>
@@ -314,11 +305,11 @@
     </section> -->
 
     <!-- Promos Section -->
-    <section id="promos" class="py-16 bg-blue-50">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-blue-700">Special Promos & Offers</h2>
-                <p class="text-gray-600 mt-2">Don't miss out on our amazing deals and discounts</p>
+    <section id="promos" class="py-12 sm:py-16 bg-blue-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-blue-700">Special Promos & Offers</h2>
+                <p class="text-sm sm:text-base text-gray-600 mt-2">Don't miss out on our amazing deals and discounts</p>
             </div>
            <!-- <div class="grid md:grid-cols-3 gap-8">
                 <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition border-l-4 border-blue-500">
@@ -368,19 +359,19 @@
     </section>
 
     <!-- Routes Section -->
-    <section id="routes" class="py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-blue-700">Our Routes</h2>
-                <p class="text-gray-600 mt-2">Connecting beautiful destinations across the Philippines</p>
+    <section id="routes" class="py-12 sm:py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-blue-700">Our Routes</h2>
+                <p class="text-sm sm:text-base text-gray-600 mt-2">Connecting beautiful destinations across the Philippines</p>
             </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-blue-700">Bantayan ⇄ Cadiz</h3>
-                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">Popular</span>
+            <div class="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                        <h3 class="text-base sm:text-lg font-bold text-blue-700">Bantayan ⇄ Cadiz</h3>
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold w-fit">Popular</span>
                     </div>
-                    <div class="space-y-2 text-sm text-gray-600">
+                    <div class="space-y-2 text-xs sm:text-sm text-gray-600">
                         <p><strong>Duration:</strong> 3 hours</p>
                         <p><strong>Daily Trips:</strong> 1 departures</p>
                         <p><strong>Starting from:</strong> ₱900</p>
@@ -389,12 +380,12 @@
                         <p class="text-xs text-blue-600">Scenic route with beautiful ocean views</p>
                     </div>
                 </div>
-                <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-green-700">Cadiz ⇄ Bantayan</h3>
-                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">Popular</span>
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                        <h3 class="text-base sm:text-lg font-bold text-green-700">Cadiz ⇄ Bantayan</h3>
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold w-fit">Popular</span>
                     </div>
-                    <div class="space-y-2 text-sm text-gray-600">
+                    <div class="space-y-2 text-xs sm:text-sm text-gray-600">
                         <p><strong>Duration:</strong> 3 hours</p>
                         <p><strong>Daily Trips:</strong> 1 departures</p>
                         <p><strong>Starting from:</strong> ₱900</p>
@@ -418,9 +409,9 @@
                     </div>
                 </div> -->
             </div>
-            <div class="text-center mt-8">
-                <p class="text-gray-600 mb-4">More routes available! Check our booking system for complete schedules.</p>
-                <a href="#book" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition smooth-scroll">
+            <div class="text-center mt-6 sm:mt-8">
+                <p class="text-sm sm:text-base text-gray-600 mb-4">More routes available! Check our booking system for complete schedules.</p>
+                <a href="#book" class="inline-block bg-blue-600 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-blue-700 transition smooth-scroll text-sm sm:text-base">
                     View All Routes
                 </a>
             </div>
@@ -428,36 +419,36 @@
     </section>
 
     <!-- Why Choose BaltBep -->
-    <section id="why-choose-us" class="py-16 bg-gray-100">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-blue-700">Why Choose BaltBep?</h2>
-                <p class="text-gray-600 mt-2">Your trusted ferry booking platform with seamless features</p>
+    <section id="why-choose-us" class="py-12 sm:py-16 bg-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-blue-700">Why Choose BaltBep?</h2>
+                <p class="text-sm sm:text-base text-gray-600 mt-2">Your trusted ferry booking platform with seamless features</p>
             </div>
-        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="text-xl font-bold text-blue-600 mb-2">Easy Booking</h3>
-                <p class="text-gray-600">Book your tickets online in just a few clicks.</p>
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            <div class="bg-white p-4 sm:p-6 rounded-xl shadow hover:shadow-lg transition">
+                <h3 class="text-lg sm:text-xl font-bold text-blue-600 mb-2">Easy Booking</h3>
+                <p class="text-sm sm:text-base text-gray-600">Book your tickets online in just a few clicks.</p>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="text-xl font-bold text-blue-600 mb-2">Secure Payments</h3>
-                <p class="text-gray-600">Your transactions are safe with us.</p>
+            <div class="bg-white p-4 sm:p-6 rounded-xl shadow hover:shadow-lg transition">
+                <h3 class="text-lg sm:text-xl font-bold text-blue-600 mb-2">Secure Payments</h3>
+                <p class="text-sm sm:text-base text-gray-600">Your transactions are safe with us.</p>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="text-xl font-bold text-blue-600 mb-2">Real-time Updates</h3>
-                <p class="text-gray-600">Stay informed about trip schedules and changes.</p>
+            <div class="bg-white p-4 sm:p-6 rounded-xl shadow hover:shadow-lg transition">
+                <h3 class="text-lg sm:text-xl font-bold text-blue-600 mb-2">Real-time Updates</h3>
+                <p class="text-sm sm:text-base text-gray-600">Stay informed about trip schedules and changes.</p>
             </div>
         </div>
     </section>
 
     <!-- About Us Section -->
-    <section id="about-us" class="py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
+    <section id="about-us" class="py-12 sm:py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
                 <div>
-                    <h2 class="text-3xl font-bold text-blue-700 mb-6">About BaltBep</h2>
-                    <div class="space-y-4 text-gray-600">
-                        <p class="text-lg leading-relaxed">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-blue-700 mb-4 sm:mb-6">About BaltBep</h2>
+                    <div class="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-600">
+                        <p class="sm:text-lg leading-relaxed">
                             BaltBep is your premier ferry booking platform, connecting the beautiful islands of the Philippines with safe, reliable, and comfortable sea travel experiences.
                         </p>
                         <p>
@@ -467,34 +458,34 @@
                             Our commitment to excellence, safety, and customer satisfaction has made us the trusted choice for both local and international travelers exploring the stunning beauty of the Philippines.
                         </p>
                     </div>
-                    <div class="mt-8 grid grid-cols-2 gap-6">
+                    <div class="mt-6 sm:mt-8 grid grid-cols-2 gap-4 sm:gap-6">
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-600">25K+</div>
-                            <div class="text-sm text-gray-600">Happy Passengers</div>
+                            <div class="text-xl sm:text-2xl font-bold text-blue-600">25K+</div>
+                            <div class="text-xs sm:text-sm text-gray-600">Happy Passengers</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-600">12+</div>
-                            <div class="text-sm text-gray-600">Daily Trips</div>
+                            <div class="text-xl sm:text-2xl font-bold text-blue-600">12+</div>
+                            <div class="text-xs sm:text-sm text-gray-600">Daily Trips</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-600">4.9★</div>
-                            <div class="text-sm text-gray-600">Average Rating</div>
+                            <div class="text-xl sm:text-2xl font-bold text-blue-600">4.9★</div>
+                            <div class="text-xs sm:text-sm text-gray-600">Average Rating</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-600">5+</div>
-                            <div class="text-sm text-gray-600">Years Experience</div>
+                            <div class="text-xl sm:text-2xl font-bold text-blue-600">5+</div>
+                            <div class="text-xs sm:text-sm text-gray-600">Years Experience</div>
                         </div>
                     </div>
                 </div>
-                <div class="relative">
-                    <div class="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl p-8">
-                        <div class="bg-white rounded-xl p-6 shadow-lg">
-                            <h3 class="text-xl font-bold text-blue-700 mb-4">Our Mission</h3>
-                            <p class="text-gray-600 mb-6">
+                <div class="relative mt-8 lg:mt-0">
+                    <div class="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl p-6 sm:p-8">
+                        <div class="bg-white rounded-xl p-4 sm:p-6 shadow-lg">
+                            <h3 class="text-lg sm:text-xl font-bold text-blue-700 mb-3 sm:mb-4">Our Mission</h3>
+                            <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
                                 To provide safe, reliable, and affordable ferry transportation while promoting sustainable tourism across the Philippine islands.
                             </p>
-                            <h3 class="text-xl font-bold text-blue-700 mb-4">Our Vision</h3>
-                            <p class="text-gray-600">
+                            <h3 class="text-lg sm:text-xl font-bold text-blue-700 mb-3 sm:mb-4">Our Vision</h3>
+                            <p class="text-sm sm:text-base text-gray-600">
                                 To be the leading ferry booking platform in the Philippines, connecting communities and creating memorable travel experiences.
                             </p>
                         </div>
@@ -505,82 +496,71 @@
     </section>
 
     <!-- Contact Us Section -->
-    <section id="contact-us" class="py-16 bg-blue-50">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-blue-700">Contact Us</h2>
-                <p class="text-gray-600 mt-2">Get in touch with us for any questions or assistance</p>
+    <section id="contact-us" class="py-12 sm:py-16 bg-blue-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-blue-700">Contact Us</h2>
+                <p class="text-sm sm:text-base text-gray-600 mt-2">Get in touch with us for any questions or assistance</p>
             </div>
-            <div class="grid lg:grid-cols-2 gap-12">
+            <div class="grid lg:grid-cols-2 gap-8 sm:gap-12">
                 <!-- Contact Information -->
-                <div class="space-y-8">
-                    <div class="bg-white p-6 rounded-xl shadow-lg">
-                        <h3 class="text-xl font-bold text-blue-700 mb-6">Get In Touch</h3>
+                <div class="space-y-6 sm:space-y-8">
+                    <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg sm:text-xl font-bold text-blue-700 mb-4 sm:mb-6">Get In Touch</h3>
                         <div class="space-y-4">
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-blue-100 p-3 rounded-full">
-                                    <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <div class="bg-blue-100 p-2.5 sm:p-3 rounded-full flex-shrink-0">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
                                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
                                     </svg>
                                 </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Email</h4>
-                                    <p class="text-gray-600">info@baltbep.com</p>
+                                <div class="min-w-0">
+                                    <h4 class="font-semibold text-gray-800 text-sm sm:text-base">Email</h4>
+                                    <p class="text-gray-600 text-xs sm:text-base truncate">info@baltbep.com</p>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-green-100 p-3 rounded-full">
-                                    <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <div class="bg-green-100 p-2.5 sm:p-3 rounded-full flex-shrink-0">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-800">Phone</h4>
-                                    <p class="text-gray-600">+63 949 883 3551</p>
+                                    <h4 class="font-semibold text-gray-800 text-sm sm:text-base">Phone</h4>
+                                    <p class="text-gray-600 text-xs sm:text-base">+63 949 883 3551</p>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-purple-100 p-3 rounded-full">
-                                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <div class="bg-purple-100 p-2.5 sm:p-3 rounded-full flex-shrink-0">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
                                     </svg>
                                 </div>
-                                <!--<div>
-                                    <h4 class="font-semibold text-gray-800">Office</h4>
-                                    <p class="text-gray-600">Tagbilaran Port, Bohol, Philippines</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-orange-100 p-3 rounded-full">
-                                    <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
-                                    </svg>
-                                </div> -->
                                 <div>
-                                    <h4 class="font-semibold text-gray-800">Business Hours</h4>
-                                    <p class="text-gray-600">Mon - Sun: 6:00 AM - 10:00 AM</p>
+                                    <h4 class="font-semibold text-gray-800 text-sm sm:text-base">Business Hours</h4>
+                                    <p class="text-gray-600 text-xs sm:text-base">Mon - Sun: 6:00 AM - 10:00 AM</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Social Media -->
-                    <div class="bg-white p-6 rounded-xl shadow-lg">
-                        <h3 class="text-xl font-bold text-blue-700 mb-4">Follow Us</h3>
-                        <div class="flex space-x-4">
-                            <a href="https://web.facebook.com/baltbepshippingexpress" class="bg-blue-800 text-white p-3 rounded-full hover:bg-blue-900 transition" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg sm:text-xl font-bold text-blue-700 mb-4">Follow Us</h3>
+                        <div class="flex space-x-3 sm:space-x-4">
+                            <a href="https://web.facebook.com/baltbepshippingexpress" class="bg-blue-800 text-white p-2.5 sm:p-3 rounded-full hover:bg-blue-900 transition" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                 </svg>
                             </a>
-                            <a href="mailto:support@baltbep.com" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition" aria-label="Email">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <a href="mailto:support@baltbep.com" class="bg-blue-600 text-white p-2.5 sm:p-3 rounded-full hover:bg-blue-700 transition" aria-label="Email">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M2 4h20a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V6a2 2 0 012-2zm10 7l10-5H2l10 5zm-2.236-.132L2 8.118V18h20V8.118l-7.764 2.75a4 4 0 01-4.472 0z"/>
                                 </svg>
                             </a>
-                            <a href="tel:+639498833551" class="bg-green-600 text-white p-3 rounded-full hover:bg-green-700 transition" aria-label="Call us">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <a href="tel:+639498833551" class="bg-green-600 text-white p-2.5 sm:p-3 rounded-full hover:bg-green-700 transition" aria-label="Call us">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M2.003 5.884l3.682-.737a1 1 0 011.115.595l1.516 3.538a1 1 0 01-.23 1.09l-2.21 2.1a16.053 16.053 0 007.257 7.257l2.1-2.21a1 1 0 011.09-.23l3.538 1.516a1 1 0 01.595 1.115l-.737 3.682A1 1 0 0118.25 24C8.175 24 0 15.825 0 5.75a1 1 0 011.003-1.003z"/>
                                 </svg>
                             </a>
@@ -589,30 +569,30 @@
                 </div>
 
                 <!-- Contact Form -->
-                <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold text-blue-700 mb-6">Send us a Message</h3>
-                    <form class="space-y-6">
-                        <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+                    <h3 class="text-lg sm:text-xl font-bold text-blue-700 mb-4 sm:mb-6">Send us a Message</h3>
+                    <form class="space-y-4 sm:space-y-6">
+                        <div class="grid sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your first name">
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                <input type="text" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your first name">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your last name">
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                <input type="text" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your last name">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="your.email@example.com">
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="your.email@example.com">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="What is this about?">
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Subject</label>
+                            <input type="text" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="What is this about?">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                            <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Tell us how we can help you..."></textarea>
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea rows="4" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Tell us how we can help you..."></textarea>
                         </div>
                         <button type="submit" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition font-medium">
                             Send Message
@@ -627,8 +607,10 @@
     document.addEventListener("DOMContentLoaded", function () {
         const tripTypes = document.querySelectorAll(".tripType");
         const arrow = document.getElementById("tripArrow");
-        const fromSelect = document.getElementById("fromSelect");
-        const toSelect = document.getElementById("toSelect");
+        // Redesigned: single set of selects with IDs
+        const fromSelect = document.getElementById('fromSelect');
+        const toSelect = document.getElementById('toSelect');
+        
         const returnDateContainer = document.getElementById("returnDateContainer");
 
         const departureInput = document.getElementById("departure_date");
@@ -641,10 +623,18 @@
         const departureField = document.getElementById("departureField");
         const returnField = document.getElementById("returnField");
 
+        // Change listeners for new single selects
+        if (fromSelect) {
+            fromSelect.addEventListener('change', updateHiddenBasics);
+        }
+        if (toSelect) {
+            toSelect.addEventListener('change', updateHiddenBasics);
+        }
+
         function updateHiddenBasics() {
-            originField.value = fromSelect.value;
-            destinationField.value = toSelect.value;
-            const checked = Array.from(tripTypes).find(t => t.checked)?.value || 'round';
+            if (fromSelect) originField.value = fromSelect.value;
+            if (toSelect) destinationField.value = toSelect.value;
+            const checked = Array.from(tripTypes).find(t => t.checked)?.value || 'oneway';
             tripTypeField.value = checked;
             departureField.value = departureInput.value;
             returnField.value = returnInput ? returnInput.value : '';
@@ -665,12 +655,18 @@
         }
 
         function setRoundTripUI(isRound) {
+            if (arrow) {
+                if (isRound) {
+                    arrow.textContent = "⇆";
+                } else {
+                    arrow.textContent = "→";
+                }
+            }
+            
             if (isRound) {
-                arrow.textContent = "⇆";
                 returnDateContainer.classList.remove("hidden");
                 syncReturnMin();
             } else {
-                arrow.textContent = "→";
                 returnDateContainer.classList.add("hidden");
                 if (returnInput) {
                     returnInput.value = "";
@@ -680,16 +676,34 @@
             updateHiddenBasics();
         }
 
-        // Initialize
-        setRoundTripUI(Array.from(tripTypes).find(t => t.checked)?.value === 'round');
-        updateHiddenBasics();
+    // Initialize with new layout
+    setRoundTripUI(Array.from(tripTypes).find(t => t.checked)?.value === 'round');
+    updateHiddenBasics();
+
+        // Update visual state of trip type buttons
+        function updateTripTypeUI() {
+            document.querySelectorAll('label:has(.tripType)').forEach(label => {
+                const input = label.querySelector('.tripType');
+                if (input.checked) {
+                    label.setAttribute('data-checked', 'true');
+                    label.classList.add('bg-white', 'shadow');
+                } else {
+                    label.removeAttribute('data-checked');
+                    label.classList.remove('bg-white', 'shadow');
+                }
+            });
+        }
 
         // React to trip type changes
         tripTypes.forEach(type => {
             type.addEventListener("change", () => {
                 setRoundTripUI(type.value === "round");
+                updateTripTypeUI();
             });
         });
+
+        // Initialize trip type UI
+        updateTripTypeUI();
 
         // Keep return date in range when departure changes
         if (departureInput) {
@@ -703,12 +717,28 @@
         }
 
         // Swap From/To on arrow click
-        arrow.addEventListener("click", () => {
-            const tmp = fromSelect.value;
-            fromSelect.value = toSelect.value;
-            toSelect.value = tmp;
-            updateHiddenBasics();
-        });
+        if (arrow) {
+            arrow.addEventListener("click", () => {
+                const fromSelect = fromSelectMobile || fromSelectDesktop;
+                const toSelect = toSelectMobile || toSelectDesktop;
+                
+                const tmp = fromSelect.value;
+                fromSelect.value = toSelect.value;
+                toSelect.value = tmp;
+                
+                // Sync both mobile and desktop
+                if (fromSelectMobile && fromSelectDesktop) {
+                    fromSelectMobile.value = fromSelect.value;
+                    fromSelectDesktop.value = fromSelect.value;
+                }
+                if (toSelectMobile && toSelectDesktop) {
+                    toSelectMobile.value = toSelect.value;
+                    toSelectDesktop.value = toSelect.value;
+                }
+                
+                updateHiddenBasics();
+            });
+        }
 
         // Keep hidden fields updated on dropdown changes
         fromSelect.addEventListener("change", updateHiddenBasics);
