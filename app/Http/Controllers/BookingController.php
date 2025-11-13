@@ -256,6 +256,10 @@ class BookingController extends Controller
             'total_amount' => $data['grand_total'] ?? $data['subtotal'] ?? 0,
             'payment_method' => $request->payment_method,
             'status' => 'pending',
+            'meta' => [
+                'passengers' => $data['passengers'] ?? [],
+                'contact_info' => $data['contact_info'] ?? [],
+            ],
         ]);
 
         // This method now only handles PayMongo/Card/COD payments

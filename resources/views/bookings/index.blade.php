@@ -187,6 +187,7 @@
                                             payment_status: @js($paymentStatus),
                                             created_at: @js(optional($b->created_at)->format('M d, Y • h:i A')),
                                             update_status_url: @js(route('bookings.updateStatus', $b)),
+                                            passengers: @js($b->meta['passengers'] ?? []),
                                         }; showPassengers = false; showModal = true">
                                     View
                                 </button>
@@ -231,18 +232,79 @@
                             class="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
                             @click="showPassengers = !showPassengers">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                        View Details
+                        View Passenger Details
                     </button>
-                    <div x-show="showPassengers" x-collapse class="mt-3 rounded-lg border border-gray-200 p-4 bg-gray-50">
-                        <div class="text-gray-700 font-medium mb-2">Passenger Details</div>
-                        <ul class="text-sm text-gray-700 space-y-1">
-                            <li>Adult: <span class="font-medium" x-text="selected?.adult"></span></li>
-                            <li>Child: <span class="font-medium" x-text="selected?.child"></span></li>
-                            <li>Infant: <span class="font-medium" x-text="selected?.infant"></span></li>
-                            <li>PWD: <span class="font-medium" x-text="selected?.pwd"></span></li>
-                            <li>Student: <span class="font-medium" x-text="selected?.student"></span></li>
-                        </ul>
-                        <p class="mt-3 text-xs text-gray-500">Note: Showing category counts. If you later store per-passenger records, we can render a full list here (names, seat numbers, etc.).</p>
+                    <div x-show="showPassengers" x-collapse class="mt-3 rounded-lg border border-gray-200 p-4 bg-gray-50 max-h-96 overflow-y-auto">
+                        <div class="text-gray-700 font-medium mb-3">Passenger List</div>
+                        
+                        <!-- Check if passengers data exists -->
+                        <template x-if="selected?.passengers && selected.passengers.length > 0">
+                            <div class="space-y-3">
+                                <template x-for="(passenger, index) in selected.passengers" :key="index">
+                                    <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1">
+                                                <div class="font-semibold text-gray-900">
+                                                    <span x-text="passenger.first_name"></span>
+                                                    <span x-text="passenger.last_name"></span>
+                                                </div>
+                                                <div class="text-sm text-gray-600 mt-1">
+                                                    <span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 capitalize" x-text="passenger.type"></span>
+                                                    <span class="ml-2" x-text="passenger.gender === 'male' ? '♂ Male' : '♀ Female'"></span>
+                                                </div>
+                                                <div class="text-sm text-gray-500 mt-1">
+                                                    DOB: <span x-text="passenger.birth_date"></span>
+                                                </div>
+                                                
+                                                <!-- Student-specific info -->
+                                                <template x-if="passenger.type === 'student'">
+                                                    <div class="mt-2 p-2 bg-indigo-50 rounded border border-indigo-200">
+                                                        <div class="text-xs text-indigo-900">
+                                                            <div><strong>Student ID:</strong> <span x-text="passenger.student_id || 'N/A'"></span></div>
+                                                            <div><strong>School:</strong> <span x-text="passenger.school || 'N/A'"></span></div>
+                                                            <template x-if="passenger.student_id_photo_path">
+                                                                <div class="mt-1">
+                                                                    <a :href="'/storage/' + passenger.student_id_photo_path" 
+                                                                       target="_blank"
+                                                                       class="text-indigo-600 hover:text-indigo-800 underline">
+                                                                        📎 View Student ID
+                                                                    </a>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                
+                                                <!-- PWD-specific info -->
+                                                <template x-if="passenger.type === 'pwd' && passenger.id_number">
+                                                    <div class="mt-2 text-xs text-gray-600">
+                                                        <strong>PWD ID:</strong> <span x-text="passenger.id_number"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="text-right text-sm font-medium text-gray-900">
+                                                ₱<span x-text="parseFloat(passenger.fare).toFixed(2)"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        
+                        <!-- Fallback if no passenger data -->
+                        <template x-if="!selected?.passengers || selected.passengers.length === 0">
+                            <div>
+                                <div class="text-gray-700 font-medium mb-2">Passenger Summary</div>
+                                <ul class="text-sm text-gray-700 space-y-1">
+                                    <li>Adult: <span class="font-medium" x-text="selected?.adult"></span></li>
+                                    <li>Child: <span class="font-medium" x-text="selected?.child"></span></li>
+                                    <li>Infant: <span class="font-medium" x-text="selected?.infant"></span></li>
+                                    <li>PWD: <span class="font-medium" x-text="selected?.pwd"></span></li>
+                                    <li>Student: <span class="font-medium" x-text="selected?.student"></span></li>
+                                </ul>
+                                <p class="mt-3 text-xs text-gray-500">Individual passenger details not available for this booking.</p>
+                            </div>
+                        </template>
                     </div>
                 </div>
                 <div>
