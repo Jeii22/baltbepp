@@ -44,7 +44,7 @@
                 <!-- Logo (Left) -->
                 <div class="flex-shrink-0 w-1/4">
                     <a href="/" class="flex items-center space-x-2">
-                        <img src="{{ asset('images/baltbep-logo.png') }}" class="h-18 md:h-22" alt="BaltBep Logo">
+                        <img src="{{ asset('images/baltbep-logo.png') }}" class="h-16 md:h-20" alt="BaltBep Logo">
                     </a>
                 </div>
               
