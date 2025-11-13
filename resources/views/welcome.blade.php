@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Balt Bep</title>
+    <link rel="preload" as="image" href="{{ asset('images/barko.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -718,26 +719,12 @@
             returnInput.addEventListener("change", updateHiddenBasics);
         }
 
-        // Swap From/To on arrow click
-        if (arrow) {
+        // Swap From/To on arrow click (updated for single select set)
+        if (arrow && fromSelect && toSelect) {
             arrow.addEventListener("click", () => {
-                const fromSelect = fromSelectMobile || fromSelectDesktop;
-                const toSelect = toSelectMobile || toSelectDesktop;
-                
                 const tmp = fromSelect.value;
                 fromSelect.value = toSelect.value;
                 toSelect.value = tmp;
-                
-                // Sync both mobile and desktop
-                if (fromSelectMobile && fromSelectDesktop) {
-                    fromSelectMobile.value = fromSelect.value;
-                    fromSelectDesktop.value = fromSelect.value;
-                }
-                if (toSelectMobile && toSelectDesktop) {
-                    toSelectMobile.value = toSelect.value;
-                    toSelectDesktop.value = toSelect.value;
-                }
-                
                 updateHiddenBasics();
             });
         }
