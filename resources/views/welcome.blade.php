@@ -139,7 +139,7 @@
     </nav>
 
     <!-- Hero Section -->
-        <div class="relative bg-cover bg-center h-[60vh] sm:h-[70vh] md:h-[80vh]" style="background-image: url('{{ asset('images/barko.png') }}');">
+        <div class="relative bg-cover bg-center h-[60vh] sm:h-[70vh] md:h-[80vh]" style="background-image: url({{ asset('images/barko.png') }});">
             <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <div class="text-center text-white px-4 sm:px-6">
                     <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">Take you where the sea takes your destination</h1>
