@@ -213,6 +213,16 @@ class BookingController extends Controller
                 ->with('error', 'Your booking session has expired. Please start your booking again.');
         }
 
+        // Extra validation: ensure passengers are present
+        if (empty($data['passengers']) || !is_array($data['passengers']) || count($data['passengers']) === 0) {
+            \Log::warning('Booking attempt with missing passenger details in session.', [
+                'user_id' => auth()->id(),
+                'data' => $data,
+            ]);
+            return redirect()->route('bookings.create', ['trip' => $request->input('trip_id') ?? null])
+                ->with('error', 'Passenger details are missing. Please fill out the passenger form before proceeding.');
+        }
+
         // Get available wallets
         $wallets = collect();
         if (Schema::hasTable('payment_methods')) {
