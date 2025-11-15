@@ -5,9 +5,10 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\URL;
 
-class TwoFactorCodeNotification extends Notification
+class TwoFactorCodeNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -31,6 +32,16 @@ class TwoFactorCodeNotification extends Notification
     public function via(object $notifiable): array
     {
         return ['mail'];
+    }
+
+    /**
+     * Specify queue names per channel.
+     */
+    public function viaQueues(): array
+    {
+        return [
+            'mail' => 'otp',
+        ];
     }
 
     /**

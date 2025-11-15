@@ -5,8 +5,9 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendOtpNotification extends Notification
+class SendOtpNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -20,6 +21,13 @@ class SendOtpNotification extends Notification
     public function via($notifiable)
     {
         return ['mail'];
+    }
+
+    public function viaQueues(): array
+    {
+        return [
+            'mail' => 'otp',
+        ];
     }
 
     public function toMail($notifiable)

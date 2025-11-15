@@ -40,8 +40,8 @@ class AuthenticatedSessionController extends Controller
             // Generate OTP code BEFORE logout (while we still have the user)
             $twoFactorCode = \App\Models\TwoFactorCode::createForUser($user, 'login');
             
-            // Send notification BEFORE logout
-            $user->notify(new \App\Notifications\TwoFactorCodeNotification($twoFactorCode->code, 'login'));
+            // Queue notification BEFORE logout (non-blocking)
+            $user->notify((new \App\Notifications\TwoFactorCodeNotification($twoFactorCode->code, 'login'))->onQueue('otp'));
             
             // NOW logout the provisional session
             Auth::logout();
