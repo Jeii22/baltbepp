@@ -80,8 +80,8 @@ class RegisteredUserController extends Controller
         // Generate OTP
         $twoFactorCode = \App\Models\TwoFactorCode::createForUser($user, 'registration');
 
-        // Send OTP to the user's email
-        $user->notify(new \App\Notifications\TwoFactorCodeNotification($twoFactorCode->code, 'registration'));
+        // Send OTP to the user's email (queued for speed)
+        $user->notify((new \App\Notifications\TwoFactorCodeNotification($twoFactorCode->code, 'registration'))->onQueue('otp'));
 
         // Store user ID in session for verification
         session(['registration:user:id' => $user->id]);

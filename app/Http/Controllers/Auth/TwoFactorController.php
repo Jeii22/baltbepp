@@ -154,8 +154,8 @@ class TwoFactorController extends Controller
         // Generate new code
         $twoFactorCode = TwoFactorCode::createForUser($user, 'login');
 
-        // Send notification
-        $user->notify(new TwoFactorCodeNotification($twoFactorCode->code, 'login'));
+        // Send notification (queued)
+        $user->notify((new TwoFactorCodeNotification($twoFactorCode->code, 'login'))->onQueue('otp'));
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -180,7 +180,7 @@ class TwoFactorController extends Controller
 
         // Generate and send verification code
         $twoFactorCode = TwoFactorCode::createForUser($user, 'enable_2fa');
-        $user->notify(new TwoFactorCodeNotification($twoFactorCode->code, 'login'));
+        $user->notify((new TwoFactorCodeNotification($twoFactorCode->code, 'login'))->onQueue('otp'));
 
         return back()->with('success', 'A verification code has been sent to your email. Please verify to enable 2FA.');
     }
