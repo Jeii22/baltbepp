@@ -1,6 +1,10 @@
 @extends('layouts.superadmin')
 
 @section('content')
+<!-- Add Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <div class="mb-6">
     <a href="{{ route('users.index') }}" class="text-blue-600 hover:text-blue-800">&larr; Back to Users</a>
     @if(auth()->user() && auth()->user()->role === 'super_admin')
@@ -100,8 +104,8 @@
         <div class="mb-4">
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8">
-                    <button onclick="switchMapProvider('osm')" id="osmTab" class="map-tab border-b-2 border-blue-500 py-2 px-1 text-sm font-medium text-blue-600">
-                        OpenStreetMap
+                    <button onclick="switchMapProvider('leaflet')" id="leafletTab" class="map-tab border-b-2 border-blue-500 py-2 px-1 text-sm font-medium text-blue-600">
+                        Interactive Map
                     </button>
                     <button onclick="switchMapProvider('google')" id="googleTab" class="map-tab border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
                         Google Maps (External)
@@ -119,11 +123,11 @@
                 </div>
             </div>
             
-            <!-- OpenStreetMap -->
-            <iframe id="osmMap" class="map-frame w-full h-96 rounded-lg shadow-lg border-2 border-gray-200" frameborder="0" allowfullscreen></iframe>
+            <!-- Leaflet Map -->
+            <div id="leafletMap" class="w-full h-96 rounded-lg shadow-lg border-2 border-gray-200"></div>
             
             <!-- Google Maps Notice -->
-            <div id="googleMapNotice" class="map-frame w-full h-96 rounded-lg shadow-lg border-2 border-blue-200 bg-blue-50 hidden flex items-center justify-center">
+            <div id="googleMapNotice" class="w-full h-96 rounded-lg shadow-lg border-2 border-blue-200 bg-blue-50 hidden flex items-center justify-center">
                 <div class="text-center p-8">
                     <svg class="w-16 h-16 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -138,15 +142,6 @@
                         Open in Google Maps
                     </a>
                 </div>
-            </div>
-            
-            <!-- Error Message -->
-            <div id="mapError" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                <svg class="w-12 h-12 text-red-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
-                <p class="text-red-600 font-medium">Unable to load map</p>
-                <p class="text-red-500 text-sm mt-1">Location data may be unavailable for this login attempt.</p>
             </div>
         </div>
         
@@ -167,9 +162,11 @@
 </div>
 
 <script>
-let currentProvider = 'google';
+let currentProvider = 'leaflet';
 let currentLat = null;
 let currentLng = null;
+let map = null;
+let marker = null;
 
 function showLocationModal(lat, lng, city, region, country, date, ip) {
     if (!lat || !lng || lat === 'null' || lng === 'null' || lat === '' || lng === '') {
@@ -225,28 +222,26 @@ function showLocationModal(lat, lng, city, region, country, date, ip) {
     // Set Google Maps external link
     googleMapsLink.href = `https://www.google.com/maps?q=${currentLat},${currentLng}`;
     
-    // Load map (default to OpenStreetMap)
-    switchMapProvider('osm');
+    // Load map (default to Leaflet)
+    setTimeout(() => switchMapProvider('leaflet'), 100);
 }
 
 function switchMapProvider(provider) {
     if (!currentLat || !currentLng) return;
     
     currentProvider = provider;
+    const leafletMapDiv = document.getElementById('leafletMap');
     const googleMapNotice = document.getElementById('googleMapNotice');
     const googleMapsDirectLink = document.getElementById('googleMapsDirectLink');
-    const osmMap = document.getElementById('osmMap');
+    const leafletTab = document.getElementById('leafletTab');
     const googleTab = document.getElementById('googleTab');
-    const osmTab = document.getElementById('osmTab');
     const mapLoading = document.getElementById('mapLoading');
-    const mapError = document.getElementById('mapError');
     
     // Show loading
     mapLoading.classList.remove('hidden');
-    mapError.classList.add('hidden');
     
     // Update tabs
-    osmTab.className = provider === 'osm' 
+    leafletTab.className = provider === 'leaflet' 
         ? 'map-tab border-b-2 border-blue-500 py-2 px-1 text-sm font-medium text-blue-600'
         : 'map-tab border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300';
     
@@ -255,31 +250,59 @@ function switchMapProvider(provider) {
         : 'map-tab border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300';
     
     if (provider === 'google') {
-        // Show Google Maps notice instead of embed (which requires API key)
-        osmMap.classList.add('hidden');
+        // Show Google Maps notice
+        leafletMapDiv.style.display = 'none';
         googleMapNotice.classList.remove('hidden');
         googleMapsDirectLink.href = `https://www.google.com/maps?q=${currentLat},${currentLng}`;
         mapLoading.classList.add('hidden');
     } else {
-        // Show OpenStreetMap embed
+        // Show Leaflet Map
         googleMapNotice.classList.add('hidden');
-        osmMap.classList.remove('hidden');
-        osmMap.src = `https://www.openstreetmap.org/export/embed.html?bbox=${currentLng-0.01},${currentLat-0.01},${currentLng+0.01},${currentLat+0.01}&layer=mapnik&marker=${currentLat},${currentLng}`;
+        leafletMapDiv.style.display = 'block';
         
-        // Hide loading after iframe loads
-        setTimeout(() => mapLoading.classList.add('hidden'), 1500);
+        // Destroy existing map if any
+        if (map) {
+            map.remove();
+            map = null;
+        }
+        
+        // Create new Leaflet map
+        setTimeout(() => {
+            try {
+                map = L.map('leafletMap').setView([currentLat, currentLng], 15);
+                
+                // Add OpenStreetMap tiles
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19
+                }).addTo(map);
+                
+                // Add marker with popup
+                marker = L.marker([currentLat, currentLng]).addTo(map);
+                marker.bindPopup(`<b>Login Location</b><br>Lat: ${currentLat.toFixed(6)}<br>Lng: ${currentLng.toFixed(6)}`).openPopup();
+                
+                mapLoading.classList.add('hidden');
+            } catch (error) {
+                console.error('Error loading map:', error);
+                mapLoading.classList.add('hidden');
+                alert('Failed to load map. Please try again.');
+            }
+        }, 100);
     }
 }
 
 function closeLocationModal() {
     const modal = document.getElementById('locationModal');
-    const osmMap = document.getElementById('osmMap');
     
     modal.classList.add('hidden');
     document.body.style.overflow = '';
     
-    // Clear map source to stop loading
-    osmMap.src = '';
+    // Destroy map
+    if (map) {
+        map.remove();
+        map = null;
+        marker = null;
+    }
     
     currentLat = null;
     currentLng = null;
