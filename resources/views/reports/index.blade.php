@@ -321,7 +321,52 @@
     </div>
 
     <!-- Customer Feedback Section -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" x-data="feedbackModal()">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" x-data="{
+        showModal: false,
+        message: { id: null, email: '', subject: '', message: '' },
+        reply: '',
+        sending: false,
+        sent: false,
+        error: '',
+        openModal(id, email, subject, msg) {
+            this.message = { id, email, subject, message: msg };
+            this.reply = '';
+            this.sending = false;
+            this.sent = false;
+            this.error = '';
+            this.showModal = true;
+        },
+        sendReply() {
+            if (!this.reply.trim()) {
+                this.error = 'Reply message is required.';
+                return;
+            }
+            this.sending = true;
+            this.error = '';
+            fetch('/feedback/' + this.message.id + '/reply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                body: JSON.stringify({ reply_message: this.reply })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    this.sent = true;
+                } else {
+                    this.error = 'Failed to send reply.';
+                }
+            })
+            .catch(() => {
+                this.error = 'Failed to send reply. Please try again.';
+            })
+            .finally(() => {
+                this.sending = false;
+            });
+        }
+    }">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Customer Feedback & Messages</h3>
             <span class="text-sm text-gray-600">Total: {{ $contactMessages->total() }}</span>
@@ -331,7 +376,7 @@
             <div class="space-y-4">
                 @foreach($contactMessages as $message)
                     <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-blue-100 transition {{ $message->is_read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200' }}"
-                         @click="openModal({{ $message->id }}, '{{ $message->email }}', {{ json_encode($message->subject) }}, {{ json_encode($message->message) }})">
+                         @click="openModal({{ $message->id }}, '{{ addslashes($message->email) }}', '{{ addslashes($message->subject) }}', '{{ addslashes($message->message) }}')">
                         <div class="flex items-center gap-2">
                             <span class="font-semibold text-gray-900">From: {{ $message->email }}</span>
                             @if(!$message->is_read)
@@ -414,64 +459,6 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-function feedbackModal() {
-    return {
-        showModal: false,
-        message: {
-            id: null,
-            email: '',
-            subject: '',
-            message: ''
-        },
-        reply: '',
-        sending: false,
-        sent: false,
-        error: '',
-        
-        openModal(id, email, subject, message) {
-            this.message = { id, email, subject, message };
-            this.reply = '';
-            this.sending = false;
-            this.sent = false;
-            this.error = '';
-            this.showModal = true;
-        },
-        
-        sendReply() {
-            if (!this.reply.trim()) {
-                this.error = 'Reply message is required.';
-                return;
-            }
-            
-            this.sending = true;
-            this.error = '';
-            
-            fetch(`/feedback/${this.message.id}/reply`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ reply_message: this.reply })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    this.sent = true;
-                } else {
-                    this.error = 'Failed to send reply.';
-                }
-            })
-            .catch(() => {
-                this.error = 'Failed to send reply. Please try again.';
-            })
-            .finally(() => {
-                this.sending = false;
-            });
-        }
-    };
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     // Booking Trends Chart
     const bookingCtx = document.getElementById('bookingTrendsChart').getContext('2d');
