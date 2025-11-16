@@ -134,6 +134,92 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('status', 'User created successfully');
     }
 
+    public function edit(User $user)
+    {
+        // Only super admins can edit other super admins
+        if ($user->role === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            abort(403, 'You cannot edit a super admin account.');
+        }
+
+        $this->logActivity('Accessed user edit', 'Opened edit form for user', [
+            'edited_user_id' => $user->id,
+            'edited_user_email' => $user->email
+        ]);
+
+        return view('superadmin.users.edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        // Only super admins can edit other super admins
+        if ($user->role === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            abort(403, 'You cannot edit a super admin account.');
+        }
+
+        $allowedRoles = ['admin'];
+        if (auth()->user()->role === 'super_admin') {
+            $allowedRoles[] = 'super_admin';
+        }
+
+        $rules = [
+            'email' => ['required','email','unique:users,email,'.$user->id],
+            'first_name' => ['required','string','max:255'],
+            'last_name' => ['required','string','max:255'],
+            'username' => ['required','string','max:255','unique:users,username,'.$user->id],
+            'role' => ['required','in:' . implode(',', $allowedRoles)],
+        ];
+
+        // Only validate password if provided
+        if ($request->filled('password')) {
+            $rules['password'] = ['confirmed', Password::defaults()];
+        }
+
+        $data = $request->validate($rules);
+
+        // Track changes
+        $changes = [];
+        $oldValues = [
+            'email' => $user->email,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'username' => $user->username,
+            'role' => $user->role,
+        ];
+
+        // Update user data
+        $user->email = $data['email'];
+        $user->first_name = $data['first_name'];
+        $user->last_name = $data['last_name'];
+        $user->name = $data['first_name'].' '.$data['last_name'];
+        $user->username = $data['username'];
+        $user->role = $data['role'];
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $user->password = $data['password'];
+            $changes[] = 'password';
+        }
+
+        // Track what changed
+        foreach ($oldValues as $key => $oldValue) {
+            if ($user->{$key} !== $oldValue) {
+                $changes[] = $key;
+            }
+        }
+
+        $user->save();
+
+        $this->logActivity('user_updated', "Updated user: {$user->name} ({$user->email})", [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'role' => $user->role,
+            'changes' => $changes,
+            'old_values' => $oldValues,
+        ]);
+
+        return redirect()->route('users.index')->with('status', 'User updated successfully');
+    }
+
     public function destroy(User $user)
     {
         if ($user->role === 'super_admin') {

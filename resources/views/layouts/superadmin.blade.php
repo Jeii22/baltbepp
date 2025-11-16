@@ -11,6 +11,8 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="font-sans antialiased bg-gray-100">
+    <x-loading-screen message="Processing..." />
+    
     <div class="h-screen flex overflow-hidden" x-data="{ sidebarOpen: false }">
 
         <!-- Mobile Sidebar Overlay -->
