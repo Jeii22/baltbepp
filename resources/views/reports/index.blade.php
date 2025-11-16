@@ -321,7 +321,7 @@
     </div>
 
     <!-- Customer Feedback Section -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" x-data="feedbackModal()">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Customer Feedback & Messages</h3>
             <span class="text-sm text-gray-600">Total: {{ $contactMessages->total() }}</span>
@@ -330,109 +330,17 @@
         @if($contactMessages->count() > 0)
             <div class="space-y-4">
                 @foreach($contactMessages as $message)
-    <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-blue-100 {{ $message->is_read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200' }}"
-         @click="Alpine.store('feedbackModal').open({
-            id: {{ $message->id }},
-            email: '{{ $message->email }}',
-            subject: `{{ addslashes($message->subject) }}`,
-            message: `{{ addslashes($message->message) }}`
-         })">
-        <div class="flex items-center gap-2">
-            <span class="font-semibold text-gray-900">From: {{ $message->email }}</span>
-            @if(!$message->is_read)
-                <span class="px-2 py-1 bg-blue-600 text-white text-xs rounded-full">New</span>
-            @endif
-        </div>
-        <span class="text-xs text-gray-500 ml-2">{{ $message->created_at->format('M d, Y h:i A') }}</span>
-    </div>
-@endforeach
-
-@push('modals')
-<div x-data="{ showModal: false, message: null, reply: '', sending: false, sent: false, error: '' }" x-init="$store.feedbackModal = $data" x-show="$store.feedbackModal.showModal" style="display: none;" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 relative" @click.away="$store.feedbackModal.showModal = false">
-        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" @click="$store.feedbackModal.showModal = false">&times;</button>
-        <template x-if="$store.feedbackModal.message">
-            <div>
-                <h3 class="text-lg font-bold mb-2">From: <span x-text="$store.feedbackModal.message.email"></span></h3>
-                <p class="text-sm text-gray-600 mb-2"><span class="font-semibold">Subject:</span> <span x-text="$store.feedbackModal.message.subject"></span></p>
-                <div class="mb-4">
-                    <span class="font-semibold text-xs text-gray-500">Message:</span>
-                    <p class="text-gray-800 whitespace-pre-wrap mt-1" x-text="$store.feedbackModal.message.message"></p>
-                </div>
-                <template x-if="!$store.feedbackModal.sent">
-                    <form @submit.prevent="$store.feedbackModal.sendReply()">
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Reply</label>
-                        <textarea x-model="$store.feedbackModal.reply" class="w-full border rounded-lg p-2 mb-2" rows="4" placeholder="Type your reply..."></textarea>
-                        <div class="flex justify-end gap-2">
-                            <button type="button" class="px-3 py-1.5 rounded bg-gray-200 text-gray-700" @click="$store.feedbackModal.showModal = false">Cancel</button>
-                            <button type="submit" class="px-4 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700" x-bind:disabled="$store.feedbackModal.sending">Send</button>
+                    <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-blue-100 transition {{ $message->is_read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200' }}"
+                         @click="openModal({{ $message->id }}, '{{ $message->email }}', {{ json_encode($message->subject) }}, {{ json_encode($message->message) }})">
+                        <div class="flex items-center gap-2">
+                            <span class="font-semibold text-gray-900">From: {{ $message->email }}</span>
+                            @if(!$message->is_read)
+                                <span class="px-2 py-1 bg-blue-600 text-white text-xs rounded-full">New</span>
+                            @endif
                         </div>
-                        <template x-if="$store.feedbackModal.error">
-                            <p class="text-red-600 text-xs mt-2" x-text="$store.feedbackModal.error"></p>
-                        </template>
-                    </form>
-                </template>
-                <template x-if="$store.feedbackModal.sent">
-                    <div class="text-green-600 font-semibold text-center py-4">Reply sent successfully!</div>
-                </template>
-            </div>
-        </template>
-    </div>
-</div>
-@endpush
-
-@push('scripts')
-<script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.store('feedbackModal', {
-            showModal: false,
-            message: null,
-            reply: '',
-            sending: false,
-            sent: false,
-            error: '',
-            open(msg) {
-                this.message = msg;
-                this.reply = '';
-                this.sending = false;
-                this.sent = false;
-                this.error = '';
-                this.showModal = true;
-            },
-            sendReply() {
-                if (!this.reply.trim()) {
-                    this.error = 'Reply message is required.';
-                    return;
-                }
-                this.sending = true;
-                this.error = '';
-                fetch(`/feedback/${this.message.id}/reply`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                    },
-                    body: JSON.stringify({ reply_message: this.reply })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        this.sent = true;
-                    } else {
-                        this.error = 'Failed to send reply.';
-                    }
-                })
-                .catch(() => {
-                    this.error = 'Failed to send reply.';
-                })
-                .finally(() => {
-                    this.sending = false;
-                });
-            }
-        });
-    });
-</script>
-@endpush
+                        <span class="text-xs text-gray-500 ml-2">{{ $message->created_at->format('M d, Y h:i A') }}</span>
+                    </div>
+                @endforeach
             </div>
             
             <!-- Pagination -->
@@ -447,12 +355,123 @@
                 <p class="text-gray-500">No customer feedback received yet</p>
             </div>
         @endif
+
+        <!-- Feedback Modal -->
+        <div x-show="showModal" 
+             x-cloak
+             class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center"
+             @click.self="showModal = false">
+            <div class="bg-white rounded-xl shadow-lg max-w-lg w-full mx-4 p-6 relative">
+                <button class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-2xl leading-none" 
+                        @click="showModal = false">&times;</button>
+                
+                <h3 class="text-lg font-bold mb-2">From: <span x-text="message.email"></span></h3>
+                <p class="text-sm text-gray-600 mb-2">
+                    <span class="font-semibold">Subject:</span> 
+                    <span x-text="message.subject"></span>
+                </p>
+                <div class="mb-4">
+                    <span class="font-semibold text-xs text-gray-500">Message:</span>
+                    <p class="text-gray-800 whitespace-pre-wrap mt-1 p-3 bg-gray-50 rounded" x-text="message.message"></p>
+                </div>
+                
+                <template x-if="!sent">
+                    <form @submit.prevent="sendReply()">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Your Reply</label>
+                        <textarea x-model="reply" 
+                                  class="w-full border border-gray-300 rounded-lg p-3 mb-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                  rows="4" 
+                                  placeholder="Type your reply here..."></textarea>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" 
+                                    class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300" 
+                                    @click="showModal = false">Cancel</button>
+                            <button type="submit" 
+                                    class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50" 
+                                    :disabled="sending">
+                                <span x-show="!sending">Send Reply</span>
+                                <span x-show="sending">Sending...</span>
+                            </button>
+                        </div>
+                        <p x-show="error" class="text-red-600 text-sm mt-2" x-text="error"></p>
+                    </form>
+                </template>
+                
+                <template x-if="sent">
+                    <div class="text-center py-6">
+                        <svg class="w-16 h-16 mx-auto text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-green-600 font-semibold text-lg">Reply sent successfully!</p>
+                        <button @click="showModal = false" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Close</button>
+                    </div>
+                </template>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+function feedbackModal() {
+    return {
+        showModal: false,
+        message: {
+            id: null,
+            email: '',
+            subject: '',
+            message: ''
+        },
+        reply: '',
+        sending: false,
+        sent: false,
+        error: '',
+        
+        openModal(id, email, subject, message) {
+            this.message = { id, email, subject, message };
+            this.reply = '';
+            this.sending = false;
+            this.sent = false;
+            this.error = '';
+            this.showModal = true;
+        },
+        
+        sendReply() {
+            if (!this.reply.trim()) {
+                this.error = 'Reply message is required.';
+                return;
+            }
+            
+            this.sending = true;
+            this.error = '';
+            
+            fetch(`/feedback/${this.message.id}/reply`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ reply_message: this.reply })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    this.sent = true;
+                } else {
+                    this.error = 'Failed to send reply.';
+                }
+            })
+            .catch(() => {
+                this.error = 'Failed to send reply. Please try again.';
+            })
+            .finally(() => {
+                this.sending = false;
+            });
+        }
+    };
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Booking Trends Chart
     const bookingCtx = document.getElementById('bookingTrendsChart').getContext('2d');
