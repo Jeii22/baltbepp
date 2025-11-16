@@ -749,6 +749,7 @@
                 }
             });
             checkPassengerCount();
+            
             // Contact email verification logic
             const emailInput = document.querySelector('input[name="contact_email"]');
             const sendBtn = document.getElementById('sendContactEmailCodeBtn');
@@ -774,6 +775,61 @@
                     proceedBtn.classList.remove('opacity-60','cursor-not-allowed');
                 }
             }
+
+            // Check verification status on page load (handles browser back button)
+            async function checkVerificationStatus() {
+                const email = emailInput ? emailInput.value.trim() : '';
+                if (!email) {
+                    disableProceedIfUnverified();
+                    return;
+                }
+
+                try {
+                    const res = await fetch("{{ route('booking.contact_email.status') }}?email=" + encodeURIComponent(email));
+                    const data = await res.json();
+
+                    if (data.verified) {
+                        // Verification is still valid
+                        if (verifiedField) verifiedField.value = '1';
+                        setStatus('Email verified ✔ You may proceed.', 'success');
+                        if (verifyBtn) {
+                            verifyBtn.textContent = 'Verified';
+                            verifyBtn.disabled = true;
+                        }
+                        if (codeInput) codeInput.disabled = true;
+                        if (emailInput) emailInput.readOnly = true;
+                        disableProceedIfUnverified();
+                        
+                        // Show expiration time
+                        const expiresIn = data.expires_in_seconds;
+                        if (expiresIn > 0) {
+                            const minutes = Math.floor(expiresIn / 60);
+                            setStatus(`Email verified ✔ (expires in ${minutes} minutes)`, 'success');
+                        }
+                    } else {
+                        // Not verified or expired
+                        if (verifiedField) verifiedField.value = '0';
+                        setStatus(data.message || 'Please verify your email.', 'info');
+                        disableProceedIfUnverified();
+                    }
+                } catch (e) {
+                    console.error('Error checking verification status:', e);
+                    // On error, assume not verified
+                    if (verifiedField) verifiedField.value = '0';
+                    disableProceedIfUnverified();
+                }
+            }
+
+            // Check status on page load
+            checkVerificationStatus();
+
+            // Re-check when page becomes visible (handles browser back)
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    checkVerificationStatus();
+                }
+            });
+
             disableProceedIfUnverified();
 
             if (emailInput) {
@@ -856,7 +912,7 @@
                             return;
                         }
                         if (verifiedField) verifiedField.value = '1';
-                        setStatus('Email verified ✔ You may proceed.', 'success');
+                        setStatus('Email verified ✔ You may proceed. (Valid for 30 minutes)', 'success');
                         verifyBtn.textContent = 'Verified';
                         verifyBtn.disabled = true;
                         if (codeInput) codeInput.disabled = true;

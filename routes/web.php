@@ -115,6 +115,8 @@ Route::post('/booking/contact-email/send', [\App\Http\Controllers\BookingContact
     ->name('booking.contact_email.send');
 Route::post('/booking/contact-email/verify', [\App\Http\Controllers\BookingContactEmailVerificationController::class, 'verify'])
     ->name('booking.contact_email.verify');
+Route::get('/booking/contact-email/status', [\App\Http\Controllers\BookingContactEmailVerificationController::class, 'checkStatus'])
+    ->name('booking.contact_email.status');
 
 // PayMongo GCash routes
 Route::get('/payments/paymongo/gcash/success/{booking}', [BookingController::class, 'paymongoSuccess'])->name('payments.paymongo.gcash.success');

@@ -92,8 +92,29 @@ class BookingController extends Controller
         // Server-side enforcement of contact email verification to prevent bypass
         $sessionVerified = session('booking_contact_email_verified');
         $sessionEmail = session('booking_contact_email');
+        $verifiedAt = session('booking_contact_email_verified_at');
+        
+        // Check if verified
         if (!$sessionVerified || !$sessionEmail || strtolower($sessionEmail) !== strtolower($validated['contact_email'])) {
             return back()->withErrors(['contact_email' => 'Please verify the contact email before proceeding.'])->withInput();
+        }
+        
+        // Check if verification is still valid (30 minutes from verification time)
+        if ($verifiedAt) {
+            $verifiedAt = \Carbon\Carbon::parse($verifiedAt);
+            $expiresAt = $verifiedAt->copy()->addMinutes(30);
+            
+            if (now()->greaterThan($expiresAt)) {
+                // Clear expired verification
+                session([
+                    'booking_contact_email_verified' => false,
+                    'booking_contact_email_verified_at' => null,
+                ]);
+                return back()->withErrors(['contact_email' => 'Email verification expired. Please verify again.'])->withInput();
+            }
+        } else {
+            // No timestamp found, reject
+            return back()->withErrors(['contact_email' => 'Invalid verification. Please verify the contact email again.'])->withInput();
         }
 
         // Handle student ID photo uploads and store file paths

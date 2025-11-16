@@ -9,6 +9,16 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use App\Mail\ContactEmailVerification;
 
+/**
+ * Controller for booking contact email verification.
+ * 
+ * Security Features:
+ * - Session-based verification with 30-minute expiration
+ * - Verification code expires after 10 minutes
+ * - Maximum 5 verification attempts per code
+ * - Browser back button protection via status checking
+ * - Email mismatch detection
+ */
 class BookingContactEmailVerificationController extends Controller
 {
     /**
@@ -114,12 +124,66 @@ class BookingContactEmailVerificationController extends Controller
             ], 422);
         }
 
-        // Mark verified
-        session(['booking_contact_email_verified' => true]);
+        // Mark verified with timestamp (valid for 30 minutes)
+        session([
+            'booking_contact_email_verified' => true,
+            'booking_contact_email_verified_at' => now(),
+        ]);
 
         return response()->json([
             'ok' => true,
             'message' => 'Email verified successfully.',
+        ]);
+    }
+
+    /**
+     * Check if the current session has a valid verification.
+     * Returns verification status and remaining time.
+     */
+    public function checkStatus(Request $request)
+    {
+        $email = $request->input('email');
+        $sessionEmail = session('booking_contact_email');
+        $verified = session('booking_contact_email_verified', false);
+        $verifiedAt = session('booking_contact_email_verified_at');
+
+        // Check if email matches session
+        if ($email && $sessionEmail && strtolower($email) !== strtolower($sessionEmail)) {
+            return response()->json([
+                'verified' => false,
+                'message' => 'Email changed. Please verify the new email.',
+            ]);
+        }
+
+        // Check if verification exists and is still valid (30 minutes)
+        if ($verified && $verifiedAt) {
+            $verifiedAt = \Carbon\Carbon::parse($verifiedAt);
+            $expiresAt = $verifiedAt->copy()->addMinutes(30);
+            
+            if (now()->lessThan($expiresAt)) {
+                return response()->json([
+                    'verified' => true,
+                    'email' => $sessionEmail,
+                    'verified_at' => $verifiedAt->toIso8601String(),
+                    'expires_at' => $expiresAt->toIso8601String(),
+                    'expires_in_seconds' => now()->diffInSeconds($expiresAt, false),
+                ]);
+            } else {
+                // Verification expired
+                session([
+                    'booking_contact_email_verified' => false,
+                    'booking_contact_email_verified_at' => null,
+                ]);
+                return response()->json([
+                    'verified' => false,
+                    'message' => 'Verification expired. Please verify again.',
+                ]);
+            }
+        }
+
+        return response()->json([
+            'verified' => false,
+            'message' => 'Email not verified.',
         ]);
     }
 }
