@@ -62,22 +62,34 @@
                                 </span>
                             </td>
                             <td class="px-4 py-2">
-                                <button 
-                                    class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs transition
-                                        {{ empty($attempt->latitude) || empty($attempt->longitude) ? 'bg-gray-300 cursor-not-allowed' : '' }}"
-                                    onclick="showLocationModal(
-                                        '{{ $attempt->latitude }}', 
-                                        '{{ $attempt->longitude }}', 
-                                        '{{ $attempt->city ?? '' }}', 
-                                        '{{ $attempt->region ?? '' }}', 
-                                        '{{ $attempt->country ?? '' }}', 
-                                        '{{ $attempt->created_at }}', 
-                                        '{{ $attempt->ip_address }}'
-                                    )"
-                                    {{ empty($attempt->latitude) || empty($attempt->longitude) ? 'disabled' : '' }}
-                                >
-                                    View Location
-                                </button>
+                                @if(!empty($attempt->latitude) && !empty($attempt->longitude))
+                                    <button 
+                                        class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs transition shadow-sm"
+                                        onclick="showLocationModal(
+                                            '{{ $attempt->latitude }}', 
+                                            '{{ $attempt->longitude }}', 
+                                            '{{ $attempt->city ?? '' }}', 
+                                            '{{ $attempt->region ?? '' }}', 
+                                            '{{ $attempt->country ?? '' }}', 
+                                            '{{ $attempt->created_at }}', 
+                                            '{{ $attempt->ip_address }}'
+                                        )"
+                                        title="View location on map"
+                                    >
+                                        <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        View Location
+                                    </button>
+                                @else
+                                    <span class="inline-flex items-center px-3 py-1 bg-gray-200 text-gray-500 rounded text-xs cursor-not-allowed" title="Location data not available for this login attempt">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                                        </svg>
+                                        No Location
+                                    </span>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
