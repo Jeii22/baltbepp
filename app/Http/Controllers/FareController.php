@@ -28,7 +28,8 @@ class FareController extends Controller
             'price' => 'required|numeric|min:0',
             'active' => 'nullable|boolean',
         ]);
-        $validated['active'] = $request->boolean('active', true);
+        // Checkbox: if present => true, if absent => false
+        $validated['active'] = $request->has('active');
 
         $fare = Fare::create($validated);
         $this->logActivity('Created fare', "Fare created (ID {$fare->id})", [
@@ -51,7 +52,8 @@ class FareController extends Controller
             'price' => 'required|numeric|min:0',
             'active' => 'nullable|boolean',
         ]);
-        $validated['active'] = $request->boolean('active', true);
+        // Allow deactivation by unchecking the box
+        $validated['active'] = $request->has('active');
 
         $fare->update($validated);
         $this->logActivity('Updated fare', "Fare updated (ID {$fare->id})", [

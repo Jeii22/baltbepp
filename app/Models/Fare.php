@@ -14,4 +14,9 @@ class Fare extends Model
         'price',
         'active',
     ];
+
+    protected $casts = [
+        'active' => 'boolean',
+        'price' => 'decimal:2',
+    ];
 }
