@@ -330,54 +330,109 @@
         @if($contactMessages->count() > 0)
             <div class="space-y-4">
                 @foreach($contactMessages as $message)
-                    <div class="border border-gray-200 rounded-lg p-4 {{ $message->is_read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200' }}">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-2">
-                                    <h4 class="font-semibold text-gray-900">{{ $message->full_name }}</h4>
-                                    @if(!$message->is_read)
-                                        <span class="px-2 py-1 bg-blue-600 text-white text-xs rounded-full">New</span>
-                                    @endif
-                                </div>
-                                <p class="text-sm text-gray-600">{{ $message->email }}</p>
-                            </div>
-                            <span class="text-xs text-gray-500">{{ $message->created_at->format('M d, Y h:i A') }}</span>
+    <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-blue-100 {{ $message->is_read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200' }}"
+         @click="Alpine.store('feedbackModal').open({
+            id: {{ $message->id }},
+            email: '{{ $message->email }}',
+            subject: `{{ addslashes($message->subject) }}`,
+            message: `{{ addslashes($message->message) }}`
+         })">
+        <div class="flex items-center gap-2">
+            <span class="font-semibold text-gray-900">From: {{ $message->email }}</span>
+            @if(!$message->is_read)
+                <span class="px-2 py-1 bg-blue-600 text-white text-xs rounded-full">New</span>
+            @endif
+        </div>
+        <span class="text-xs text-gray-500 ml-2">{{ $message->created_at->format('M d, Y h:i A') }}</span>
+    </div>
+@endforeach
+
+@push('modals')
+<div x-data="{ showModal: false, message: null, reply: '', sending: false, sent: false, error: '' }" x-init="$store.feedbackModal = $data" x-show="$store.feedbackModal.showModal" style="display: none;" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 relative" @click.away="$store.feedbackModal.showModal = false">
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" @click="$store.feedbackModal.showModal = false">&times;</button>
+        <template x-if="$store.feedbackModal.message">
+            <div>
+                <h3 class="text-lg font-bold mb-2">From: <span x-text="$store.feedbackModal.message.email"></span></h3>
+                <p class="text-sm text-gray-600 mb-2"><span class="font-semibold">Subject:</span> <span x-text="$store.feedbackModal.message.subject"></span></p>
+                <div class="mb-4">
+                    <span class="font-semibold text-xs text-gray-500">Message:</span>
+                    <p class="text-gray-800 whitespace-pre-wrap mt-1" x-text="$store.feedbackModal.message.message"></p>
+                </div>
+                <template x-if="!$store.feedbackModal.sent">
+                    <form @submit.prevent="$store.feedbackModal.sendReply()">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Reply</label>
+                        <textarea x-model="$store.feedbackModal.reply" class="w-full border rounded-lg p-2 mb-2" rows="4" placeholder="Type your reply..."></textarea>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" class="px-3 py-1.5 rounded bg-gray-200 text-gray-700" @click="$store.feedbackModal.showModal = false">Cancel</button>
+                            <button type="submit" class="px-4 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700" x-bind:disabled="$store.feedbackModal.sending">Send</button>
                         </div>
-                        
-                        <div class="mt-3 space-y-2">
-                            <div>
-                                <span class="text-xs font-semibold text-gray-600">Subject:</span>
-                                <p class="text-sm text-gray-800 mt-1">{{ $message->subject }}</p>
-                            </div>
-                            
-                            <div>
-                                <span class="text-xs font-semibold text-gray-600">Message:</span>
-                                <p class="text-sm text-gray-700 mt-1 whitespace-pre-wrap">{{ $message->message }}</p>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between">
-                            <a href="mailto:{{ $message->email }}" 
-                               class="inline-flex items-center text-sm text-blue-600 hover:text-blue-700">
-                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-                                </svg>
-                                Reply via Email
-                            </a>
-                            
-                            @if(!$message->is_read)
-                                <form action="{{ route('contact.mark-read', $message->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="text-sm text-gray-600 hover:text-gray-700">
-                                        Mark as Read
-                                    </button>
-                                </form>
-                            @endif
-                        </div>
-                    </div>
-                @endforeach
+                        <template x-if="$store.feedbackModal.error">
+                            <p class="text-red-600 text-xs mt-2" x-text="$store.feedbackModal.error"></p>
+                        </template>
+                    </form>
+                </template>
+                <template x-if="$store.feedbackModal.sent">
+                    <div class="text-green-600 font-semibold text-center py-4">Reply sent successfully!</div>
+                </template>
+            </div>
+        </template>
+    </div>
+</div>
+@endpush
+
+@push('scripts')
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('feedbackModal', {
+            showModal: false,
+            message: null,
+            reply: '',
+            sending: false,
+            sent: false,
+            error: '',
+            open(msg) {
+                this.message = msg;
+                this.reply = '';
+                this.sending = false;
+                this.sent = false;
+                this.error = '';
+                this.showModal = true;
+            },
+            sendReply() {
+                if (!this.reply.trim()) {
+                    this.error = 'Reply message is required.';
+                    return;
+                }
+                this.sending = true;
+                this.error = '';
+                fetch(`/feedback/${this.message.id}/reply`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                    },
+                    body: JSON.stringify({ reply_message: this.reply })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        this.sent = true;
+                    } else {
+                        this.error = 'Failed to send reply.';
+                    }
+                })
+                .catch(() => {
+                    this.error = 'Failed to send reply.';
+                })
+                .finally(() => {
+                    this.sending = false;
+                });
+            }
+        });
+    });
+</script>
+@endpush
             </div>
             
             <!-- Pagination -->

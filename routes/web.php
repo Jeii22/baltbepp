@@ -13,6 +13,7 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\FeedbackReplyController;
 
 // DIAGNOSTIC: Test route to verify server is running latest code (bypasses all middleware)
 Route::get('/test-alive', function () {
@@ -47,6 +48,9 @@ Route::get('/test-session', function () {
         'forwarded_proto' => request()->header('X-Forwarded-Proto'),
     ]);
 });
+
+// Feedback reply (AJAX)
+Route::post('/feedback/{id}/reply', [FeedbackReplyController::class, 'send'])->middleware(['auth', 'role:admin,super_admin']);
 
 // DIAGNOSTIC: Test mail configuration
 Route::get('/test-mail', function () {
