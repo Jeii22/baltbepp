@@ -100,11 +100,11 @@
         <div class="mb-4">
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8">
-                    <button onclick="switchMapProvider('google')" id="googleTab" class="map-tab border-b-2 border-blue-500 py-2 px-1 text-sm font-medium text-blue-600">
-                        Google Maps
-                    </button>
-                    <button onclick="switchMapProvider('osm')" id="osmTab" class="map-tab border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                    <button onclick="switchMapProvider('osm')" id="osmTab" class="map-tab border-b-2 border-blue-500 py-2 px-1 text-sm font-medium text-blue-600">
                         OpenStreetMap
+                    </button>
+                    <button onclick="switchMapProvider('google')" id="googleTab" class="map-tab border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        Google Maps (External)
                     </button>
                 </nav>
             </div>
@@ -119,11 +119,26 @@
                 </div>
             </div>
             
-            <!-- Google Maps -->
-            <iframe id="googleMap" class="map-frame w-full h-96 rounded-lg shadow-lg border-2 border-gray-200" frameborder="0" allowfullscreen></iframe>
-            
             <!-- OpenStreetMap -->
-            <iframe id="osmMap" class="map-frame w-full h-96 rounded-lg shadow-lg border-2 border-gray-200 hidden" frameborder="0" allowfullscreen></iframe>
+            <iframe id="osmMap" class="map-frame w-full h-96 rounded-lg shadow-lg border-2 border-gray-200" frameborder="0" allowfullscreen></iframe>
+            
+            <!-- Google Maps Notice -->
+            <div id="googleMapNotice" class="map-frame w-full h-96 rounded-lg shadow-lg border-2 border-blue-200 bg-blue-50 hidden flex items-center justify-center">
+                <div class="text-center p-8">
+                    <svg class="w-16 h-16 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Google Maps</h3>
+                    <p class="text-blue-700 mb-4">Click the button below to open this location in Google Maps</p>
+                    <a id="googleMapsDirectLink" href="#" target="_blank" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        Open in Google Maps
+                    </a>
+                </div>
+            </div>
             
             <!-- Error Message -->
             <div id="mapError" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 text-center">
@@ -210,15 +225,16 @@ function showLocationModal(lat, lng, city, region, country, date, ip) {
     // Set Google Maps external link
     googleMapsLink.href = `https://www.google.com/maps?q=${currentLat},${currentLng}`;
     
-    // Load map
-    switchMapProvider('google');
+    // Load map (default to OpenStreetMap)
+    switchMapProvider('osm');
 }
 
 function switchMapProvider(provider) {
     if (!currentLat || !currentLng) return;
     
     currentProvider = provider;
-    const googleMap = document.getElementById('googleMap');
+    const googleMapNotice = document.getElementById('googleMapNotice');
+    const googleMapsDirectLink = document.getElementById('googleMapsDirectLink');
     const osmMap = document.getElementById('osmMap');
     const googleTab = document.getElementById('googleTab');
     const osmTab = document.getElementById('osmTab');
@@ -230,41 +246,39 @@ function switchMapProvider(provider) {
     mapError.classList.add('hidden');
     
     // Update tabs
-    googleTab.className = provider === 'google' 
+    osmTab.className = provider === 'osm' 
         ? 'map-tab border-b-2 border-blue-500 py-2 px-1 text-sm font-medium text-blue-600'
         : 'map-tab border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300';
     
-    osmTab.className = provider === 'osm'
+    googleTab.className = provider === 'google'
         ? 'map-tab border-b-2 border-blue-500 py-2 px-1 text-sm font-medium text-blue-600'
         : 'map-tab border-b-2 border-transparent py-2 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300';
     
     if (provider === 'google') {
-        googleMap.classList.remove('hidden');
+        // Show Google Maps notice instead of embed (which requires API key)
         osmMap.classList.add('hidden');
-        googleMap.src = `https://maps.google.com/maps?q=${currentLat},${currentLng}&z=15&output=embed`;
-        
-        // Hide loading after a short delay
-        setTimeout(() => mapLoading.classList.add('hidden'), 1500);
+        googleMapNotice.classList.remove('hidden');
+        googleMapsDirectLink.href = `https://www.google.com/maps?q=${currentLat},${currentLng}`;
+        mapLoading.classList.add('hidden');
     } else {
+        // Show OpenStreetMap embed
+        googleMapNotice.classList.add('hidden');
         osmMap.classList.remove('hidden');
-        googleMap.classList.add('hidden');
         osmMap.src = `https://www.openstreetmap.org/export/embed.html?bbox=${currentLng-0.01},${currentLat-0.01},${currentLng+0.01},${currentLat+0.01}&layer=mapnik&marker=${currentLat},${currentLng}`;
         
-        // Hide loading after a short delay
+        // Hide loading after iframe loads
         setTimeout(() => mapLoading.classList.add('hidden'), 1500);
     }
 }
 
 function closeLocationModal() {
     const modal = document.getElementById('locationModal');
-    const googleMap = document.getElementById('googleMap');
     const osmMap = document.getElementById('osmMap');
     
     modal.classList.add('hidden');
     document.body.style.overflow = '';
     
-    // Clear map sources to stop loading
-    googleMap.src = '';
+    // Clear map source to stop loading
     osmMap.src = '';
     
     currentLat = null;
