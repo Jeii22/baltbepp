@@ -204,6 +204,7 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
     Route::get('/fares/{fare}/edit', [FareController::class, 'edit'])->name('fares.edit');
     Route::put('/fares/{fare}', [FareController::class, 'update'])->name('fares.update');
     Route::delete('/fares/{fare}', [FareController::class, 'destroy'])->name('fares.destroy');
+    Route::post('/fares/{fare}/toggle', [FareController::class, 'toggle'])->name('fares.toggle');
 
     // Settings (SuperAdmin only)
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

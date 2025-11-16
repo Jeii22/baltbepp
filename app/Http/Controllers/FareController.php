@@ -71,4 +71,16 @@ class FareController extends Controller
         ]);
         return redirect()->route('fares.index')->with('success', 'Fare deleted successfully!');
     }
+
+    public function toggle(Fare $fare)
+    {
+        $fare->active = ! $fare->active;
+        $fare->save();
+        $action = $fare->active ? 'Activated fare' : 'Deactivated fare';
+        $this->logActivity($action, "Fare status changed (ID {$fare->id})", [
+            'fare_id' => $fare->id,
+            'active' => $fare->active,
+        ]);
+        return back()->with('success', 'Fare '.($fare->active ? 'activated' : 'deactivated').' successfully!');
+    }
 }

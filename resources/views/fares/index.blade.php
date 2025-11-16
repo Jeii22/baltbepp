@@ -44,10 +44,13 @@
                     </div>
 
                     <div class="lg:col-span-2">
-                        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium {{ $fare->active ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600' }}">
-                            <span class="w-2 h-2 rounded-full {{ $fare->active ? 'bg-green-500' : 'bg-gray-400' }}"></span>
-                            {{ $fare->active ? 'Active' : 'Inactive' }}
-                        </span>
+                        <form action="{{ route('fares.toggle', $fare->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="group inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition {{ $fare->active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" title="Click to {{ $fare->active ? 'deactivate' : 'activate' }}">
+                                <span class="w-2 h-2 rounded-full {{ $fare->active ? 'bg-green-500 group-hover:bg-green-600' : 'bg-gray-500 group-hover:bg-gray-600' }}"></span>
+                                {{ $fare->active ? 'Active (Deactivate?)' : 'Inactive (Activate?)' }}
+                            </button>
+                        </form>
                     </div>
 
                     <div class="lg:col-span-4 flex lg:justify-end gap-3">
