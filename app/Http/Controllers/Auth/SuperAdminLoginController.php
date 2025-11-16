@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -16,6 +17,43 @@ use Illuminate\View\View;
 
 class SuperAdminLoginController extends Controller
 {
+    /**
+     * Get location data from IP address
+     */
+    private function getLocationFromIp(string $ip): array
+    {
+        if ($ip === '127.0.0.1' || $ip === '::1') {
+            return [
+                'country' => 'Local',
+                'region' => 'Local',
+                'city' => 'Localhost',
+                'latitude' => null,
+                'longitude' => null,
+            ];
+        }
+
+        try {
+            $response = Http::timeout(5)->get("http://ipapi.co/{$ip}/json/");
+            $data = $response->json();
+
+            return [
+                'country' => $data['country_name'] ?? null,
+                'region' => $data['region'] ?? null,
+                'city' => $data['city'] ?? null,
+                'latitude' => $data['latitude'] ?? null,
+                'longitude' => $data['longitude'] ?? null,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'country' => null,
+                'region' => null,
+                'city' => null,
+                'latitude' => null,
+                'longitude' => null,
+            ];
+        }
+    }
+
     // Show hidden superadmin login form
     public function show(): View
     {
@@ -38,11 +76,17 @@ class SuperAdminLoginController extends Controller
         if (!$user || !in_array($user->role, ['super_admin', 'admin']) || !Hash::check($validated['password'], $user->password)) {
             RateLimiter::hit($this->throttleKey($request));
 
-            // Log failed attempt
+            // Log failed attempt with geolocation
+            $location = $this->getLocationFromIp($request->ip());
             LoginAttempt::create([
                 'user_id' => $user?->id,
                 'email' => $email,
                 'ip_address' => $request->ip(),
+                'country' => $location['country'],
+                'region' => $location['region'],
+                'city' => $location['city'],
+                'latitude' => $location['latitude'],
+                'longitude' => $location['longitude'],
                 'user_agent' => $request->userAgent(),
                 'successful' => false,
                 'attempted_at' => now(),
@@ -53,11 +97,17 @@ class SuperAdminLoginController extends Controller
             ]);
         }
 
-        // Log successful attempt
+        // Log successful attempt with geolocation
+        $location = $this->getLocationFromIp($request->ip());
         LoginAttempt::create([
             'user_id' => $user->id,
             'email' => $email,
             'ip_address' => $request->ip(),
+            'country' => $location['country'],
+            'region' => $location['region'],
+            'city' => $location['city'],
+            'latitude' => $location['latitude'],
+            'longitude' => $location['longitude'],
             'user_agent' => $request->userAgent(),
             'successful' => true,
             'attempted_at' => now(),
