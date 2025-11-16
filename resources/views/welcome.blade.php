@@ -20,6 +20,8 @@
 </head>
 <body class="antialiased bg-white text-gray-800">
 
+    <x-loading-screen message="Loading..." />
+
     <!-- SweetAlert for login welcome -->
     @auth
         @if(session('just_logged_in'))
@@ -583,7 +585,7 @@
                         </div>
                     @endif
                     
-                    <form action="{{ route('contact.submit') }}" method="POST" class="space-y-4 sm:space-y-6">
+                    <form action="{{ route('contact.submit') }}" method="POST" class="space-y-4 sm:space-y-6" onsubmit="showLoading('Sending your message...')">
                         @csrf
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div>
@@ -967,6 +969,7 @@
                 }
                 // Allow form to submit if we have passengers
                 console.log('Form validation passed, submitting with passengers:', total);
+                showLoading('Searching for trips...');
                 return true;
             });
         } else {

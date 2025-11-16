@@ -33,6 +33,7 @@
     <script>
         function onRegisterSubmit(e) {
             e.preventDefault();
+            showLoading('Creating your account...');
             @if(config('services.recaptcha.version', 'v3') === 'v2')
                 if (typeof grecaptcha !== 'undefined') {
                     grecaptcha.execute();
@@ -58,6 +59,8 @@
 </head>
 <body class="min-h-screen flex items-center justify-center 
              bg-gradient-to-b from-blue-600 via-cyan-400 to-white">
+
+    <x-loading-screen message="Creating account..." />
 
     <!-- Card -->
     <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 space-y-6">

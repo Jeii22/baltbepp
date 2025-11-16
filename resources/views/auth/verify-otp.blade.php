@@ -1,4 +1,6 @@
 <x-guest-layout>
+    <x-loading-screen message="Verifying OTP..." />
+    
     <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
         {{ __('Enter the 6-digit OTP sent to your email address.') }}
     </div>
@@ -6,7 +8,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('password.verify.otp') }}">
+    <form method="POST" action="{{ route('password.verify.otp') }}" onsubmit="showLoading('Verifying OTP...')">
         @csrf
 
         <input type="hidden" name="email" value="{{ $email }}">

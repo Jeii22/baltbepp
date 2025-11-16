@@ -1,6 +1,7 @@
 @extends('layouts.superadmin')
 
 @section('content')
+<x-loading-screen message="Loading..." />
 <div class="space-y-6">
     <!-- Header -->
     <div class="flex justify-between items-center">
@@ -343,6 +344,7 @@
             }
             this.sending = true;
             this.error = '';
+            showLoading('Sending reply...');
             fetch('/feedback/' + this.message.id + '/reply', {
                 method: 'POST',
                 headers: {
@@ -353,6 +355,7 @@
             })
             .then(res => res.json())
             .then(data => {
+                hideLoading();
                 if (data.success) {
                     this.sent = true;
                 } else {
@@ -360,6 +363,7 @@
                 }
             })
             .catch(() => {
+                hideLoading();
                 this.error = 'Failed to send reply. Please try again.';
             })
             .finally(() => {

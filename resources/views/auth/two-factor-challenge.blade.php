@@ -1,4 +1,6 @@
 <x-guest-layout>
+    <x-loading-screen message="Verifying code..." />
+    
     <div class="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-8">
         <!-- Header -->
         <div class="text-center mb-6">
@@ -18,7 +20,7 @@
         @endif
 
         <!-- Verification Form -->
-        <form method="POST" action="{{ route('two-factor.verify') }}">
+        <form method="POST" action="{{ route('two-factor.verify') }}" onsubmit="showLoading('Verifying code...')">
             @csrf
 
             <div class="mb-6">
@@ -51,7 +53,7 @@
         <!-- Resend Code -->
         <div class="mt-6 text-center">
             <p class="text-sm text-gray-600 mb-2">Didn't receive the code?</p>
-            <form method="POST" action="{{ route('two-factor.resend') }}">
+            <form method="POST" action="{{ route('two-factor.resend') }}" onsubmit="showLoading('Sending new code...')">
                 @csrf
                 <button 
                     type="submit" 

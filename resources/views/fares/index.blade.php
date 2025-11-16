@@ -1,6 +1,7 @@
 @extends('layouts.superadmin')
 
 @section('content')
+<x-loading-screen message="Processing..." />
 <div class="p-6">
     <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -44,7 +45,7 @@
                     </div>
 
                     <div class="lg:col-span-2">
-                        <form action="{{ route('fares.toggle', $fare->id) }}" method="POST">
+                        <form action="{{ route('fares.toggle', $fare->id) }}" method="POST" onsubmit="showLoading('Updating fare status...')">
                             @csrf
                             <button type="submit" class="group inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition {{ $fare->active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}" title="Click to {{ $fare->active ? 'deactivate' : 'activate' }}">
                                 <span class="w-2 h-2 rounded-full {{ $fare->active ? 'bg-green-500 group-hover:bg-green-600' : 'bg-gray-500 group-hover:bg-gray-600' }}"></span>
@@ -61,7 +62,7 @@
                             </svg>
                             Edit
                         </a>
-                        <form action="{{ route('fares.destroy', $fare->id) }}" method="POST" onsubmit="return confirm('Delete this fare?')" class="inline">
+                        <form action="{{ route('fares.destroy', $fare->id) }}" method="POST" onsubmit="if(confirm('Delete this fare?')){showLoading('Deleting fare...'); return true;} return false;" class="inline">
                             @csrf
                             @method('DELETE')
                             <button class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-100 rounded-lg hover:bg-red-100 transition">

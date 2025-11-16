@@ -1,9 +1,10 @@
 <x-guest-layout>
+    <x-loading-screen message="Resetting password..." />
     <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
         {{ __('Enter your new password.') }}
     </div>
 
-    <form method="POST" action="{{ route('password.reset.otp') }}">
+    <form method="POST" action="{{ route('password.reset.otp') }}" onsubmit="showLoading('Resetting password...')">
         @csrf
 
         <input type="hidden" name="email" value="{{ $email }}">

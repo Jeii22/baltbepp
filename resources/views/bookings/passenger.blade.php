@@ -9,6 +9,9 @@
 </head>
 <body class="antialiased bg-white text-gray-800">
 
+    <!-- Loading Screen -->
+    <x-loading-screen message="Verifying email..." />
+
     <!-- Navbar (same as welcome.blade) -->
     <nav class="absolute top-0 left-0 w-full z-20 bg-transparent">
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
@@ -833,6 +836,7 @@
                     verifyBtn.disabled = true;
                     verifyBtn.textContent = 'Verifying...';
                     setStatus('Verifying...', 'info');
+                    showLoading('Verifying email...');
                     try {
                         const res = await fetch("{{ route('booking.contact_email.verify') }}", {
                             method: 'POST',
@@ -844,6 +848,7 @@
                             body: JSON.stringify({ email, code })
                         });
                         const data = await res.json();
+                        hideLoading();
                         if (!res.ok || !data.ok) {
                             setStatus(data.message || 'Invalid code.', 'error');
                             verifyBtn.disabled = false;
@@ -858,6 +863,7 @@
                         if (emailInput) emailInput.readOnly = true;
                         disableProceedIfUnverified();
                     } catch (e) {
+                        hideLoading();
                         setStatus('Network error verifying code.', 'error');
                         verifyBtn.disabled = false;
                         verifyBtn.textContent = 'Verify';
@@ -885,6 +891,8 @@
                         e.preventDefault();
                         setStatus('Please verify the contact email before proceeding.', 'error');
                         disableProceedIfUnverified();
+                    } else {
+                        showLoading('Processing booking...');
                     }
                 });
             }

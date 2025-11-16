@@ -17,6 +17,8 @@
 @endphp
 <body class="antialiased bg-white text-gray-800">
 
+    <x-loading-screen message="Processing..." />
+
     <nav class="absolute top-0 left-0 w-full z-20 bg-black/30 backdrop-blur-sm" x-data="{ open: false, dropdownOpen: false }">
         <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
             <a href="/" class="flex items-center space-x-2">
@@ -103,7 +105,7 @@
                     </div>
                 @endif
 
-                <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+                <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data" onsubmit="showLoading('Updating profile...')">
                     @csrf
                     @method('patch')
 
@@ -182,7 +184,7 @@ document.getElementById('photo')?.addEventListener('change', function(e){
                     </div>
                 @endif
 
-                <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
+                <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6" onsubmit="showLoading('Updating password...')">
                     @csrf
                     @method('put')
 

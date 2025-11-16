@@ -33,6 +33,7 @@
     <script>
         function onLoginSubmit(e) {
             e.preventDefault();
+            showLoading('Signing in...');
             @if(config('services.recaptcha.version', 'v3') === 'v2')
                 if (typeof grecaptcha !== 'undefined') {
                     grecaptcha.execute();
@@ -58,7 +59,7 @@
 <body class="min-h-screen flex items-center justify-center 
              bg-gradient-to-b from-blue-600 via-cyan-400 to-white">
 
-    
+    <x-loading-screen message="Signing in..." />
 
     <!-- Card -->
     <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 space-y-6">

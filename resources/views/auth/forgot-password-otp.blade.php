@@ -1,4 +1,5 @@
 <x-guest-layout>
+    <x-loading-screen message="Sending OTP..." />
     <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
         {{ __('Forgot your password? No problem. Just let us know your email address and we will email you an OTP to reset your password.') }}
     </div>
@@ -13,7 +14,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('password.send.otp') }}">
+    <form method="POST" action="{{ route('password.send.otp') }}" onsubmit="showLoading('Sending OTP...')">
         @csrf
 
         <!-- Email Address -->
