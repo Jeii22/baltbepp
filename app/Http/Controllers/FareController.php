@@ -31,7 +31,7 @@ class FareController extends Controller
         $validated['active'] = $request->boolean('active', true);
 
         $fare = Fare::create($validated);
-        $this->logActivity('Created fare', [
+        $this->logActivity('Created fare', "Fare created (ID {$fare->id})", [
             'fare_id' => $fare->id,
             'passenger_type' => $fare->passenger_type,
             'price' => $fare->price
@@ -54,7 +54,7 @@ class FareController extends Controller
         $validated['active'] = $request->boolean('active', true);
 
         $fare->update($validated);
-        $this->logActivity('Updated fare', [
+        $this->logActivity('Updated fare', "Fare updated (ID {$fare->id})", [
             'fare_id' => $fare->id,
             'passenger_type' => $fare->passenger_type,
             'price' => $fare->price
@@ -66,7 +66,7 @@ class FareController extends Controller
     {
         $fareId = $fare->id;
         $fare->delete();
-        $this->logActivity('Deleted fare', [
+        $this->logActivity('Deleted fare', "Fare deleted (ID {$fareId})", [
             'fare_id' => $fareId
         ]);
         return redirect()->route('fares.index')->with('success', 'Fare deleted successfully!');
