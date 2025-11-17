@@ -202,20 +202,28 @@
                 <!-- Dropdown -->
                 <div id="passengerDropdown" class="hidden absolute z-30 mt-2 w-full sm:w-96 bg-white border-2 border-gray-200 rounded-xl shadow-2xl p-4 sm:p-5 left-0 right-0">
                     @php
-                        $passengerTypeMap = [
+                        // Source meta definitions for known passenger types
+                        $metaSource = [
                             'Regular' => ['key' => 'adult', 'label' => 'Adult', 'description' => 'Ages 12+ years old', 'default' => 0],
                             'Child (2-11)' => ['key' => 'child', 'label' => 'Child', 'description' => 'Ages 2-11', 'default' => 0],
                             'Infant' => ['key' => 'infant', 'label' => 'Infant', 'description' => 'Under 2', 'default' => 0],
                             'Senior Citizen / PWD' => ['key' => 'pwd', 'label' => 'PWD/Senior', 'description' => 'Persons With Disability / Senior Citizens', 'default' => 0],
+                            'Senior/PWD' => ['key' => 'pwd', 'label' => 'PWD/Senior', 'description' => 'Persons With Disability / Senior Citizens', 'default' => 0], // alternate naming fallback
                             'Student' => ['key' => 'student', 'label' => 'Student', 'description' => 'With valid student ID', 'default' => 0],
                         ];
-                        $fareLookup = $fares->keyBy('passenger_type');
+                        // Build active fare meta only from active fare records passed from controller
+                        $activeFareMeta = [];
+                        foreach($fares as $fare) {
+                            $pt = $fare->passenger_type;
+                            if(isset($metaSource[$pt])) {
+                                $activeFareMeta[$pt] = $metaSource[$pt] + ['price' => $fare->price];
+                            }
+                        }
+                        // Preserve order based on metaSource definition
+                        $orderedActive = array_filter($metaSource, fn($v, $k) => array_key_exists($k, $activeFareMeta), ARRAY_FILTER_USE_BOTH);
                     @endphp
-                    @foreach($passengerTypeMap as $fareType => $typeInfo)
-                        @php
-                            $fareEntry = $fareLookup->get($fareType);
-                            $price = $fareEntry ? $fareEntry->price : 0;
-                        @endphp
+                    @foreach($orderedActive as $fareType => $typeInfo)
+                        @php $price = $activeFareMeta[$fareType]['price']; @endphp
                         <div class="flex items-center justify-between gap-3 {{ !$loop->last ? 'mb-4 pb-3 border-b border-gray-100' : '' }}">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between gap-2 mb-1">
@@ -770,7 +778,7 @@
 
         // Initialize counts dynamically based on available passenger types
         let counts = {
-            @foreach($passengerTypeMap as $typeInfo)
+            @foreach(($orderedActive ?? []) as $fareType => $typeInfo)
                 '{{ $typeInfo['key'] }}': {{ $typeInfo['default'] }},
             @endforeach
         };
@@ -831,7 +839,7 @@
 
         function updateTotal() {
             let displayParts = [];
-            @foreach($passengerTypeMap as $typeInfo)
+            @foreach(($orderedActive ?? []) as $fareType => $typeInfo)
                 if (counts['{{ $typeInfo['key'] }}'] > 0) {
                     displayParts.push(`${counts['{{ $typeInfo['key'] }}']} {{ $typeInfo['label'] }}`);
                 }
