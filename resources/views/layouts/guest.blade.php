@@ -35,5 +35,6 @@
             {{ $slot }}
         </div>
     </div>
+    <x-console-lock />
 </body>
 </html>

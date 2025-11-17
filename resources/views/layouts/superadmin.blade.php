@@ -233,4 +233,5 @@
     });
     </script>
 </body>
+    <x-console-lock />
 </html>

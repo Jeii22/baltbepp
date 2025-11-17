@@ -95,5 +95,6 @@
             });
         });
         </script>
+        <x-console-lock />
     </body>
 </html>
