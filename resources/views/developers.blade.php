@@ -90,9 +90,11 @@
 </head>
 <body class="antialiased bg-white text-gray-800">
 
+    <x-loading-screen message="Loading..." />
+
 
     <!-- Hero Section with Background -->
-    <section class="relative w-full min-h-screen bg-cover bg-center bg-fixed" style="background-image: url('/images/barko.png'); background-position: center center; background-repeat: no-repeat; background-size: cover;">
+    <section class="relative w-full min-h-screen bg-cover bg-center bg-fixed" style="background-image: url('{{ asset('images/barko.png') }}'); background-position: center center; background-repeat: no-repeat; background-size: cover;">
         <!-- Gradient Overlay -->
         <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70"></div>
         
@@ -112,7 +114,7 @@
                 <a href="https://www.facebook.com/kajake.rodriguez" target="_blank" class="float-animation neon-blue bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-blue-500">
-                            <img src="{{ asset('images/developers/jake.jpg') }}" alt="Jake Rodriguez" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="{{ asset('images/developers/jake.jpg') }}" alt="Jake Rodriguez" class="w-full h-full object-cover" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="w-full h-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center" style="display:none;">
                                 <span class="text-3xl font-bold text-white">JR</span>
                             </div>
@@ -128,7 +130,7 @@
                 <a href="https://www.facebook.com/melchades.mansueto.10" target="_blank" class="float-animation neon-purple bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-purple-500">
-                            <img src="{{ asset('images/developers/melchades.jpg') }}" alt="Melchades Mansueto" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="{{ asset('images/developers/melchades.jpg') }}" alt="Melchades Mansueto" class="w-full h-full object-cover" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="w-full h-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center" style="display:none;">
                                 <span class="text-3xl font-bold text-white">MM</span>
                             </div>
@@ -144,7 +146,7 @@
                 <a href="https://www.facebook.com/kyle.gadiano.7" target="_blank" class="float-animation neon-green bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-green-500">
-                            <img src="{{ asset('images/developers/kyle.jpg') }}" alt="Kyle Gadiano" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="{{ asset('images/developers/kyle.jpg') }}" alt="Kyle Gadiano" class="w-full h-full object-cover" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="w-full h-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center" style="display:none;">
                                 <span class="text-3xl font-bold text-white">KG</span>
                             </div>
@@ -160,7 +162,7 @@
                 <a href="https://www.facebook.com/rudelyn.illut.7" target="_blank" class="float-animation neon-orange bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-orange-500">
-                            <img src="{{ asset('images/developers/rudelyn.jpg') }}" alt="Rudelyn Illut" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="{{ asset('images/developers/rudelyn.jpg') }}" alt="Rudelyn Illut" class="w-full h-full object-cover" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="w-full h-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center" style="display:none;">
                                 <span class="text-3xl font-bold text-white">RI</span>
                             </div>
@@ -176,7 +178,7 @@
                 <a href="https://www.facebook.com/jhammyss" target="_blank" class="float-animation neon-pink bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300 md:col-span-2 lg:col-span-1 block cursor-pointer">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-24 h-24 rounded-full mb-4 shadow-lg overflow-hidden border-4 border-pink-500">
-                            <img src="{{ asset('images/developers/jonamae.jpg') }}" alt="Jona Mae Illut" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="{{ asset('images/developers/jonamae.jpg') }}" alt="Jona Mae Illut" class="w-full h-full object-cover" loading="lazy" decoding="async" fetchpriority="low" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="w-full h-full bg-gradient-to-br from-pink-500 to-pink-700 flex items-center justify-center" style="display:none;">
                                 <span class="text-3xl font-bold text-white">JI</span>
                             </div>
@@ -191,7 +193,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8">
