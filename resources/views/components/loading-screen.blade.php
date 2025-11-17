@@ -1,6 +1,6 @@
 @props(['message' => 'Processing...'])
 
-<div id="loadingScreen" style="display: none;" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+<div id="loadingScreen" style="display: none;" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
     <div class="text-center">
         <!-- Animated Logo (Sailing Boat) -->
         <div class="relative mb-6">
