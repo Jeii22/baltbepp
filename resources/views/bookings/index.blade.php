@@ -210,7 +210,20 @@
                                             payment_status: @js($paymentStatus),
                                             created_at: @js(optional($b->created_at)->format('M d, Y • h:i A')),
                                             update_status_url: @js(route('bookings.updateStatus', $b)),
-                                            passengers: @js($b->meta['passengers'] ?? []),
+                                            passengers: @js($b->passengers->map(function($p) {
+                                                return [
+                                                    'first_name' => $p->first_name,
+                                                    'last_name' => $p->last_name,
+                                                    'type' => $p->type,
+                                                    'gender' => $p->gender,
+                                                    'birth_date' => optional($p->birthdate)->format('Y-m-d'),
+                                                    'fare' => $p->fare,
+                                                    'id_number' => $p->id_number,
+                                                    'student_id' => $p->extra['student_id'] ?? null,
+                                                    'school' => $p->extra['school'] ?? null,
+                                                    'student_id_photo_path' => $p->extra['student_id_photo_path'] ?? null,
+                                                ];
+                                            })->toArray()),
                                         }; showPassengers = false; showModal = true">
                                     View
                                 </button>

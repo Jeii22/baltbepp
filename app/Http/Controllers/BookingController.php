@@ -305,6 +305,37 @@ class BookingController extends Controller
 
         $booking = \App\Models\Booking::create($bookingData);
 
+        // Create individual passenger records in passengers table
+        if (!empty($data['passengers']) && is_array($data['passengers'])) {
+            foreach ($data['passengers'] as $passengerData) {
+                $extraData = [];
+                
+                // Store student-specific information in extra field
+                if (isset($passengerData['student_id'])) {
+                    $extraData['student_id'] = $passengerData['student_id'];
+                }
+                if (isset($passengerData['school'])) {
+                    $extraData['school'] = $passengerData['school'];
+                }
+                if (isset($passengerData['student_id_photo_path'])) {
+                    $extraData['student_id_photo_path'] = $passengerData['student_id_photo_path'];
+                }
+                
+                // Create passenger record
+                \App\Models\Passenger::create([
+                    'booking_id' => $booking->id,
+                    'first_name' => $passengerData['first_name'] ?? '',
+                    'last_name' => $passengerData['last_name'] ?? '',
+                    'type' => $passengerData['type'] ?? 'adult',
+                    'gender' => $passengerData['gender'] ?? null,
+                    'birthdate' => $passengerData['birth_date'] ?? null,
+                    'id_number' => $passengerData['id_number'] ?? null,
+                    'fare' => $passengerData['fare'] ?? 0,
+                    'extra' => !empty($extraData) ? $extraData : null,
+                ]);
+            }
+        }
+
         // This method now only handles PayMongo/Card/COD payments
         // Digital wallets are handled by processDigitalWallet method
         if (in_array($request->payment_method, $allowedWalletTypes)) {
@@ -412,6 +443,37 @@ class BookingController extends Controller
             'status' => 'pending',
             'payment_reference' => $paymentService->generatePaymentReference($request->payment_method, time()),
         ]);
+
+        // Create individual passenger records in passengers table
+        if (!empty($data['passengers']) && is_array($data['passengers'])) {
+            foreach ($data['passengers'] as $passengerData) {
+                $extraData = [];
+                
+                // Store student-specific information in extra field
+                if (isset($passengerData['student_id'])) {
+                    $extraData['student_id'] = $passengerData['student_id'];
+                }
+                if (isset($passengerData['school'])) {
+                    $extraData['school'] = $passengerData['school'];
+                }
+                if (isset($passengerData['student_id_photo_path'])) {
+                    $extraData['student_id_photo_path'] = $passengerData['student_id_photo_path'];
+                }
+                
+                // Create passenger record
+                \App\Models\Passenger::create([
+                    'booking_id' => $booking->id,
+                    'first_name' => $passengerData['first_name'] ?? '',
+                    'last_name' => $passengerData['last_name'] ?? '',
+                    'type' => $passengerData['type'] ?? 'adult',
+                    'gender' => $passengerData['gender'] ?? null,
+                    'birthdate' => $passengerData['birth_date'] ?? null,
+                    'id_number' => $passengerData['id_number'] ?? null,
+                    'fare' => $passengerData['fare'] ?? 0,
+                    'extra' => !empty($extraData) ? $extraData : null,
+                ]);
+            }
+        }
 
         // Get the selected wallet details
         $selectedWallet = $wallets->where('type', $request->payment_method)->first();
@@ -562,7 +624,7 @@ class BookingController extends Controller
     // Superadmin: list + filter by origin & destination
     public function index(Request $request)
     {
-        $query = \App\Models\Booking::query()->with('trip');
+        $query = \App\Models\Booking::query()->with(['trip', 'passengers']);
 
         // Basic filters
         if ($request->filled('origin')) {

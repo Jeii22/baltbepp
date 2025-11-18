@@ -40,4 +40,9 @@ class Booking extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function passengers()
+    {
+        return $this->hasMany(Passenger::class);
+    }
 }
