@@ -1059,7 +1059,7 @@
     </div>
 
     <script>
-        // Student ID file preview logic (image/PDF)
+        // File preview logic for Student, Child, Infant, and PWD/Senior
         (function() {
             const modal = document.getElementById('filePreviewModal');
             if (!modal) return;
@@ -1115,7 +1115,7 @@
                 downloadLink.download = file.name || 'document';
                 downloadLink.classList.remove('hidden');
                 if (type.startsWith('image/')) {
-                    contentEl.innerHTML = '<div class="p-4"><img src="'+url+'" alt="Student ID Image" class="max-h-[65vh] mx-auto rounded shadow"/></div>';
+                    contentEl.innerHTML = '<div class="p-4"><img src="'+url+'" alt="ID Image" class="max-h-[65vh] mx-auto rounded shadow"/></div>';
                 } else if (type === 'application/pdf') {
                     contentEl.innerHTML = '<object data="'+url+'" type="application/pdf" class="w-full h-[65vh]" aria-label="PDF preview"><p class="p-4 text-sm">PDF preview not available. <a href="'+url+'" target="_blank" class="text-indigo-600 underline">Open PDF</a></p></object>';
                 } else {
@@ -1124,15 +1124,17 @@
                 openModal();
             }
 
-            // Attach to each student ID file input
-            document.querySelectorAll('.student-id-file').forEach(function(input) {
-                const eyeBtn = modalSetupEyeButton(input);
-                input.addEventListener('change', function() {
-                    if (this.files && this.files[0]) {
-                        eyeBtn.classList.remove('hidden');
-                    } else {
-                        eyeBtn.classList.add('hidden');
-                    }
+            // Attach to each file input for preview (student, child, infant, pwd)
+            ['.student-id-file', '.child-id-file', '.infant-id-file', '.pwd-id-file'].forEach(function(cls) {
+                document.querySelectorAll(cls).forEach(function(input) {
+                    const eyeBtn = modalSetupEyeButton(input);
+                    input.addEventListener('change', function() {
+                        if (this.files && this.files[0]) {
+                            eyeBtn.classList.remove('hidden');
+                        } else {
+                            eyeBtn.classList.add('hidden');
+                        }
+                    });
                 });
             });
 
