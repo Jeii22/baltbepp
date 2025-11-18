@@ -371,11 +371,25 @@
                                 <div class="md:col-span-2">
                                     <label class="text-sm font-semibold text-gray-700">Student ID Photo <span class="text-red-500">*</span></label>
                                     <p class="text-xs text-gray-500 mb-2">Upload a clear photo of your student ID (front side). Accepted formats: JPG, PNG, PDF. Max size: 2MB</p>
-                                    <input type="file" 
-                                           name="passengers[{{ $passengerIndex }}][student_id_photo]" 
-                                           class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-gray-300 rounded-lg cursor-pointer" 
-                                           accept="image/jpeg,image/jpg,image/png,application/pdf"
-                                           required>
+                                    <div class="relative">
+                                        <input type="file"
+                                               id="studentIdPhoto_{{ $passengerIndex }}"
+                                               name="passengers[{{ $passengerIndex }}][student_id_photo]"
+                                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-gray-300 rounded-lg cursor-pointer student-id-file"
+                                               accept="image/jpeg,image/jpg,image/png,application/pdf"
+                                               required
+                                               data-preview-btn-target="studentIdPhoto_{{ $passengerIndex }}">
+                                        <button type="button"
+                                                class="eye-preview-btn hidden absolute top-2 right-2 p-2 rounded-md bg-indigo-600 text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                                                aria-label="Preview uploaded Student ID"
+                                                title="Preview uploaded Student ID"
+                                                data-preview-for="studentIdPhoto_{{ $passengerIndex }}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s3.75-7.5 10.5-7.5S22.5 12 22.5 12s-3.75 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -953,6 +967,117 @@
                 });
             }
         });
+    </script>
+
+    <!-- File Preview Modal -->
+    <div id="filePreviewModal" class="fixed inset-0 z-50 hidden" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden ring-1 ring-black/10" data-preview-container>
+                <div class="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-indigo-600 to-indigo-500">
+                    <h2 class="text-white text-sm font-semibold" id="filePreviewTitle">Student ID Preview</h2>
+                    <div class="flex items-center gap-2">
+                        <a href="#" target="_blank" rel="noopener" class="download-link hidden text-xs px-2 py-1 rounded bg-white/20 text-white hover:bg-white/30" data-download-link>Download</a>
+                        <button type="button" class="text-white hover:text-gray-200 focus:outline-none" data-preview-close aria-label="Close preview">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="max-h-[70vh] overflow-auto bg-gray-50" data-preview-content>
+                    <div class="p-6 text-center text-gray-500 text-sm">No file selected</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Student ID file preview logic (image/PDF)
+        (function() {
+            const modal = document.getElementById('filePreviewModal');
+            if (!modal) return;
+            const contentEl = modal.querySelector('[data-preview-content]');
+            const closeBtn = modal.querySelector('[data-preview-close]');
+            const downloadLink = modal.querySelector('[data-download-link]');
+            let lastFocusedEl = null;
+
+            function openModal() {
+                modal.classList.remove('hidden');
+                modal.setAttribute('aria-hidden', 'false');
+                lastFocusedEl = document.activeElement;
+                closeBtn.focus();
+                document.addEventListener('keydown', escHandler);
+                trapFocus();
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.setAttribute('aria-hidden', 'true');
+                document.removeEventListener('keydown', escHandler);
+                releaseFocusTrap();
+                if (lastFocusedEl) lastFocusedEl.focus();
+            }
+
+            function escHandler(e) { if (e.key === 'Escape') { e.preventDefault(); closeModal(); } }
+
+            function trapFocus() {
+                const focusables = modal.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+                const first = focusables[0];
+                const last = focusables[focusables.length - 1];
+                modal.addEventListener('keydown', function(e) {
+                    if (e.key === 'Tab') {
+                        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                    }
+                });
+            }
+            function releaseFocusTrap() { /* no-op placeholder */ }
+
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+            function renderFilePreview(file) {
+                if (!file) {
+                    contentEl.innerHTML = '<div class="p-6 text-center text-gray-500 text-sm">No file selected</div>';
+                    downloadLink.classList.add('hidden');
+                    return;
+                }
+                const type = file.type;
+                const url = URL.createObjectURL(file);
+                downloadLink.href = url;
+                downloadLink.download = file.name || 'document';
+                downloadLink.classList.remove('hidden');
+                if (type.startsWith('image/')) {
+                    contentEl.innerHTML = '<div class="p-4"><img src="'+url+'" alt="Student ID Image" class="max-h-[65vh] mx-auto rounded shadow"/></div>';
+                } else if (type === 'application/pdf') {
+                    contentEl.innerHTML = '<object data="'+url+'" type="application/pdf" class="w-full h-[65vh]" aria-label="PDF preview"><p class="p-4 text-sm">PDF preview not available. <a href="'+url+'" target="_blank" class="text-indigo-600 underline">Open PDF</a></p></object>';
+                } else {
+                    contentEl.innerHTML = '<div class="p-6 text-center text-gray-500 text-sm">Unsupported file type.</div>';
+                }
+                openModal();
+            }
+
+            // Attach to each student ID file input
+            document.querySelectorAll('.student-id-file').forEach(function(input) {
+                const eyeBtn = modalSetupEyeButton(input);
+                input.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        eyeBtn.classList.remove('hidden');
+                    } else {
+                        eyeBtn.classList.add('hidden');
+                    }
+                });
+            });
+
+            function modalSetupEyeButton(input) {
+                const btn = document.querySelector('[data-preview-for="'+input.id+'"]');
+                if (!btn) return { classList: { add(){}, remove(){} } };
+                btn.addEventListener('click', function() {
+                    if (input.files && input.files[0]) {
+                        renderFilePreview(input.files[0]);
+                    }
+                });
+                return btn;
+            }
+        })();
     </script>
 
     <!-- Data bridge to avoid Blade vs JS template literal conflicts -->
