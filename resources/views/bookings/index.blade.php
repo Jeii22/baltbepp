@@ -298,11 +298,12 @@
                                                             <div><strong>Student ID:</strong> <span x-text="passenger.student_id || 'N/A'"></span></div>
                                                             <div><strong>School:</strong> <span x-text="passenger.school || 'N/A'"></span></div>
                                                             <template x-if="passenger.student_id_photo_path">
-                                                                <div class="mt-1">
+                                                                <div class="mt-2">
                                                                     <a :href="'/storage/' + passenger.student_id_photo_path" 
                                                                        target="_blank"
-                                                                       class="text-indigo-600 hover:text-indigo-800 underline">
-                                                                        📎 View Student ID
+                                                                       class="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white text-xs rounded-md hover:bg-indigo-700 transition">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                                        View Student ID Photo
                                                                     </a>
                                                                 </div>
                                                             </template>
