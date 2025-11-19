@@ -165,75 +165,6 @@
                             </div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                                <div class="md:col-span-2">
-                                                                    <label class="text-sm font-semibold text-gray-700">Child ID/Document <span class="text-red-500">*</span></label>
-                                                                    <p class="text-xs text-gray-500 mb-2">Upload a photo of the child's birth certificate or ID (JPG, PNG, PDF, max 2MB).</p>
-                                                                    <div class="relative">
-                                                                        <input type="file"
-                                                                               id="childIdPhoto_{{ $passengerIndex }}"
-                                                                               name="passengers[{{ $passengerIndex }}][child_id_photo]"
-                                                                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg cursor-pointer child-id-file"
-                                                                               accept="image/jpeg,image/jpg,image/png,application/pdf"
-                                                                               required
-                                                                               data-preview-btn-target="childIdPhoto_{{ $passengerIndex }}">
-                                                                        <button type="button"
-                                                                                class="eye-preview-btn hidden absolute top-2 right-2 p-2 rounded-md bg-green-600 text-white shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-                                                                                aria-label="Preview uploaded Child ID"
-                                                                                title="Preview uploaded Child ID"
-                                                                                data-preview-for="childIdPhoto_{{ $passengerIndex }}">
-                                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s3.75-7.5 10.5-7.5S22.5 12 22.5 12s-3.75 7.5-10.5 7.5S1.5 12 1.5 12z" />
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                                                            </svg>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="md:col-span-2">
-                                                                    <label class="text-sm font-semibold text-gray-700">Infant ID/Document <span class="text-red-500">*</span></label>
-                                                                    <p class="text-xs text-gray-500 mb-2">Upload a photo of the infant's birth certificate or ID (JPG, PNG, PDF, max 2MB).</p>
-                                                                    <div class="relative">
-                                                                        <input type="file"
-                                                                               id="infantIdPhoto_{{ $passengerIndex }}"
-                                                                               name="passengers[{{ $passengerIndex }}][infant_id_photo]"
-                                                                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 border border-gray-300 rounded-lg cursor-pointer infant-id-file"
-                                                                               accept="image/jpeg,image/jpg,image/png,application/pdf"
-                                                                               required
-                                                                               data-preview-btn-target="infantIdPhoto_{{ $passengerIndex }}">
-                                                                        <button type="button"
-                                                                                class="eye-preview-btn hidden absolute top-2 right-2 p-2 rounded-md bg-yellow-600 text-white shadow hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                                                                                aria-label="Preview uploaded Infant ID"
-                                                                                title="Preview uploaded Infant ID"
-                                                                                data-preview-for="infantIdPhoto_{{ $passengerIndex }}">
-                                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s3.75-7.5 10.5-7.5S22.5 12 22.5 12s-3.75 7.5-10.5 7.5S1.5 12 1.5 12z" />
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                                                            </svg>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="md:col-span-2">
-                                                                    <label class="text-sm font-semibold text-gray-700">PWD/Senior ID Photo <span class="text-red-500">*</span></label>
-                                                                    <p class="text-xs text-gray-500 mb-2">Upload a photo of the PWD/Senior ID (JPG, PNG, PDF, max 2MB).</p>
-                                                                    <div class="relative">
-                                                                        <input type="file"
-                                                                               id="pwdIdPhoto_{{ $passengerIndex }}"
-                                                                               name="passengers[{{ $passengerIndex }}][pwd_id_photo]"
-                                                                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 border border-gray-300 rounded-lg cursor-pointer pwd-id-file"
-                                                                               accept="image/jpeg,image/jpg,image/png,application/pdf"
-                                                                               required
-                                                                               data-preview-btn-target="pwdIdPhoto_{{ $passengerIndex }}">
-                                                                        <button type="button"
-                                                                                class="eye-preview-btn hidden absolute top-2 right-2 p-2 rounded-md bg-purple-600 text-white shadow hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                                                                                aria-label="Preview uploaded PWD/Senior ID"
-                                                                                title="Preview uploaded PWD/Senior ID"
-                                                                                data-preview-for="pwdIdPhoto_{{ $passengerIndex }}">
-                                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s3.75-7.5 10.5-7.5S22.5 12 22.5 12s-3.75 7.5-10.5 7.5S1.5 12 1.5 12z" />
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                                                            </svg>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
                                 <div>
                                     <label class="text-sm font-semibold text-gray-700">First Name <span class="text-red-500">*</span></label>
                                     <input type="text" name="passengers[{{ $passengerIndex }}][first_name]" class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Juan" required>
@@ -297,6 +228,29 @@
                                     <input type="date" name="passengers[{{ $passengerIndex }}][birth_date]" class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500" required>
                                     <p class="text-xs text-gray-500 mt-1">Must be between 2-11 years old</p>
                                 </div>
+                                <div class="md:col-span-2">
+                                    <label class="text-sm font-semibold text-gray-700">Child ID Photo <span class="text-red-500">*</span></label>
+                                    <p class="text-xs text-gray-500 mb-2">Upload a clear photo for verification (Birth Certificate, ID, etc.). Accepted formats: JPG, PNG, PDF. Max size: 2MB</p>
+                                    <div class="relative">
+                                        <input type="file"
+                                               id="childIdPhoto_{{ $passengerIndex }}"
+                                               name="passengers[{{ $passengerIndex }}][child_id_photo]"
+                                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg cursor-pointer verification-photo-file"
+                                               accept="image/jpeg,image/jpg,image/png,application/pdf"
+                                               required
+                                               data-preview-btn-target="childIdPhoto_{{ $passengerIndex }}">
+                                        <button type="button"
+                                                class="eye-preview-btn hidden absolute top-2 right-2 p-2 rounded-md bg-green-600 text-white shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                                                aria-label="Preview uploaded Child ID"
+                                                title="Preview uploaded Child ID"
+                                                data-preview-for="childIdPhoto_{{ $passengerIndex }}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s3.75-7.5 10.5-7.5S22.5 12 22.5 12s-3.75 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             
                             <input type="hidden" name="passengers[{{ $passengerIndex }}][type]" value="child">
@@ -339,6 +293,29 @@
                                     <label class="text-sm font-semibold text-gray-700">Date of Birth <span class="text-red-500">*</span></label>
                                     <input type="date" name="passengers[{{ $passengerIndex }}][birth_date]" class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" required>
                                     <p class="text-xs text-gray-500 mt-1">Must be under 2 years old</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="text-sm font-semibold text-gray-700">Infant ID Photo <span class="text-red-500">*</span></label>
+                                    <p class="text-xs text-gray-500 mb-2">Upload a clear photo for verification (Birth Certificate, etc.). Accepted formats: JPG, PNG, PDF. Max size: 2MB</p>
+                                    <div class="relative">
+                                        <input type="file"
+                                               id="infantIdPhoto_{{ $passengerIndex }}"
+                                               name="passengers[{{ $passengerIndex }}][infant_id_photo]"
+                                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 border border-gray-300 rounded-lg cursor-pointer verification-photo-file"
+                                               accept="image/jpeg,image/jpg,image/png,application/pdf"
+                                               required
+                                               data-preview-btn-target="infantIdPhoto_{{ $passengerIndex }}">
+                                        <button type="button"
+                                                class="eye-preview-btn hidden absolute top-2 right-2 p-2 rounded-md bg-yellow-600 text-white shadow hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                                aria-label="Preview uploaded Infant ID"
+                                                title="Preview uploaded Infant ID"
+                                                data-preview-for="infantIdPhoto_{{ $passengerIndex }}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s3.75-7.5 10.5-7.5S22.5 12 22.5 12s-3.75 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -386,6 +363,29 @@
                                     <label class="text-sm font-semibold text-gray-700">PWD/Senior ID Number <span class="text-red-500">*</span></label>
                                     <input type="text" name="passengers[{{ $passengerIndex }}][id_number]" class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="PWD/Senior Citizen ID Number" required>
                                     <p class="text-xs text-gray-500 mt-1">Required for discount verification</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="text-sm font-semibold text-gray-700">PWD/Senior ID Photo <span class="text-red-500">*</span></label>
+                                    <p class="text-xs text-gray-500 mb-2">Upload a clear photo of your PWD/Senior Citizen ID. Accepted formats: JPG, PNG, PDF. Max size: 2MB</p>
+                                    <div class="relative">
+                                        <input type="file"
+                                               id="pwdIdPhoto_{{ $passengerIndex }}"
+                                               name="passengers[{{ $passengerIndex }}][pwd_id_photo]"
+                                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 border border-gray-300 rounded-lg cursor-pointer verification-photo-file"
+                                               accept="image/jpeg,image/jpg,image/png,application/pdf"
+                                               required
+                                               data-preview-btn-target="pwdIdPhoto_{{ $passengerIndex }}">
+                                        <button type="button"
+                                                class="eye-preview-btn hidden absolute top-2 right-2 p-2 rounded-md bg-purple-600 text-white shadow hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                                aria-label="Preview uploaded PWD/Senior ID"
+                                                title="Preview uploaded PWD/Senior ID"
+                                                data-preview-for="pwdIdPhoto_{{ $passengerIndex }}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.5 12s3.75-7.5 10.5-7.5S22.5 12 22.5 12s-3.75 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -1059,7 +1059,7 @@
     </div>
 
     <script>
-        // File preview logic for Student, Child, Infant, and PWD/Senior
+        // Student ID file preview logic (image/PDF)
         (function() {
             const modal = document.getElementById('filePreviewModal');
             if (!modal) return;
@@ -1115,7 +1115,7 @@
                 downloadLink.download = file.name || 'document';
                 downloadLink.classList.remove('hidden');
                 if (type.startsWith('image/')) {
-                    contentEl.innerHTML = '<div class="p-4"><img src="'+url+'" alt="ID Image" class="max-h-[65vh] mx-auto rounded shadow"/></div>';
+                    contentEl.innerHTML = '<div class="p-4"><img src="'+url+'" alt="Student ID Image" class="max-h-[65vh] mx-auto rounded shadow"/></div>';
                 } else if (type === 'application/pdf') {
                     contentEl.innerHTML = '<object data="'+url+'" type="application/pdf" class="w-full h-[65vh]" aria-label="PDF preview"><p class="p-4 text-sm">PDF preview not available. <a href="'+url+'" target="_blank" class="text-indigo-600 underline">Open PDF</a></p></object>';
                 } else {
@@ -1124,17 +1124,27 @@
                 openModal();
             }
 
-            // Attach to each file input for preview (student, child, infant, pwd)
-            ['.student-id-file', '.child-id-file', '.infant-id-file', '.pwd-id-file'].forEach(function(cls) {
-                document.querySelectorAll(cls).forEach(function(input) {
-                    const eyeBtn = modalSetupEyeButton(input);
-                    input.addEventListener('change', function() {
-                        if (this.files && this.files[0]) {
-                            eyeBtn.classList.remove('hidden');
-                        } else {
-                            eyeBtn.classList.add('hidden');
-                        }
-                    });
+            // Attach to each student ID file input
+            document.querySelectorAll('.student-id-file').forEach(function(input) {
+                const eyeBtn = modalSetupEyeButton(input);
+                input.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        eyeBtn.classList.remove('hidden');
+                    } else {
+                        eyeBtn.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Attach to all verification photo file inputs (child, infant, pwd)
+            document.querySelectorAll('.verification-photo-file').forEach(function(input) {
+                const eyeBtn = modalSetupEyeButton(input);
+                input.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        eyeBtn.classList.remove('hidden');
+                    } else {
+                        eyeBtn.classList.add('hidden');
+                    }
                 });
             });
 

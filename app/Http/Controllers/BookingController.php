@@ -75,6 +75,9 @@ class BookingController extends Controller
             'passengers.*.school' => 'sometimes|nullable|string|max:200',
             'passengers.*.id_number' => 'sometimes|nullable|string|max:50',
             'passengers.*.student_id_photo' => 'sometimes|nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
+            'passengers.*.child_id_photo' => 'sometimes|nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
+            'passengers.*.infant_id_photo' => 'sometimes|nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
+            'passengers.*.pwd_id_photo' => 'sometimes|nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
             
             // Contact information
             'contact_name' => 'required|string|max:120',
@@ -120,12 +123,36 @@ class BookingController extends Controller
         // Handle student ID photo uploads and store file paths
         if ($request->hasFile('passengers')) {
             foreach ($request->file('passengers') as $index => $passengerFiles) {
+                // Handle student ID photo
                 if (isset($passengerFiles['student_id_photo'])) {
                     $file = $passengerFiles['student_id_photo'];
                     $fileName = 'student_id_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
                     $filePath = $file->storeAs('student_ids', $fileName, 'public');
-                    // Store the file path, not the UploadedFile object
                     $validated['passengers'][$index]['student_id_photo_path'] = $filePath;
+                }
+                
+                // Handle child ID photo
+                if (isset($passengerFiles['child_id_photo'])) {
+                    $file = $passengerFiles['child_id_photo'];
+                    $fileName = 'child_id_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+                    $filePath = $file->storeAs('verification_photos', $fileName, 'public');
+                    $validated['passengers'][$index]['child_id_photo_path'] = $filePath;
+                }
+                
+                // Handle infant ID photo
+                if (isset($passengerFiles['infant_id_photo'])) {
+                    $file = $passengerFiles['infant_id_photo'];
+                    $fileName = 'infant_id_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+                    $filePath = $file->storeAs('verification_photos', $fileName, 'public');
+                    $validated['passengers'][$index]['infant_id_photo_path'] = $filePath;
+                }
+                
+                // Handle PWD/Senior ID photo
+                if (isset($passengerFiles['pwd_id_photo'])) {
+                    $file = $passengerFiles['pwd_id_photo'];
+                    $fileName = 'pwd_id_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+                    $filePath = $file->storeAs('verification_photos', $fileName, 'public');
+                    $validated['passengers'][$index]['pwd_id_photo_path'] = $filePath;
                 }
             }
         }
@@ -133,6 +160,9 @@ class BookingController extends Controller
         // Remove ALL UploadedFile objects from validated data to prevent serialization errors
         foreach ($validated['passengers'] as $index => $passenger) {
             unset($validated['passengers'][$index]['student_id_photo']);
+            unset($validated['passengers'][$index]['child_id_photo']);
+            unset($validated['passengers'][$index]['infant_id_photo']);
+            unset($validated['passengers'][$index]['pwd_id_photo']);
         }
 
         // Get trips
@@ -321,6 +351,21 @@ class BookingController extends Controller
                     $extraData['student_id_photo_path'] = $passengerData['student_id_photo_path'];
                 }
                 
+                // Store child ID photo path
+                if (isset($passengerData['child_id_photo_path'])) {
+                    $extraData['child_id_photo_path'] = $passengerData['child_id_photo_path'];
+                }
+                
+                // Store infant ID photo path
+                if (isset($passengerData['infant_id_photo_path'])) {
+                    $extraData['infant_id_photo_path'] = $passengerData['infant_id_photo_path'];
+                }
+                
+                // Store PWD/Senior ID photo path
+                if (isset($passengerData['pwd_id_photo_path'])) {
+                    $extraData['pwd_id_photo_path'] = $passengerData['pwd_id_photo_path'];
+                }
+                
                 // Create passenger record
                 \App\Models\Passenger::create([
                     'booking_id' => $booking->id,
@@ -458,6 +503,21 @@ class BookingController extends Controller
                 }
                 if (isset($passengerData['student_id_photo_path'])) {
                     $extraData['student_id_photo_path'] = $passengerData['student_id_photo_path'];
+                }
+                
+                // Store child ID photo path
+                if (isset($passengerData['child_id_photo_path'])) {
+                    $extraData['child_id_photo_path'] = $passengerData['child_id_photo_path'];
+                }
+                
+                // Store infant ID photo path
+                if (isset($passengerData['infant_id_photo_path'])) {
+                    $extraData['infant_id_photo_path'] = $passengerData['infant_id_photo_path'];
+                }
+                
+                // Store PWD/Senior ID photo path
+                if (isset($passengerData['pwd_id_photo_path'])) {
+                    $extraData['pwd_id_photo_path'] = $passengerData['pwd_id_photo_path'];
                 }
                 
                 // Create passenger record

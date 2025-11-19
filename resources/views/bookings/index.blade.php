@@ -222,6 +222,9 @@
                                                     'student_id' => $p->extra['student_id'] ?? null,
                                                     'school' => $p->extra['school'] ?? null,
                                                     'student_id_photo_path' => $p->extra['student_id_photo_path'] ?? null,
+                                                    'child_id_photo_path' => $p->extra['child_id_photo_path'] ?? null,
+                                                    'infant_id_photo_path' => $p->extra['infant_id_photo_path'] ?? null,
+                                                    'pwd_id_photo_path' => $p->extra['pwd_id_photo_path'] ?? null,
                                                 ];
                                             })->toArray()),
                                         }; showPassengers = false; showModal = true">
@@ -310,10 +313,54 @@
                                                         </div>
                                                     </div>
                                                 </template>
+                                                <!-- Child-specific info -->
+                                                <template x-if="passenger.type === 'child' && passenger.child_id_photo_path">
+                                                    <div class="mt-2 p-2 bg-green-50 rounded border border-green-200">
+                                                        <div class="text-xs text-green-900">
+                                                            <div><strong>Verification Photo:</strong></div>
+                                                            <div class="mt-2">
+                                                                <a :href="'/storage/' + passenger.child_id_photo_path" 
+                                                                   target="_blank"
+                                                                   class="inline-flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-xs rounded-md hover:bg-green-700 transition">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                                    View Child ID Photo
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <!-- Infant-specific info -->
+                                                <template x-if="passenger.type === 'infant' && passenger.infant_id_photo_path">
+                                                    <div class="mt-2 p-2 bg-yellow-50 rounded border border-yellow-200">
+                                                        <div class="text-xs text-yellow-900">
+                                                            <div><strong>Verification Photo:</strong></div>
+                                                            <div class="mt-2">
+                                                                <a :href="'/storage/' + passenger.infant_id_photo_path" 
+                                                                   target="_blank"
+                                                                   class="inline-flex items-center gap-1 px-3 py-1.5 bg-yellow-600 text-white text-xs rounded-md hover:bg-yellow-700 transition">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                                    View Infant ID Photo
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
                                                 <!-- PWD-specific info -->
-                                                <template x-if="passenger.type === 'pwd' && passenger.id_number">
-                                                    <div class="mt-2 text-xs text-gray-600">
-                                                        <strong>PWD ID:</strong> <span x-text="passenger.id_number"></span>
+                                                <template x-if="passenger.type === 'pwd'">
+                                                    <div class="mt-2 p-2 bg-purple-50 rounded border border-purple-200">
+                                                        <div class="text-xs text-purple-900">
+                                                            <div><strong>PWD/Senior ID:</strong> <span x-text="passenger.id_number || 'N/A'"></span></div>
+                                                            <template x-if="passenger.pwd_id_photo_path">
+                                                                <div class="mt-2">
+                                                                    <a :href="'/storage/' + passenger.pwd_id_photo_path" 
+                                                                       target="_blank"
+                                                                       class="inline-flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white text-xs rounded-md hover:bg-purple-700 transition">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                                        View PWD/Senior ID Photo
+                                                                    </a>
+                                                                </div>
+                                                            </template>
+                                                        </div>
                                                     </div>
                                                 </template>
                                             </div>

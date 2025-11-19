@@ -181,7 +181,7 @@
                                     </div>
                                 </div>
                                 
-                                @if(isset($passenger['student_id']) || isset($passenger['id_number']) || isset($passenger['school']))
+                                @if(isset($passenger['student_id']) || isset($passenger['id_number']) || isset($passenger['school']) || isset($passenger['student_id_photo_path']) || isset($passenger['child_id_photo_path']) || isset($passenger['infant_id_photo_path']) || isset($passenger['pwd_id_photo_path']))
                                 <div class="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-100">
                                     @if(isset($passenger['student_id']))
                                         <p><span class="font-medium">Student ID:</span> {{ $passenger['student_id'] }}</p>
@@ -191,6 +191,54 @@
                                     @endif
                                     @if(isset($passenger['id_number']))
                                         <p><span class="font-medium">PWD/Senior ID:</span> {{ $passenger['id_number'] }}</p>
+                                    @endif
+                                    @if(isset($passenger['student_id_photo_path']))
+                                        <p class="flex items-center gap-2 mt-1">
+                                            <span class="font-medium">Student ID Photo:</span> 
+                                            <button type="button" onclick="previewPhoto('{{ asset('storage/' . $passenger['student_id_photo_path']) }}', 'Student ID')" class="text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                View
+                                            </button>
+                                        </p>
+                                    @endif
+                                    @if(isset($passenger['child_id_photo_path']))
+                                        <p class="flex items-center gap-2 mt-1">
+                                            <span class="font-medium">Child ID Photo:</span> 
+                                            <button type="button" onclick="previewPhoto('{{ asset('storage/' . $passenger['child_id_photo_path']) }}', 'Child Verification')" class="text-green-600 hover:text-green-800 flex items-center gap-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                View
+                                            </button>
+                                        </p>
+                                    @endif
+                                    @if(isset($passenger['infant_id_photo_path']))
+                                        <p class="flex items-center gap-2 mt-1">
+                                            <span class="font-medium">Infant ID Photo:</span> 
+                                            <button type="button" onclick="previewPhoto('{{ asset('storage/' . $passenger['infant_id_photo_path']) }}', 'Infant Verification')" class="text-yellow-600 hover:text-yellow-800 flex items-center gap-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                View
+                                            </button>
+                                        </p>
+                                    @endif
+                                    @if(isset($passenger['pwd_id_photo_path']))
+                                        <p class="flex items-center gap-2 mt-1">
+                                            <span class="font-medium">PWD/Senior ID Photo:</span> 
+                                            <button type="button" onclick="previewPhoto('{{ asset('storage/' . $passenger['pwd_id_photo_path']) }}', 'PWD/Senior ID')" class="text-purple-600 hover:text-purple-800 flex items-center gap-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                View
+                                            </button>
+                                        </p>
                                     @endif
                                 </div>
                                 @endif
@@ -401,6 +449,49 @@
             </form>
         </div>
     </div>
+
+    <!-- Photo Preview Modal -->
+    <div id="photoPreviewModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-75 flex items-center justify-center p-4" onclick="closePhotoPreview()">
+        <div class="relative bg-white rounded-xl max-w-3xl max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between p-4 bg-gray-800">
+                <h3 id="photoPreviewTitle" class="text-white font-semibold">Photo Preview</h3>
+                <button type="button" onclick="closePhotoPreview()" class="text-white hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4 overflow-auto max-h-[calc(90vh-60px)]">
+                <img id="photoPreviewImage" src="" alt="Preview" class="max-w-full h-auto mx-auto rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function previewPhoto(photoUrl, title) {
+            const modal = document.getElementById('photoPreviewModal');
+            const image = document.getElementById('photoPreviewImage');
+            const titleEl = document.getElementById('photoPreviewTitle');
+            
+            image.src = photoUrl;
+            titleEl.textContent = title + ' Preview';
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePhotoPreview() {
+            const modal = document.getElementById('photoPreviewModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePhotoPreview();
+            }
+        });
+    </script>
 
 </body>
 </html>
