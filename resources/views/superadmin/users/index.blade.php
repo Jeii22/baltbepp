@@ -96,7 +96,7 @@
                 </div>
                 <input type="text" name="search" value="{{ request('search') }}" 
                        placeholder="Search by name, email, or username..." 
-                       class="pl-10 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                       class="pl-10 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-lg py-3 h-14">
             </div>
         </div>
         <div class="w-full md:w-48">
