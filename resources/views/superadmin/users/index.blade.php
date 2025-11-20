@@ -85,9 +85,11 @@
 </div>
 
 <!-- Search and Filter Bar -->
+
 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6 print-hidden">
-    <form method="GET" action="{{ route('users.index') }}" class="flex flex-col md:flex-row gap-4">
-        <div class="flex-1">
+    <form method="GET" action="{{ route('users.index') }}" class="flex flex-col gap-4">
+        <!-- Search Bar -->
+        <div class="w-full">
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,29 +101,32 @@
                        class="pl-10 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-lg py-3 h-14">
             </div>
         </div>
-        <div class="w-full md:w-48">
-            <select name="role" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">All Roles</option>
-                <option value="super_admin" {{ request('role') === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
-            </select>
-        </div>
-        <div class="w-full md:w-48">
-            <select name="status" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">All Status</option>
-                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active Today</option>
-                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
-            </select>
-        </div>
-        <div class="flex gap-2">
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Filter
-            </button>
-            @if(request()->hasAny(['search', 'role', 'status']))
-                <a href="{{ route('users.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
-                    Clear
-                </a>
-            @endif
+        <!-- Filter Bar -->
+        <div class="flex flex-col md:flex-row gap-4 items-center">
+            <div class="w-full md:w-48">
+                <select name="role" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Roles</option>
+                    <option value="super_admin" {{ request('role') === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
+                    <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                </select>
+            </div>
+            <div class="w-full md:w-48">
+                <select name="status" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Status</option>
+                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active Today</option>
+                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Filter
+                </button>
+                @if(request()->hasAny(['search', 'role', 'status']))
+                    <a href="{{ route('users.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        Clear
+                    </a>
+                @endif
+            </div>
         </div>
     </form>
 </div>
