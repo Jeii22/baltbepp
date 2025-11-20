@@ -238,6 +238,53 @@ class UserController extends Controller
             'role' => $userRole,
         ]);
 
-        return redirect()->route('users.index')->with('status', 'User deleted');
+        return redirect()->route('users.index')->with('success', 'User deleted successfully. You can restore it from the Deleted Accounts page.');
+    }
+
+    public function trashed()
+    {
+        $trashedUsers = User::onlyTrashed()
+            ->orderByDesc('deleted_at')
+            ->paginate(15);
+
+        return view('superadmin.users.trashed', compact('trashedUsers'));
+    }
+
+    public function restore($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        
+        $userName = $user->name;
+        $userEmail = $user->email;
+        
+        $user->restore();
+
+        $this->logActivity('user_restored', "Restored user: {$userName} ({$userEmail})", [
+            'user_id' => $user->id,
+            'email' => $userEmail,
+        ]);
+
+        return redirect()->route('users.trashed')->with('success', 'User restored successfully');
+    }
+
+    public function forceDelete($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+
+        if ($user->role === 'super_admin') {
+            abort(403);
+        }
+
+        $userName = $user->name;
+        $userEmail = $user->email;
+
+        $this->logActivity('user_permanently_deleted', "Permanently deleted user: {$userName} ({$userEmail})", [
+            'user_id' => $user->id,
+            'email' => $userEmail,
+        ]);
+
+        $user->forceDelete();
+
+        return redirect()->route('users.trashed')->with('success', 'User permanently deleted');
     }
 }
