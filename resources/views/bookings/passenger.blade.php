@@ -553,6 +553,123 @@
                                 </div>
                             </div>
                             <p class="text-xs text-gray-500 mt-2">Select how you'd like to receive booking updates and notifications</p>
+
+                            <!-- Terms and Conditions & Data Privacy Consent -->
+                            <div class="mt-6 pt-4 border-t border-gray-200">
+                                <div class="flex items-start mb-2">
+                                    <input type="checkbox" id="termsCheckbox" name="terms" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded" required>
+                                    <label for="termsCheckbox" class="ml-2 text-sm text-gray-700">
+                                        I agree to the
+                                        <a href="#" class="text-blue-600 underline" id="openTermsModal">Terms and Conditions</a>
+                                    </label>
+                                </div>
+                                <!-- Terms Modal -->
+                                <div id="termsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+                                    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 relative">
+                                        <button id="closeTermsModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                                        <h2 class="text-xl font-bold mb-4">Terms and Conditions</h2>
+                                        <div class="max-h-96 overflow-y-auto text-sm text-gray-700 space-y-2">
+                                            <p>By booking a trip, you agree to abide by all company policies, payment terms, and travel regulations. Please review the following key points:</p>
+                                            <ul class="list-disc pl-6">
+                                                <li>All bookings are subject to seat availability and confirmation.</li>
+                                                <li>Tickets are non-transferable and non-refundable unless otherwise stated.</li>
+                                                <li>Passengers must present valid identification upon boarding.</li>
+                                                <li>Changes to bookings may incur additional fees.</li>
+                                                <li>Company is not liable for delays due to unforeseen circumstances.</li>
+                                                <li>For full details, contact our support or visit our website.</li>
+                                            </ul>
+                                            <p>By proceeding, you acknowledge that you have read and understood these terms.</p>
+                                        </div>
+                                        <div class="mt-6 text-right">
+                                            <button id="closeTermsModalBtn" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start mb-2">
+                                    <input type="checkbox" id="privacyCheckbox" name="privacy" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded" required>
+                                    <label for="privacyCheckbox" class="ml-2 text-sm text-gray-700">
+                                        I consent to the
+                                        <a href="#" class="text-blue-600 underline" id="openPrivacyModal">Data Privacy Policy</a>
+                                    </label>
+                                </div>
+                                <!-- Privacy Modal -->
+                                <div id="privacyModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+                                    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 relative">
+                                        <button id="closePrivacyModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                                        <h2 class="text-xl font-bold mb-4">Data Privacy Policy (RA 10173)</h2>
+                                        <div class="max-h-96 overflow-y-auto text-sm text-gray-700 space-y-2">
+                                            <p>In compliance with Republic Act No. 10173 (Data Privacy Act of 2012), you consent to the collection, use, and processing of your personal data for the purpose of booking and communication regarding your trip.</p>
+                                            <ul class="list-disc pl-6">
+                                                <li>Your contact details (including phone number) may be used to send booking updates, reminders, and important notifications via SMS or call.</li>
+                                                <li>Your data will be handled securely and will not be shared with third parties except as required by law or for booking fulfillment.</li>
+                                                <li>You have the right to access, correct, or request deletion of your personal data at any time.</li>
+                                            </ul>
+                                            <p>By proceeding, you agree to receive messages and calls regarding your booking and acknowledge your rights under the Data Privacy Act.</p>
+                                        </div>
+                                        <div class="mt-6 text-right">
+                                            <button id="closePrivacyModalBtn" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500">You must agree to both to proceed.</p>
+                            </div>
+                            <script>
+                                // Modal logic for Terms and Privacy
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    // Terms modal
+                                    const openTerms = document.getElementById('openTermsModal');
+                                    const closeTerms = document.getElementById('closeTermsModal');
+                                    const closeTermsBtn = document.getElementById('closeTermsModalBtn');
+                                    const termsModal = document.getElementById('termsModal');
+                                    if (openTerms && closeTerms && closeTermsBtn && termsModal) {
+                                        openTerms.addEventListener('click', function(e) {
+                                            e.preventDefault();
+                                            termsModal.classList.remove('hidden');
+                                        });
+                                        closeTerms.addEventListener('click', function() {
+                                            termsModal.classList.add('hidden');
+                                        });
+                                        closeTermsBtn.addEventListener('click', function() {
+                                            termsModal.classList.add('hidden');
+                                        });
+                                        termsModal.addEventListener('click', function(e) {
+                                            if (e.target === termsModal) termsModal.classList.add('hidden');
+                                        });
+                                    }
+                                    // Privacy modal
+                                    const openPrivacy = document.getElementById('openPrivacyModal');
+                                    const closePrivacy = document.getElementById('closePrivacyModal');
+                                    const closePrivacyBtn = document.getElementById('closePrivacyModalBtn');
+                                    const privacyModal = document.getElementById('privacyModal');
+                                    if (openPrivacy && closePrivacy && closePrivacyBtn && privacyModal) {
+                                        openPrivacy.addEventListener('click', function(e) {
+                                            e.preventDefault();
+                                            privacyModal.classList.remove('hidden');
+                                        });
+                                        closePrivacy.addEventListener('click', function() {
+                                            privacyModal.classList.add('hidden');
+                                        });
+                                        closePrivacyBtn.addEventListener('click', function() {
+                                            privacyModal.classList.add('hidden');
+                                        });
+                                        privacyModal.addEventListener('click', function(e) {
+                                            if (e.target === privacyModal) privacyModal.classList.add('hidden');
+                                        });
+                                    }
+                                    // Enable the Proceed button only if both checkboxes are checked
+                                    const terms = document.getElementById('termsCheckbox');
+                                    const privacy = document.getElementById('privacyCheckbox');
+                                    const proceedBtn = document.getElementById('proceedSummaryBtn');
+                                    function toggleProceed() {
+                                        proceedBtn.disabled = !(terms.checked && privacy.checked);
+                                    }
+                                    if (terms && privacy && proceedBtn) {
+                                        terms.addEventListener('change', toggleProceed);
+                                        privacy.addEventListener('change', toggleProceed);
+                                        toggleProceed();
+                                    }
+                                });
+                            </script>
                         </div>
                     </div>
 
