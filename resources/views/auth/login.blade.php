@@ -144,6 +144,16 @@
         <p class="text-center text-sm text-gray-600 mt-4">
             Don't have an account? <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-800">Register here</a>
         </p>
+
+        <!-- Back to Home button -->
+        <div class="text-center mt-4">
+            <a href="{{ url('/') }}" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
     </div>
 </body>
 </html>
