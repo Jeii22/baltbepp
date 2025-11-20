@@ -55,6 +55,30 @@
         <form method="POST" action="{{ route('users.update', $user) }}" class="px-12 py-12 space-y-12" onsubmit="showLoading('Updating user...')">
             @csrf
             @method('PUT')
+            @if(session('success'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: @json(session('success')),
+                            confirmButtonColor: '#3085d6',
+                        });
+                    });
+                </script>
+            @endif
+            @if(session('error'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: @json(session('error')),
+                            confirmButtonColor: '#d33',
+                        });
+                    });
+                </script>
+            @endif
 
             <!-- Personal Information Section -->
             <div class="space-y-6">

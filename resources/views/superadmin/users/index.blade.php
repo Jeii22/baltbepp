@@ -217,8 +217,8 @@
                                 
                                 @if($user->role !== 'super_admin')
                                     <form method="POST" action="{{ route('users.destroy', $user) }}" 
-                                          onsubmit="if(confirm('Are you sure you want to delete this user? This action cannot be undone.')){showLoading('Deleting user...'); return true;} return false;" 
-                                          class="inline">
+                                        data-confirm="Are you sure you want to delete this user? This action cannot be undone." 
+                                        class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 

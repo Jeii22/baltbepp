@@ -9,9 +9,35 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="font-sans antialiased bg-gray-100">
     <x-loading-screen message="Processing..." />
+    @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: @json(session('success')),
+                    confirmButtonColor: '#3085d6',
+                });
+            });
+        </script>
+    @endif
+    @if(session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: @json(session('error')),
+                    confirmButtonColor: '#d33',
+                });
+            });
+        </script>
+    @endif
     
     <div class="h-screen flex overflow-hidden" x-data="{ sidebarOpen: false }">
 
