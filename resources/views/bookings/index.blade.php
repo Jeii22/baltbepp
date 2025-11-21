@@ -132,11 +132,13 @@
                         $paymentStatus = match($b->status) {
                             'confirmed' => 'Paid',
                             'cancelled' => 'Cancelled',
+                            'refunded' => 'Refunded',
                             default => 'Pending',
                         };
                         $paymentBadgeClasses = match($paymentStatus) {
                             'Paid' => 'bg-green-100 text-green-800',
                             'Cancelled' => 'bg-red-100 text-red-800',
+                            'Refunded' => 'bg-purple-100 text-purple-800',
                             default => 'bg-yellow-100 text-yellow-800',
                         };
                     @endphp

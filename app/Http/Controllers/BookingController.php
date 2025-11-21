@@ -746,7 +746,7 @@ class BookingController extends Controller
             'infant' => 'required|integer|min:0',
             'pwd' => 'required|integer|min:0',
             'student' => 'nullable|integer|min:0',
-            'status' => 'required|in:pending,confirmed,cancelled',
+            'status' => 'required|in:pending,confirmed,cancelled,refunded',
         ]);
 
         $booking->update($validated);
