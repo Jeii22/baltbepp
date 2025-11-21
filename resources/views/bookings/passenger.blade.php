@@ -6,6 +6,7 @@
 
     <title>Passenger Details - Balt-Bep</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="antialiased bg-white text-gray-800">
 
@@ -1317,6 +1318,37 @@
         })();
     </script>
     @endverbatim
+
+    <script>
+        // File size validation for all photo uploads
+        document.addEventListener('DOMContentLoaded', function() {
+            const maxSizeMB = 2;
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;
+            
+            // Select all file inputs for verification photos
+            const fileInputs = document.querySelectorAll('.verification-photo-file, .student-id-file');
+            
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    
+                    if (file && file.size > maxSizeBytes) {
+                        // Show SweetAlert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'File Too Large',
+                            html: `The file you selected is <strong>${(file.size / (1024 * 1024)).toFixed(2)} MB</strong>.<br>Please upload a file smaller than <strong>${maxSizeMB} MB</strong>.`,
+                            confirmButtonColor: '#dc2626',
+                            confirmButtonText: 'OK'
+                        });
+                        
+                        // Clear the file input
+                        e.target.value = '';
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>
