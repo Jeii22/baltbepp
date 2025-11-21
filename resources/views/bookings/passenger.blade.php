@@ -1320,7 +1320,7 @@
     @endverbatim
 
     <script>
-        // File size validation for all photo uploads
+        // File size validation for all photo uploadsjsjsjs
         document.addEventListener('DOMContentLoaded', function() {
             const maxSizeMB = 2;
             const maxSizeBytes = maxSizeMB * 1024 * 1024;
