@@ -63,7 +63,6 @@
                 <option value="pending" @selected(old('status', $booking->status)==='pending')>Pending</option>
                 <option value="confirmed" @selected(old('status', $booking->status)==='confirmed')>Confirmed</option>
                 <option value="cancelled" @selected(old('status', $booking->status)==='cancelled')>Cancelled</option>
-                <option value="refunded" @selected(old('status', $booking->status)==='refunded')>Refunded/Cancelled</option>
             </select>
         </div>
 

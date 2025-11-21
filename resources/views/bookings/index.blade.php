@@ -95,6 +95,7 @@
                     <option value="pending" @selected(request('status')==='pending')>Pending</option>
                     <option value="confirmed" @selected(request('status')==='confirmed')>Confirmed</option>
                     <option value="cancelled" @selected(request('status')==='cancelled')>Cancelled</option>
+                    <option value="refunded" @selected(request('status')==='refunded')>Refunded</option>
                 </select>
             </div>
         </div>
@@ -130,12 +131,12 @@
                         $arriveAt = optional($b->trip)->arrival_time;
                         $paymentStatus = match($b->status) {
                             'confirmed' => 'Paid',
-                            'cancelled' => 'Refunded/Cancelled',
+                            'cancelled' => 'Cancelled',
                             default => 'Pending',
                         };
                         $paymentBadgeClasses = match($paymentStatus) {
                             'Paid' => 'bg-green-100 text-green-800',
-                            'Refunded/Cancelled' => 'bg-purple-100 text-purple-800',
+                            'Cancelled' => 'bg-red-100 text-red-800',
                             default => 'bg-yellow-100 text-yellow-800',
                         };
                     @endphp

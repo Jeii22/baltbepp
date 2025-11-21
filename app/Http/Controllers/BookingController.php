@@ -758,7 +758,7 @@ class BookingController extends Controller
     public function updateStatus(Request $request, \App\Models\Booking $booking)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,confirmed,cancelled',
+            'status' => 'required|in:pending,confirmed,cancelled,refunded',
             'rejection_reason' => 'nullable|string|max:500', // For cancelled bookings
         ]);
 
