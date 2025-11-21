@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use App\Mail\BookingConfirmedMail;
 use App\Mail\BookingRejectedMail;
+use App\Mail\BookingRefundedMail;
 use App\Services\TicketService;
 
 class BookingController extends Controller
@@ -749,7 +750,14 @@ class BookingController extends Controller
             'status' => 'required|in:pending,confirmed,cancelled,refunded',
         ]);
 
+        $oldStatus = $booking->status;
         $booking->update($validated);
+        $newStatus = $validated['status'];
+
+        // Send email notification if status changed to refunded
+        if ($oldStatus !== $newStatus && $newStatus === 'refunded') {
+            $this->handleStatusChangeNotification($booking, $oldStatus, $newStatus);
+        }
 
         return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
     }
@@ -797,6 +805,8 @@ class BookingController extends Controller
                 $this->sendBookingConfirmedEmail($booking);
             } elseif ($newStatus === 'cancelled') {
                 $this->sendBookingRejectedEmail($booking, $rejectionReason);
+            } elseif ($newStatus === 'refunded') {
+                $this->sendBookingRefundedEmail($booking);
             }
         } catch (\Exception $e) {
             Log::error('Failed to send booking notification email for booking ' . $booking->id . ': ' . $e->getMessage());
@@ -827,6 +837,14 @@ class BookingController extends Controller
     private function sendBookingRejectedEmail(\App\Models\Booking $booking, $reason = null)
     {
         Mail::to($booking->email)->send(new BookingRejectedMail($booking, $reason));
+    }
+
+    /**
+     * Send booking refunded email
+     */
+    private function sendBookingRefundedEmail(\App\Models\Booking $booking)
+    {
+        Mail::to($booking->email)->send(new BookingRefundedMail($booking));
     }
 
     private function processPayment(Request $request, $booking)
