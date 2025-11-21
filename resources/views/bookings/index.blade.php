@@ -451,7 +451,7 @@
                     </div>
                     
                     <div x-show="showCancelForm" x-collapse class="mt-3">
-                        <form :action="selected?.update_status_url" method="POST" class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <form :action="selected?.update_status_url" method="POST" data-confirm="Are you sure you want to cancel this booking? The customer will receive an apology email and refund will be processed manually." class="bg-red-50 border border-red-200 rounded-lg p-4">
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="status" value="cancelled">
@@ -476,8 +476,7 @@
                                         class="px-3 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50">
                                     Cancel
                                 </button>
-                                <button type="submit" 
-                                        onclick="return confirm('Cancel this booking? Customer will receive an apology email and refund will be processed manually.')"
+                                <button type="submit"
                                         class="px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700">
                                     Cancel Booking & Send Apology Email
                                 </button>
