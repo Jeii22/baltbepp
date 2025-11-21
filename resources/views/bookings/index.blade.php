@@ -424,7 +424,7 @@
             <div class="mt-6 space-y-4">
                 <!-- Confirm Button -->
                 <div class="flex justify-end">
-                    <form :action="selected?.update_status_url" method="POST" onsubmit="return confirm('Confirm this booking? Customer will receive an email with their ticket.')">
+                    <form :action="selected?.update_status_url" method="POST" data-confirm="Are you sure you want to confirm this booking? The customer will receive a confirmation email with their ticket details.">
                         @csrf
                         @method('PATCH')
                         <input type="hidden" name="status" value="confirmed">
