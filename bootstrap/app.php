@@ -41,7 +41,6 @@ return Application::configure(basePath: dirname(__DIR__))
             App\Http\Middleware\SecurityHeaders::class,
             App\Http\Middleware\TrackLastActive::class,
             App\Http\Middleware\CheckAccountLocked::class,
-            App\Http\Middleware\IdleTimeout::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
