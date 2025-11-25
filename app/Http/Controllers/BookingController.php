@@ -719,7 +719,22 @@ class BookingController extends Controller
             $query->where('status', $request->string('status'));
         }
 
-        $bookings = $query->latest()->paginate(15)->withQueryString();
+        // Sorting
+        $allowedSorts = ['id', 'full_name', 'origin', 'departure_time', 'total_amount', 'status', 'created_at'];
+        $sort = $request->input('sort', 'created_at');
+        $direction = $request->input('direction', 'desc');
+        
+        // Validate sort column and direction
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'created_at';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
+        
+        $query->orderBy($sort, $direction);
+
+        $bookings = $query->paginate(15)->withQueryString();
 
         // Get filter options
         $origins = \App\Models\Booking::distinct()->pluck('origin')->filter()->sort()->values();

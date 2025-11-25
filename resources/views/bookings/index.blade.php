@@ -111,14 +111,105 @@
         <table class="w-full min-w-[1200px] text-sm">
             <thead class="bg-gray-50 text-gray-700">
                 <tr>
-                    <th class="px-4 py-3 text-left font-semibold">Booking ID</th>
-                    <th class="px-4 py-3 text-left font-semibold">Customer Name</th>
-                    <th class="px-4 py-3 text-left font-semibold">Origin → Destination</th>
-                    <th class="px-4 py-3 text-left font-semibold">Departure & Arrival Time</th>
+                    <th class="px-4 py-3 text-left font-semibold">
+                        <a href="{{ route('bookings.index', array_merge(request()->all(), ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-blue-600">
+                            Booking ID
+                            @if(request('sort') === 'id')
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    @if(request('direction') === 'asc')
+                                        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                                    @else
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    @endif
+                                </svg>
+                            @endif
+                        </a>
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold">
+                        <a href="{{ route('bookings.index', array_merge(request()->all(), ['sort' => 'full_name', 'direction' => request('sort') === 'full_name' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-blue-600">
+                            Customer Name
+                            @if(request('sort') === 'full_name')
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    @if(request('direction') === 'asc')
+                                        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                                    @else
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    @endif
+                                </svg>
+                            @endif
+                        </a>
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold">
+                        <a href="{{ route('bookings.index', array_merge(request()->all(), ['sort' => 'origin', 'direction' => request('sort') === 'origin' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-blue-600">
+                            Origin → Destination
+                            @if(request('sort') === 'origin')
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    @if(request('direction') === 'asc')
+                                        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                                    @else
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    @endif
+                                </svg>
+                            @endif
+                        </a>
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold">
+                        <a href="{{ route('bookings.index', array_merge(request()->all(), ['sort' => 'departure_time', 'direction' => request('sort') === 'departure_time' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-blue-600">
+                            Departure & Arrival Time
+                            @if(request('sort') === 'departure_time')
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    @if(request('direction') === 'asc')
+                                        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                                    @else
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    @endif
+                                </svg>
+                            @endif
+                        </a>
+                    </th>
                     <th class="px-4 py-3 text-left font-semibold">No. of Passengers</th>
-                    <th class="px-4 py-3 text-left font-semibold">Total Price</th>
-                    <th class="px-4 py-3 text-left font-semibold">Payment Status</th>
-                    <th class="px-4 py-3 text-left font-semibold">Date Booked</th>
+                    <th class="px-4 py-3 text-left font-semibold">
+                        <a href="{{ route('bookings.index', array_merge(request()->all(), ['sort' => 'total_amount', 'direction' => request('sort') === 'total_amount' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-blue-600">
+                            Total Price
+                            @if(request('sort') === 'total_amount')
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    @if(request('direction') === 'asc')
+                                        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                                    @else
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    @endif
+                                </svg>
+                            @endif
+                        </a>
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold">
+                        <a href="{{ route('bookings.index', array_merge(request()->all(), ['sort' => 'status', 'direction' => request('sort') === 'status' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-blue-600">
+                            Payment Status
+                            @if(request('sort') === 'status')
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    @if(request('direction') === 'asc')
+                                        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                                    @else
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    @endif
+                                </svg>
+                            @endif
+                        </a>
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold">
+                        <a href="{{ route('bookings.index', array_merge(request()->all(), ['sort' => 'created_at', 'direction' => request('sort') === 'created_at' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-blue-600">
+                            Date Booked
+                            @if(request('sort') === 'created_at')
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    @if(request('direction') === 'asc')
+                                        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                                    @else
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    @endif
+                                </svg>
+                            @endif
+                        </a>
+                    </th>
                     <th class="px-4 py-3 text-left font-semibold">Actions</th>
                 </tr>
             </thead>
