@@ -106,6 +106,26 @@
         </div>
     </form>
 
+    <!-- Show entries and results info -->
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+            <label class="text-sm text-gray-700">Show</label>
+            <select onchange="window.location.href='{{ route('bookings.index') }}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), per_page: this.value}).toString()" 
+                    class="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                <option value="5" {{ request('per_page', 15) == 5 ? 'selected' : '' }}>5</option>
+                <option value="10" {{ request('per_page', 15) == 10 ? 'selected' : '' }}>10</option>
+                <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
+                <option value="25" {{ request('per_page', 15) == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page', 15) == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ request('per_page', 15) == 100 ? 'selected' : '' }}>100</option>
+            </select>
+            <label class="text-sm text-gray-700">entries</label>
+        </div>
+        <div class="text-sm text-gray-600">
+            Showing {{ $bookings->firstItem() ?? 0 }} to {{ $bookings->lastItem() ?? 0 }} of {{ $bookings->total() }} bookings
+        </div>
+    </div>
+
     <!-- Table -->
     <div class="overflow-x-auto bg-white rounded-xl border border-gray-200 shadow-sm">
         <table class="w-full min-w-[1200px] text-sm">
@@ -167,7 +187,20 @@
                             @endif
                         </a>
                     </th>
-                    <th class="px-4 py-3 text-left font-semibold">No. of Passengers</th>
+                    <th class="px-4 py-3 text-left font-semibold">
+                        <a href="{{ route('bookings.index', array_merge(request()->all(), ['sort' => 'total_passengers', 'direction' => request('sort') === 'total_passengers' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-blue-600">
+                            No. of Passengers
+                            @if(request('sort') === 'total_passengers')
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    @if(request('direction') === 'asc')
+                                        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                                    @else
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    @endif
+                                </svg>
+                            @endif
+                        </a>
+                    </th>
                     <th class="px-4 py-3 text-left font-semibold">
                         <a href="{{ route('bookings.index', array_merge(request()->all(), ['sort' => 'total_amount', 'direction' => request('sort') === 'total_amount' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-blue-600">
                             Total Price

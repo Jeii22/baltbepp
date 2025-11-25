@@ -720,7 +720,7 @@ class BookingController extends Controller
         }
 
         // Sorting
-        $allowedSorts = ['id', 'full_name', 'origin', 'departure_time', 'total_amount', 'status', 'created_at'];
+        $allowedSorts = ['id', 'full_name', 'origin', 'departure_time', 'total_amount', 'status', 'created_at', 'total_passengers'];
         $sort = $request->input('sort', 'created_at');
         $direction = $request->input('direction', 'desc');
         
@@ -732,9 +732,21 @@ class BookingController extends Controller
             $direction = 'desc';
         }
         
-        $query->orderBy($sort, $direction);
+        // Handle total passengers sorting (calculated field)
+        if ($sort === 'total_passengers') {
+            $query->orderByRaw('(COALESCE(adult, 0) + COALESCE(child, 0) + COALESCE(infant, 0) + COALESCE(pwd, 0) + COALESCE(student, 0)) ' . $direction);
+        } else {
+            $query->orderBy($sort, $direction);
+        }
 
-        $bookings = $query->paginate(15)->withQueryString();
+        // Pagination - allow custom per_page
+        $perPage = $request->input('per_page', 15);
+        $allowedPerPage = [5, 10, 15, 25, 50, 100];
+        if (!in_array($perPage, $allowedPerPage)) {
+            $perPage = 15;
+        }
+        
+        $bookings = $query->paginate($perPage)->withQueryString();
 
         // Get filter options
         $origins = \App\Models\Booking::distinct()->pluck('origin')->filter()->sort()->values();
