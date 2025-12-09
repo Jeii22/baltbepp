@@ -284,7 +284,7 @@
     <div class="card">
         <div class="title">Welcome, Angel ☁️</div>
         <div class="subtitle">
-            A short message for you — hope you're having a great day.
+            A short message for you — just tap the button below to see something special!
         </div>
 
         <button class="prank-btn" onclick="revealPrank()">Tap Me</button>
@@ -303,9 +303,9 @@
             </a>
             <div class="reveal-text">
                 😆 Got you, Angel!<br>
-                This is your official "caught being awesome" photo!<br>
+               Ikaw ni nuh? <br>
                 <small style="opacity: 0.9; font-size: 0.85rem; margin-top: 10px; display: block;">
-                    Hope this made you smile! 😊
+                    unta nindot imo adlaw karun hahaha 😊
                 </small>
             </div>
         </div>
