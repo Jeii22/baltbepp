@@ -282,7 +282,7 @@
     <div class="ferry"></div>
 
     <div class="card">
-        <div class="title">Welcome, Angel ☁️</div>
+        <div class="title">Welcome Visitors!</div>
         <div class="subtitle">
             A short message for you — just tap the button below to see something special!
         </div>
