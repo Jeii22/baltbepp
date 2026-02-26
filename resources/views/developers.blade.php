@@ -510,16 +510,13 @@
             object-fit: contain;
             transition: 0.3s ease;
             pointer-events: none;
+            filter: brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(500%) hue-rotate(160deg);
         }
 
         .socials a:hover img{
-        transform: scale(1.15);
-        filter: brightness(1.2);
-    }
-
-    .socials img{
-        filter: brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(500%) hue-rotate(160deg);
-    }
+            transform: scale(1.15);
+            filter: brightness(0) saturate(100%) invert(100%);
+        }
     </style>
 </head>
 <body>
@@ -564,7 +561,7 @@
                                         <img src="{{ asset('images/icons/facebook.png') }}" alt="Facebook">
                                     </a>
                                     <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig">
-                                        <i class="fab fa-instagram"></i>
+                                        <img src="{{ asset('images/icons/instagram.png') }}" alt="Facebook">
                                     </a>
                             <!--   <a href="https://www.tiktok.com/@yourhandle" target="_blank" class="tt">
                                         <i class="fab fa-tiktok"></i> 
