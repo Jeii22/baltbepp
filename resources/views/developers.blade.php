@@ -277,19 +277,37 @@
             width:100%;
         }
 
+        .avatar{
+            width: 95px;
+            height: 95px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, #00b4d8, #90e0ef);
+        }
+
+        .avatar img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+        }
+
         .team-card{
-            background:var(--card);
-            border:1px solid var(--border);
-            border-radius:20px;
-            padding:28px;
-            text-align:center;
-            backdrop-filter:blur(10px);
-            transition:0.3s;
+            background: rgba(255, 255, 255, 0.55); /* darker glass */
+            border: 1px solid rgba(0,119,182,0.18);
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            backdrop-filter: blur(14px);
+            transition: 0.35s ease;
+            box-shadow: 0 8px 24px rgba(0, 119, 182, 0.08);
         }
 
         .team-card:hover{
-            transform:translateY(-6px);
-            box-shadow:0 10px 30px rgba(0,119,182,0.15);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 18px 40px rgba(0,119,182,0.18);
         }
 
         .team-card h3{
@@ -330,32 +348,42 @@
 
             <div class="team-grid">
 
-                <!-- Jake -->
                 <div class="team-card">
+                    <div class="avatar">
+                        <img src="{{ asset('images/team/jake.jpg') }}" alt="Jake Rodriguez">
+                    </div>
                     <h3>Jake Rodriguez</h3>
                     <p class="role">Developer / Programmer</p>
                 </div>
 
-                <!-- Kyle -->
                 <div class="team-card">
+                    <div class="avatar">
+                        <img src="{{ asset('images/team/kyle.jpg') }}" alt="Kyle Gadiano">
+                    </div>
                     <h3>Kyle Gadiano</h3>
                     <p class="role">Designer</p>
                 </div>
 
-                <!-- Melchades -->
                 <div class="team-card">
+                    <div class="avatar">
+                        <img src="{{ asset('images/team/melchades.jpg') }}" alt="Melchades Mansueto">
+                    </div>
                     <h3>Melchades Mansueto</h3>
                     <p class="role">Designer</p>
                 </div>
 
-                <!-- Rudelyn -->
                 <div class="team-card">
+                    <div class="avatar">
+                        <img src="{{ asset('images/team/rudelyn.jpg') }}" alt="Rudelyn Illut">
+                    </div>
                     <h3>Rudelyn Illut</h3>
                     <p class="role">Main Researcher</p>
                 </div>
 
-                <!-- Jona Mae -->
                 <div class="team-card">
+                    <div class="avatar">
+                        <img src="{{ asset('images/team/jonamae.jpg') }}" alt="Jona Mae Illut">
+                    </div>
                     <h3>Jona Mae Illut</h3>
                     <p class="role">Assistant Researcher</p>
                 </div>
