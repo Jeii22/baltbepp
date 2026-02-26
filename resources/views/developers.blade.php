@@ -340,6 +340,7 @@
         }
 
         .team-slider{
+            overflow: visible;
             position: relative;
             width: 100%;
             max-width: 360px;
@@ -403,8 +404,8 @@
             filter: brightness(0) saturate(100%) invert(100%);
         }
 
-        .prev{ left: 12px; }
-        .next{ right: 20px; }
+        .prev { left: -60px; }
+        .next { right: -60px; }
 
         .team-grid{
             display:grid;
