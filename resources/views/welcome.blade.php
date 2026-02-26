@@ -13,48 +13,98 @@
     <style>
 
         .intro-screen{
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #0077b6, #00b4d8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: 0.8s ease;
+            position:fixed;
+            inset:0;
+            background:linear-gradient(#0a192f, #003566);
+            z-index:9999;
+            overflow:hidden;
+        }
+
+        /* 🌊 Ocean */
+        .ocean{
+            position:absolute;
+            bottom:0;
+            width:100%;
+            height:40%;
+        }
+
+        /* Waves */
+        .wave{
+            position:absolute;
+            width:200%;
+            height:100%;
+            background:rgba(0,180,216,0.35);
+            border-radius:43%;
+            animation:waveMove 10s linear infinite;
+        }
+
+        .wave2{
+            background:rgba(144,224,239,0.25);
+            animation-duration:14s;
+            bottom:10px;
+        }
+
+        @keyframes waveMove{
+            from{ transform:translateX(0); }
+            to{ transform:translateX(-50%); }
+        }
+
+        /* 🚢 Ship sailing */
+        .ship{
+            position:absolute;
+            bottom:60px;
+            width:140px;
+            animation:shipSail 12s linear infinite;
+        }
+
+        @keyframes shipSail{
+            0%   { left:-20%; transform:translateY(0px) rotate(0deg); }
+            50%  { transform:translateY(-8px) rotate(-2deg); }
+            100% { left:110%; transform:translateY(0px) rotate(2deg); }
         }
 
         .intro-content{
-            text-align: center;
-            color: white;
-            font-family: 'Syne', sans-serif;
-            animation: fadeUp 1s ease;
+            position:relative;
+            z-index:2;
+            text-align:center;
+            top:30%;
+            color:white;
+            font-family:'Syne', sans-serif;
+            animation:fadeUp 1.2s ease;
         }
 
         .intro-content h1{
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            margin-bottom: 20px;
+            font-size:clamp(2.5rem,6vw,4rem);
+            margin-bottom:20px;
         }
 
-        .intro-content button{
-            padding: 16px 38px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 50px;
-            background: white;
-            color: #0077b6;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
+        #enterSite{
+            padding:16px 40px;
+            border:none;
+            border-radius:50px;
+            font-weight:700;
+            background:white;
+            color:#0077b6;
+            cursor:pointer;
+            animation:pulse 2s infinite;
         }
 
-        .intro-content button:hover{
-            transform: scale(1.08);
-            box-shadow: 0 0 25px rgba(255,255,255,0.7);
+        @keyframes pulse{
+            0%{ box-shadow:0 0 0 0 rgba(255,255,255,0.7); }
+            70%{ box-shadow:0 0 0 18px rgba(255,255,255,0); }
+            100%{ box-shadow:0 0 0 0 rgba(255,255,255,0); }
         }
 
         .intro-screen.hide{
-            opacity: 0;
-            pointer-events: none;
+            opacity:0;
+            transform:scale(1.1);
+            transition:1s ease;
+            pointer-events:none;
+        }
+
+        @keyframes fadeUp{
+            from{opacity:0; transform:translateY(40px);}
+            to{opacity:1; transform:translateY(0);}
         }
 
 
@@ -69,10 +119,19 @@
 
 
     <div id="introScreen" class="intro-screen">
+
+        <div class="ocean">
+            <div class="wave"></div>
+            <div class="wave wave2"></div>
+
+            <img src="{{ asset('images/Logo.png') }}" class="ship">
+        </div>
+
         <div class="intro-content">
             <h1>Ready to book your trip?</h1>
-            <button id="enterSite">BOOK NOW!</button>
+            <button id="enterSite">BOOK NOW</button>
         </div>
+
     </div>
 
     <x-loading-screen message="Loading..." />
@@ -1193,6 +1252,12 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById("enterSite").addEventListener("click", function(){
     document.getElementById("introScreen").classList.add("hide");
 });
+</script>
+
+<script>
+enterSite.onclick = () => {
+    introScreen.classList.add("hide");
+};
 </script>
 
 </body>
