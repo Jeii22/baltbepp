@@ -522,9 +522,7 @@
             filter: brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(500%) hue-rotate(160deg);
         }
 
-        .socials a:hover img{
-            filter: brightness(0) saturate(100%) invert(100%);
-        }
+        
     </style>
 </head>
 <body>
