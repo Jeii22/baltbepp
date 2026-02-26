@@ -465,7 +465,7 @@
                     <p class="role">Developer / Programmer</p>
 
                     <div class="socials">
-                        <a href="#" class="fb"><i class="fab fa-facebook-f"></i></a>
+                        <a href="facebook.com/jei.waizzu" class="fb"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="ig"><i class="fab fa-instagram"></i></a>
                         <a href="#" class="tt"><i class="fab fa-tiktok"></i></a>
                     </div>
