@@ -350,7 +350,14 @@
         }
 
         .team-card{
+            opacity: 0.4;
+            transform: scale(0.85);
             min-width: 100%;
+        }
+
+        .team-card.active{
+            opacity: 1;
+            transform: scale(1);
         }
 
         /* NAV BUTTONS */
@@ -597,7 +604,11 @@
 
         function updateSlider(){
             track.style.transform = `translateX(-${index * 100}%)`;
+
+            cards.forEach(card => card.classList.remove('active'));
+            cards[index].classList.add('active');
         }
+        updateSlider();
 
         next.addEventListener('click', () => {
             index = (index + 1) % cards.length;
