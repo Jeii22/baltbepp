@@ -37,7 +37,7 @@
 
             background:
                 linear-gradient(rgba(10, 25, 47, 0.78), rgba(10, 25, 47, 0.88)),
-                url("{{ asset('images/barko.png') }}");
+                url("{{ asset('images/background/barko.png') }}");
 
             background-size: cover;
             background-position: center;
