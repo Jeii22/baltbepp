@@ -544,7 +544,7 @@
 
                                 <div class="socials">
                                     <a href="https://www.facebook.com/jei.waizzu" target="_blank" class="fb">
-                                        <i class="fab fa-facebook-f"></i>
+                                        <img src="{{ asset('images/icons/facebook.png') }}" alt="Facebook">
                                     </a>
                                     <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig">
                                         <i class="fab fa-instagram"></i>
