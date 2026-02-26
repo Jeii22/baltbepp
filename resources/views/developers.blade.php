@@ -466,7 +466,7 @@
                     <p class="role">Developer / Programmer</p>
 
                     <div class="socials">
-                        <a href="https://www.facebook.com/jei.waizzu" target="_blank" class="fb">
+                        <a href="https://www.facebook.com/kajake.rodriguez" target="_blank" class="fb">
                             <i class="fab fa-facebook-f"></i>
                         </a>
                         <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig">
