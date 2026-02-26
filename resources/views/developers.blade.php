@@ -300,7 +300,7 @@
         }
 
         .team-card{
-            background: rgba(142, 174, 226, 0.43); /* darker glass */
+            background: rgba(150, 170, 202, 0.2); /* darker glass */
             border: 1px solid rgba(0,119,182,0.18);
             border-radius: 20px;
             padding: 32px 24px;
