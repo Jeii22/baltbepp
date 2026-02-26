@@ -12,6 +12,37 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
+        .socials{
+            margin-top:10px;
+            display:flex;
+            justify-content:center;
+            gap:10px;
+        }
+
+        .socials a{
+            width:32px;
+            height:32px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:50%;
+            font-size:14px;
+            color:#fff;
+            text-decoration:none;
+            transition:0.3s ease;
+        }
+
+        /* Brand colors */
+        .socials .fb{ background:#1877f2; }
+        .socials .ig{ background:linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7); }
+        .socials .tt{ background:#000; }
+
+        /* Hover effect */
+        .socials a:hover{
+            transform:translateY(-3px) scale(1.1);
+            box-shadow:0 5px 12px rgba(0,0,0,0.25);
+        }
+
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root{
