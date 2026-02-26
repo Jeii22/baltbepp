@@ -39,7 +39,7 @@
             z-index: 0;
 
             background:
-                linear-gradient(rgba(7, 37, 82, 0.69), rgba(10, 25, 47, 0.51)),
+                linear-gradient(rgba(7, 37, 82, 0.69), rgba(10, 25, 47, 0.76)),
                 url("{{ asset('images/background/barko.png') }}");
 
             background-size: cover;
