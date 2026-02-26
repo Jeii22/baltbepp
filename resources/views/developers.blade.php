@@ -36,15 +36,14 @@
             position: fixed;
             inset: 0;
             z-index: 0;
-
             background:
-                linear-gradient(rgba(155, 196, 244, 0.71), rgba(87, 172, 222, 0.68)),
-                url("{{ asset('images/barko.png') }}");
-
+                linear-gradient(rgba(238,246,255,0.85), rgba(223,241,255,0.9)),
+                url("{{ asset('images/background/barko.png') }}");
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
+            background-attachment: fixed; /* parallax effect */
         }
+        
         .bg-grid {
             position: fixed; inset: 0; z-index: 0;
             background-image:
