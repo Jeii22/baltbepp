@@ -404,8 +404,8 @@
             filter: brightness(0) saturate(100%) invert(100%);
         }
 
-        .prev { left: -45px; }
-        .next { right: -45px; }
+        .prev { left: -30px; }
+        .next { right: -30px; }
 
         .team-grid{
             display:grid;
