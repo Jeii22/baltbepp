@@ -472,9 +472,9 @@
                         <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="https://www.tiktok.com/@yourhandle" target="_blank" class="tt">
-                            <i class="fab fa-tiktok"></i>
-                        </a>
+                 <!--   <a href="https://www.tiktok.com/@yourhandle" target="_blank" class="tt">
+                            <i class="fab fa-tiktok"></i> 
+                        </a> -->
                     </div>
                 </div>
 
