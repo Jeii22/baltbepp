@@ -8,8 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
+    <link
+    rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
     <style>
         .socials {
         margin-top: 12px;
@@ -372,7 +374,7 @@
             border-radius: 50%;<div class="team-slider">
 
     <button class="nav prev">
-        <i class="fas fa-chevron-left"></i>
+        <i class="fa-solid fa-chevron-left"></i>
     </button>
 
     <div class="team-track">
@@ -499,6 +501,7 @@
     </style>
 </head>
 <body>
+    <i class="fas fa-star"></i>
 
     <x-loading-screen message="Loading..." />
 
@@ -521,7 +524,7 @@
             <div class="team-slider">
 
                 <button class="nav prev">
-                    <i class="fas fa-chevron-left"></i>
+                    <i class="fa-solid fa-chevron-left"></i>
                 </button>
 
                 <div class="team-track">
@@ -581,7 +584,7 @@
                          </div>
 
                 <button class="nav next">
-                    <i class="fas fa-chevron-right"></i>
+                    <i class="fa-solid fa-chevron-right"></i>
                 </button>
 
             </div>
