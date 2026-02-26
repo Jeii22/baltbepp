@@ -33,12 +33,17 @@
 
         /* ─── Background ─── */
         .bg-mesh{
-            position:fixed;
-            inset:0;
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+
             background:
-            radial-gradient(circle at 20% 20%, #caf0f8 0%, transparent 40%),
-            radial-gradient(circle at 80% 80%, #ade8f4 0%, transparent 40%),
-            linear-gradient(to bottom, #eef6ff, #dff1ff);
+                linear-gradient(rgba(238,246,255,0.88), rgba(223,241,255,0.92)),
+                url("{{ asset('images/barko.png') }}");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         .bg-grid {
             position: fixed; inset: 0; z-index: 0;
@@ -358,7 +363,7 @@
 
                 <div class="team-card">
                     <div class="avatar">
-                        <img src="{{ asset('images/team/kyle.jpg') }}" alt="Kyle Gadiano">
+                        <img src="{{ asset('images/developers/kyle.jpg') }}" alt="Kyle Gadiano">
                     </div>
                     <h3>Kyle Gadiano</h3>
                     <p class="role">Designer</p>
@@ -366,7 +371,7 @@
 
                 <div class="team-card">
                     <div class="avatar">
-                        <img src="{{ asset('images/team/melchades.jpg') }}" alt="Melchades Mansueto">
+                        <img src="{{ asset('images/developers/melchades.jpg') }}" alt="Melchades Mansueto">
                     </div>
                     <h3>Melchades Mansueto</h3>
                     <p class="role">Designer</p>
@@ -374,7 +379,7 @@
 
                 <div class="team-card">
                     <div class="avatar">
-                        <img src="{{ asset('images/team/rudelyn.jpg') }}" alt="Rudelyn Illut">
+                        <img src="{{ asset('images/developers/rudelyn.jpg') }}" alt="Rudelyn Illut">
                     </div>
                     <h3>Rudelyn Illut</h3>
                     <p class="role">Main Researcher</p>
@@ -382,7 +387,7 @@
 
                 <div class="team-card">
                     <div class="avatar">
-                        <img src="{{ asset('images/team/jonamae.jpg') }}" alt="Jona Mae Illut">
+                        <img src="{{ asset('images/developers/jonamae.jpg') }}" alt="Jona Mae Illut">
                     </div>
                     <h3>Jona Mae Illut</h3>
                     <p class="role">Assistant Researcher</p>
