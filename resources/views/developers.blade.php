@@ -7,6 +7,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -19,6 +20,8 @@
             --light-blue: #90e0ef;
             --text: #e6f7ff;
             --muted: #9fb3c8;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Outfit', sans-serif;
         }
 
         html, body {
@@ -306,6 +309,7 @@
             backdrop-filter: blur(16px);
             transition: 0.35s ease;
             box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+            
         }
 
         .team-card:hover{
@@ -323,19 +327,49 @@
         }
 
         .team-card h3{
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #e6f7ff;
+            margin-bottom: 6px;
             transition: 0.3s;
         }
 
         .team-card:hover h3{
             color: var(--light-blue);
+            text-shadow: 0 0 12px rgba(144,224,239,0.8);
         }
+
+        .team-card h3::after{
+            content:'';
+            display:block;
+            width:32px;
+            height:2px;
+            margin:8px auto 12px;
+            background:linear-gradient(to right, transparent, var(--blue), transparent);
+            opacity:0.7;
+        }
+
         .role{
-            font-size:0.9rem;
-            color:var(--muted);
-            background:var(--light-blue);
-            display:inline-block;
-            padding:4px 12px;
-            border-radius:999px;
+            font-family: var(--font-body);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+
+            color: #caf0f8;
+            background: rgba(0,180,216,0.12);
+            border: 1px solid rgba(0,180,216,0.35);
+
+            padding: 6px 14px;
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        .team-card:hover .role{
+            background: rgba(0,180,216,0.22);
+            box-shadow: 0 0 12px rgba(0,180,216,0.35);
         }
     </style>
 </head>
