@@ -12,31 +12,31 @@
     
     <style>
         .socials {
-            margin-top: 12px;
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-        }
+        margin-top: 12px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+    }
 
-        .socials a {
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            color: #fff;
-            text-decoration: none;
-            font-size: 16px;
-            transition: 0.3s;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(6px);
-        }
+    .socials a {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        transition: 0.3s;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(6px);
+    }
 
-        /* Hover glow */
-        .socials .fb:hover { background: #1877f2; box-shadow: 0 0 12px #1877f2; }
-        .socials .ig:hover { background: linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7); box-shadow: 0 0 12px #ee2a7b; }
-        .socials .tt:hover { background: #000; box-shadow: 0 0 12px #fff; }
+    /* Hover glow */
+    .socials .fb:hover { background: #1877f2; box-shadow: 0 0 12px #1877f2; }
+    .socials .ig:hover { background: linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7); box-shadow: 0 0 12px #ee2a7b; }
+    .socials .tt:hover { background: #000; box-shadow: 0 0 12px #fff; }
 
         /* Hover effect */
         .socials a:hover{
