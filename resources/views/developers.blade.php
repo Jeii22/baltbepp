@@ -11,17 +11,15 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        :root {
-        --bg: #eef6ff;
-        --card: rgba(255,255,255,0.75);
-        --border: rgba(0,119,182,0.15);
-        --blue: #0077b6;
-        --light-blue: #90e0ef;
-        --accent: #48cae4;
-        --text: #023047;
-        --muted: #5a6c7d;
-        --white: #ffffff;
-    }
+        :root{
+            --bg: #0a192f;
+            --card: rgba(255,255,255,0.08);
+            --border: rgba(144,224,239,0.25);
+            --blue: #00b4d8;
+            --light-blue: #90e0ef;
+            --text: #e6f7ff;
+            --muted: #9fb3c8;
+        }
 
         html, body {
             min-height: 100vh;
@@ -32,16 +30,18 @@
         }
 
         /* ─── Background ─── */
-        .bg-mesh{
+        ..bg-mesh{
             position: fixed;
             inset: 0;
             z-index: 0;
+
             background:
-                linear-gradient(rgba(238,246,255,0.65), rgba(223,241,255,0.75)),
+                linear-gradient(rgba(10, 25, 47, 0.78), rgba(10, 25, 47, 0.88)),
                 url("{{ asset('images/barko.png') }}");
+
             background-size: cover;
             background-position: center;
-            background-attachment: fixed; /* parallax effect */
+            background-repeat: no-repeat;
         }
         .bg-grid {
             position: fixed; inset: 0; z-index: 0;
@@ -298,27 +298,37 @@
         }
 
         .team-card{
-            background: rgba(150, 170, 202, 0.2); /* darker glass */
-            border: 1px solid rgba(0,119,182,0.18);
+            background: var(--card);
+            border: 1px solid var(--border);
             border-radius: 20px;
             padding: 32px 24px;
             text-align: center;
-            backdrop-filter: blur(14px);
+            backdrop-filter: blur(16px);
             transition: 0.35s ease;
-            box-shadow: 0 8px 24px rgba(0, 119, 182, 0.08);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.35);
         }
 
         .team-card:hover{
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 18px 40px rgba(0,119,182,0.18);
+            transform: translateY(-10px) scale(1.03);
+            border-color: var(--blue);
+
+            box-shadow:
+                0 0 25px rgba(0,180,216,0.45),
+                0 0 60px rgba(0,180,216,0.25),
+                0 15px 40px rgba(0,0,0,0.45);
+        }
+
+        .team-card:hover .avatar{
+            box-shadow: 0 0 18px rgba(0,180,216,0.9);
         }
 
         .team-card h3{
-            font-family:'Syne',sans-serif;
-            color:var(--blue);
-            margin-bottom:6px;
+            transition: 0.3s;
         }
 
+        .team-card:hover h3{
+            color: var(--light-blue);
+        }
         .role{
             font-size:0.9rem;
             color:var(--muted);
