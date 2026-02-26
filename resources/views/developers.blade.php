@@ -569,10 +569,10 @@
                                         <img src="{{ asset('images/icons/facebook.png') }}" alt="Facebook">
                                     </a>
                                     <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig">
-                                        <img src="{{ asset('images/icons/instagram.png') }}" alt="Facebook">
+                                        <i class="fab fa-instagram"></i>
                                     </a>
                             <!--   <a href="https://www.tiktok.com/@yourhandle" target="_blank" class="tt">
-                                        <img src="{{ asset('images/icons/tiktok.png') }}" alt="Facebook">
+                                        <i class="fab fa-tiktok"></i> 
                                     </a> -->
                                 </div>
                             </div>
