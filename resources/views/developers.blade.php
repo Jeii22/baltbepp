@@ -271,7 +271,7 @@
                 0 0 6px rgba(255,255,255,0.7),
                 0 0 14px rgba(255,255,255,0.35);
         }
-        
+
         .footer strong{
             color: #ffffff;
             font-weight: 600;
@@ -280,6 +280,13 @@
                 0 0 8px rgba(255,255,255,0.95),
                 0 0 18px rgba(255,255,255,0.55),
                 0 0 30px rgba(255,255,255,0.35);
+        }
+
+        .footer:hover p{
+            text-shadow:
+                0 0 10px rgba(255,255,255,1),
+                0 0 25px rgba(255,255,255,0.6),
+                0 0 45px rgba(255,255,255,0.4);
         }
 
         /* ─── Animations ─── */
