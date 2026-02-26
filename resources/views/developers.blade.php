@@ -337,6 +337,47 @@
             .avatar-fallback span { font-size:2rem; }
         }
 
+        .team-slider{
+            position: relative;
+            max-width: 320px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .team-track{
+            display: flex;
+            transition: transform 0.6s cubic-bezier(.77,0,.18,1);
+        }
+
+        .team-card{
+            min-width: 100%;
+        }
+
+        /* NAV BUTTONS */
+        .nav{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.08);
+            color: white;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+            transition: 0.3s;
+        }
+
+        .nav:hover{
+            box-shadow: 0 0 15px var(--blue);
+            border-color: var(--blue);
+        }
+
+        .prev{ left: -60px; }
+        .next{ right: -60px; }
+
         .team-grid{
             display:grid;
             grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -455,61 +496,69 @@
         <h1 class="section-title">Meet the <span>Team</span></h1>
             <p class="section-sub">The people behind BaltBep</p>
 
-            <div class="team-grid">
+            <div class="team-slider">
 
-                <div class="team-card">
-                    <div class="avatar">
-                        <img src="{{ asset('images/developers/jake.jpg') }}" alt="Jake Rodriguez">
-                    </div>
+                <button class="nav prev"><i class="fas fa-chevron-left"></i></button>
 
-                    <h3>Jake Rodriguez</h3>
-                    <p class="role">Developer / Programmer</p>
+                        <div class="team-track">
 
-                    <div class="socials">
-                        <a href="https://www.facebook.com/jei.waizzu" target="_blank" class="fb">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                 <!--   <a href="https://www.tiktok.com/@yourhandle" target="_blank" class="tt">
-                            <i class="fab fa-tiktok"></i> 
-                        </a> -->
-                    </div>
+                            <div class="team-card">
+                                <div class="avatar">
+                                    <img src="{{ asset('images/developers/jake.jpg') }}" alt="Jake Rodriguez">
+                                </div>
+
+                                <h3>Jake Rodriguez</h3>
+                                <p class="role">Developer / Programmer</p>
+
+                                <div class="socials">
+                                    <a href="https://www.facebook.com/jei.waizzu" target="_blank" class="fb">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                            <!--   <a href="https://www.tiktok.com/@yourhandle" target="_blank" class="tt">
+                                        <i class="fab fa-tiktok"></i> 
+                                    </a> -->
+                                </div>
+                            </div>
+
+                            <div class="team-card">
+                                <div class="avatar">
+                                    <img src="{{ asset('images/developers/kyle.jpg') }}" alt="Kyle Gadiano">
+                                </div>
+                                <h3>Kyle Gadiano</h3>
+                                <p class="role">Designer</p>
+                            </div>
+
+                            <div class="team-card">
+                                <div class="avatar">
+                                    <img src="{{ asset('images/developers/melchades.jpg') }}" alt="Melchades Mansueto">
+                                </div>
+                                <h3>Melchades Mansueto</h3>
+                                <p class="role">Designer</p>
+                            </div>
+
+                            <div class="team-card">
+                                <div class="avatar">
+                                    <img src="{{ asset('images/developers/rudelyn.jpg') }}" alt="Rudelyn Illut">
+                                </div>
+                                <h3>Rudelyn Illut</h3>
+                                <p class="role">Main Researcher</p>
+                            </div>
+
+                            <div class="team-card">
+                                <div class="avatar">
+                                    <img src="{{ asset('images/developers/jonamae.jpg') }}" alt="Jona Mae Illut">
+                                </div>
+                                <h3>Jona Mae Illut</h3>
+                                <p class="role">Assistant Researcher</p>
+                            </div>
+                        </div>
+
+                    <button class="nav next"><i class="fas fa-chevron-right"></i></button>
+
                 </div>
-
-                <div class="team-card">
-                    <div class="avatar">
-                        <img src="{{ asset('images/developers/kyle.jpg') }}" alt="Kyle Gadiano">
-                    </div>
-                    <h3>Kyle Gadiano</h3>
-                    <p class="role">Designer</p>
-                </div>
-
-                <div class="team-card">
-                    <div class="avatar">
-                        <img src="{{ asset('images/developers/melchades.jpg') }}" alt="Melchades Mansueto">
-                    </div>
-                    <h3>Melchades Mansueto</h3>
-                    <p class="role">Designer</p>
-                </div>
-
-                <div class="team-card">
-                    <div class="avatar">
-                        <img src="{{ asset('images/developers/rudelyn.jpg') }}" alt="Rudelyn Illut">
-                    </div>
-                    <h3>Rudelyn Illut</h3>
-                    <p class="role">Main Researcher</p>
-                </div>
-
-                <div class="team-card">
-                    <div class="avatar">
-                        <img src="{{ asset('images/developers/jonamae.jpg') }}" alt="Jona Mae Illut">
-                    </div>
-                    <h3>Jona Mae Illut</h3>
-                    <p class="role">Assistant Researcher</p>
-                </div>
-
             </div>
 
     </main>
@@ -537,6 +586,29 @@
             container.appendChild(p);
         }
     </script>
+
+    <script>
+        const track = document.querySelector('.team-track');
+        const cards = document.querySelectorAll('.team-card');
+        const next = document.querySelector('.next');
+        const prev = document.querySelector('.prev');
+
+        let index = 0;
+
+        function updateSlider(){
+            track.style.transform = `translateX(-${index * 100}%)`;
+        }
+
+        next.addEventListener('click', () => {
+            index = (index + 1) % cards.length;
+            updateSlider();
+        });
+
+        prev.addEventListener('click', () => {
+            index = (index - 1 + cards.length) % cards.length;
+            updateSlider();
+        });
+        </script>
 
 </body>
 </html>
