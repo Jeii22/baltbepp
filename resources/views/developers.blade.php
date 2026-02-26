@@ -30,7 +30,7 @@
         }
 
         /* ─── Background ─── */
-        ..bg-mesh{
+        .bg-mesh{
             position: fixed;
             inset: 0;
             z-index: 0;
