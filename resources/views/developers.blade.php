@@ -9,32 +9,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    
     <style>
-        .socials{
-            margin-top:10px;
-            display:flex;
-            justify-content:center;
-            gap:10px;
+        .socials {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
         }
 
-        .socials a{
-            width:32px;
-            height:32px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            border-radius:50%;
-            font-size:14px;
-            color:#fff;
-            text-decoration:none;
-            transition:0.3s ease;
+        .socials a {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(6px);
         }
 
-        /* Brand colors */
-        .socials .fb{ background:#1877f2; }
-        .socials .ig{ background:linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7); }
-        .socials .tt{ background:#000; }
+        /* Hover glow */
+        .socials .fb:hover { background: #1877f2; box-shadow: 0 0 12px #1877f2; }
+        .socials .ig:hover { background: linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7); box-shadow: 0 0 12px #ee2a7b; }
+        .socials .tt:hover { background: #000; box-shadow: 0 0 12px #fff; }
 
         /* Hover effect */
         .socials a:hover{
@@ -464,9 +466,15 @@
                     <p class="role">Developer / Programmer</p>
 
                     <div class="socials">
-                        <a href="https://www.facebook.com/jei.waizzu" target="_blank" class="fb"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.tiktok.com/@yourhandle" target="_blank" class="tt"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.facebook.com/jei.waizzu" target="_blank" class="fb">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@yourhandle" target="_blank" class="tt">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
                     </div>
                 </div>
 
