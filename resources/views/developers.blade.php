@@ -503,6 +503,28 @@
             background: rgba(0,180,216,0.22);
             box-shadow: 0 0 12px rgba(0,180,216,0.35);
         }
+
+        .socials img{
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+            transition: 0.3s ease;
+            pointer-events: none;
+        }
+
+        .socials a:hover img{
+        transform: scale(1.15);
+        filter: brightness(1.2);
+
+        }
+
+        .socials img{
+            filter: brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(500%) hue-rotate(160deg);
+        }
+
+        .socials a:hover img{
+            filter: brightness(0) saturate(100%) invert(100%);
+        }
     </style>
 </head>
 <body>
