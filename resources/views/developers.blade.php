@@ -8,8 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         .socials{
@@ -465,9 +464,9 @@
                     <p class="role">Developer / Programmer</p>
 
                     <div class="socials">
-                        <a href="facebook.com/jei.waizzu" class="fb"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="ig"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="tt"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.facebook.com/jei.waizzu" target="_blank" class="fb"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@yourhandle" target="_blank" class="tt"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
 
