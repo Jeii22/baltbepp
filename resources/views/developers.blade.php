@@ -255,11 +255,32 @@
         .cta-btn svg { width:18px; height:18px; fill:#fff; flex-shrink:0; }
 
         /* ─── Footer ─── */
-        .footer {
-            position:relative; z-index:1; text-align:center;
-            padding:32px 24px 40px; color:#2e2e50; font-size:0.82rem;
+        .footer{
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 32px 24px 40px;
+
+            color: #ffffff;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
         }
-        .footer strong { color:#44446a; font-weight:500; }
+
+        .footer p{
+            text-shadow:
+                0 0 6px rgba(255,255,255,0.7),
+                0 0 14px rgba(255,255,255,0.35);
+        }
+        
+        .footer strong{
+            color: #ffffff;
+            font-weight: 600;
+
+            text-shadow:
+                0 0 8px rgba(255,255,255,0.95),
+                0 0 18px rgba(255,255,255,0.55),
+                0 0 30px rgba(255,255,255,0.35);
+        }
 
         /* ─── Animations ─── */
         @keyframes fadeDown { from{opacity:0;transform:translateY(-20px);} to{opacity:1;transform:translateY(0);} }
