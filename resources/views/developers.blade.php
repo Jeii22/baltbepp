@@ -517,11 +517,6 @@
         filter: brightness(1.2);
 
         }
-
-        .socials img{
-            filter: brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(500%) hue-rotate(160deg);
-        }
-
         
     </style>
 </head>
