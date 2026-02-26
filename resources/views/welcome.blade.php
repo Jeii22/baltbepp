@@ -11,6 +11,53 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
+
+        .intro-screen{
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0077b6, #00b4d8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: 0.8s ease;
+        }
+
+        .intro-content{
+            text-align: center;
+            color: white;
+            font-family: 'Syne', sans-serif;
+            animation: fadeUp 1s ease;
+        }
+
+        .intro-content h1{
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 20px;
+        }
+
+        .intro-content button{
+            padding: 16px 38px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            color: #0077b6;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .intro-content button:hover{
+            transform: scale(1.08);
+            box-shadow: 0 0 25px rgba(255,255,255,0.7);
+        }
+
+        .intro-screen.hide{
+            opacity: 0;
+            pointer-events: none;
+        }
+
+
         @media (max-width: 768px) {
             nav .nav-links {
                 display: none; /* Hide navigation links */
@@ -19,6 +66,14 @@
     </style>
 </head>
 <body class="antialiased bg-white text-gray-800">
+
+
+    <div id="introScreen" class="intro-screen">
+        <div class="intro-content">
+            <h1>Ready to book your trip?</h1>
+            <button id="enterSite">BOOK NOW!</button>
+        </div>
+    </div>
 
     <x-loading-screen message="Loading..." />
 
@@ -1132,6 +1187,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+</script>
+
+<script>
+document.getElementById("enterSite").addEventListener("click", function(){
+    document.getElementById("introScreen").classList.add("hide");
+});
 </script>
 
 </body>
