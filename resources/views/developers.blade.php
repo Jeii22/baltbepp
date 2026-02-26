@@ -339,9 +339,11 @@
 
         .team-slider{
             position: relative;
-            max-width: 320px;
             width: 100%;
-            overflow: hidden;
+            max-width: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .team-track{
@@ -365,25 +367,38 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;<div class="team-slider">
+
+    <button class="nav prev">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+
+    <div class="team-track">
             border: 1px solid var(--border);
-            background: rgba(255,255,255,0.08);
-            color: white;
+            background: rgba(10,25,47,0.8);
+            color: var(--light-blue);
             cursor: pointer;
             backdrop-filter: blur(10px);
-            z-index: 5;
-            transition: 0.3s;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: 0.3s ease;
         }
 
         .nav:hover{
-            box-shadow: 0 0 15px var(--blue);
             border-color: var(--blue);
+            box-shadow:
+                0 0 15px var(--blue),
+                0 0 35px rgba(0,180,216,0.4);
+            color: #fff;
         }
 
-        .prev{ left: -60px; }
-        .next{ right: -60px; }
+        .prev{ left: 10px; }
+        .next{ right: 10px; }
 
         .team-grid{
             display:grid;
@@ -505,9 +520,11 @@
 
             <div class="team-slider">
 
-                <button class="nav prev"><i class="fas fa-chevron-left"></i></button>
+                <button class="nav prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
 
-                        <div class="team-track">
+                <div class="team-track">
 
                             <div class="team-card">
                                 <div class="avatar">
@@ -561,11 +578,12 @@
                                 <h3>Jona Mae Illut</h3>
                                 <p class="role">Assistant Researcher</p>
                             </div>
-                        </div>
+                         </div>
 
-                    <button class="nav next"><i class="fas fa-chevron-right"></i></button>
+                <button class="nav next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
 
-                </div>
             </div>
 
     </main>
