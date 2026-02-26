@@ -372,23 +372,6 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;<div class="team-slider">
-
-    <button class="nav prev">
-        <i class="fa-solid fa-chevron-left"></i>
-    </button>
-
-    <div class="team-track">
-            border: 1px solid var(--border);
-            background: rgba(10,25,47,0.8);
-            color: var(--light-blue);
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: 0.3s ease;
         }
 
         .nav:hover{
