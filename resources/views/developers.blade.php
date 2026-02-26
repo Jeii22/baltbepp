@@ -350,7 +350,7 @@
 
                 <div class="team-card">
                     <div class="avatar">
-                        <img src="{{ asset('images/team/jake.jpg') }}" alt="Jake Rodriguez">
+                        <img src="{{ asset('images/developers/jake.jpg') }}" alt="Jake Rodriguez">
                     </div>
                     <h3>Jake Rodriguez</h3>
                     <p class="role">Developer / Programmer</p>
