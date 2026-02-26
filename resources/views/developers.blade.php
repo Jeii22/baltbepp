@@ -404,7 +404,7 @@
         }
 
         .prev{ left: 12px; }
-        .next{ right: 12px; }
+        .next{ right: 20px; }
 
         .team-grid{
             display:grid;
