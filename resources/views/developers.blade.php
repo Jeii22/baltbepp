@@ -369,9 +369,18 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;<div class="team-slider">
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: rgba(10,25,47,0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: 0.3s;
         }
 
         .nav:hover{
@@ -379,11 +388,23 @@
             box-shadow:
                 0 0 15px var(--blue),
                 0 0 35px rgba(0,180,216,0.4);
-            color: #fff;
         }
 
-        .prev{ left: 10px; }
-        .next{ right: 10px; }
+        .nav img{
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+            filter: brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(500%) hue-rotate(160deg);
+            transition: 0.3s ease;
+        }
+
+        /* glow on hover */
+        .nav:hover img{
+            filter: brightness(0) saturate(100%) invert(100%);
+        }
+
+        .prev{ left: 12px; }
+        .next{ right: 12px; }
 
         .team-grid{
             display:grid;
@@ -507,7 +528,7 @@
             <div class="team-slider">
 
                 <button class="nav prev">
-                    <i class="fa-solid fa-chevron-left"></i>
+                    <img src="{{ asset('images/icons/left.png') }}" alt="Previous">
                 </button>
 
                 <div class="team-track">
@@ -567,7 +588,7 @@
                          </div>
 
                 <button class="nav next">
-                    <i class="fa-solid fa-chevron-right"></i>
+                    <img src="{{ asset('images/icons/right.png') }}" alt="Next">
                 </button>
 
             </div>
