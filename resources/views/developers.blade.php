@@ -12,15 +12,16 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg:        #05050d;
-            --card:      #0e0e1c;
-            --border:    rgba(79,142,247,0.15);
-            --blue:      #4f8ef7;
-            --blue-dim:  rgba(79,142,247,0.25);
-            --text:      #e6e6f5;
-            --muted:     #6868a0;
-            --white:     #ffffff;
-        }
+        --bg: #eef6ff;
+        --card: rgba(255,255,255,0.75);
+        --border: rgba(0,119,182,0.15);
+        --blue: #0077b6;
+        --light-blue: #90e0ef;
+        --accent: #48cae4;
+        --text: #023047;
+        --muted: #5a6c7d;
+        --white: #ffffff;
+    }
 
         html, body {
             min-height: 100vh;
@@ -31,12 +32,13 @@
         }
 
         /* ─── Background ─── */
-        .bg-mesh {
-            position: fixed; inset: 0; z-index: 0;
+        .bg-mesh{
+            position:fixed;
+            inset:0;
             background:
-                radial-gradient(ellipse 80% 60% at 15% 20%, rgba(79,142,247,0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 50% at 85% 80%, rgba(99,77,247,0.10) 0%, transparent 60%),
-                linear-gradient(180deg, #05050d 0%, #0a0a18 100%);
+            radial-gradient(circle at 20% 20%, #caf0f8 0%, transparent 40%),
+            radial-gradient(circle at 80% 80%, #ade8f4 0%, transparent 40%),
+            linear-gradient(to bottom, #eef6ff, #dff1ff);
         }
         .bg-grid {
             position: fixed; inset: 0; z-index: 0;
@@ -266,6 +268,44 @@
             .avatar-wrap  { width:160px; height:160px; }
             .avatar-fallback span { font-size:2rem; }
         }
+
+        .team-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:28px;
+            max-width:1000px;
+            width:100%;
+        }
+
+        .team-card{
+            background:var(--card);
+            border:1px solid var(--border);
+            border-radius:20px;
+            padding:28px;
+            text-align:center;
+            backdrop-filter:blur(10px);
+            transition:0.3s;
+        }
+
+        .team-card:hover{
+            transform:translateY(-6px);
+            box-shadow:0 10px 30px rgba(0,119,182,0.15);
+        }
+
+        .team-card h3{
+            font-family:'Syne',sans-serif;
+            color:var(--blue);
+            margin-bottom:6px;
+        }
+
+        .role{
+            font-size:0.9rem;
+            color:var(--muted);
+            background:var(--light-blue);
+            display:inline-block;
+            padding:4px 12px;
+            border-radius:999px;
+        }
     </style>
 </head>
 <body>
@@ -285,73 +325,42 @@
             Balt Bep Team
         </div>
 
-        <h1 class="section-title">Meet the <span>Developer</span></h1>
-        <p class="section-sub">The mind powering Balt Bep</p>
+        <h1 class="section-title">Meet the <span>Team</span></h1>
+            <p class="section-sub">The people behind BaltBep</p>
 
-        <div class="profile-card">
-            <div class="card-glow-tl"></div>
-            <div class="card-glow-br"></div>
+            <div class="team-grid">
 
-            <!-- Avatar -->
-            <div class="avatar-wrap">
-                <div class="avatar-halo"></div>
-                <div class="avatar-ring"></div>
-                <div class="avatar-inner"></div>
-                <div class="avatar-img-wrap">
-                    <img
-                        src="{{ asset('images/developers/jake.jpg') }}"
-                        alt="Jake Rodriguez"
-                        loading="eager"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="avatar-fallback" style="display:none;">
-                        <span>JR</span>
-                    </div>
+                <!-- Jake -->
+                <div class="team-card">
+                    <h3>Jake Rodriguez</h3>
+                    <p class="role">Developer / Programmer</p>
                 </div>
+
+                <!-- Kyle -->
+                <div class="team-card">
+                    <h3>Kyle Gadiano</h3>
+                    <p class="role">Designer</p>
+                </div>
+
+                <!-- Melchades -->
+                <div class="team-card">
+                    <h3>Melchades Mansueto</h3>
+                    <p class="role">Designer</p>
+                </div>
+
+                <!-- Rudelyn -->
+                <div class="team-card">
+                    <h3>Rudelyn Illut</h3>
+                    <p class="role">Main Researcher</p>
+                </div>
+
+                <!-- Jona Mae -->
+                <div class="team-card">
+                    <h3>Jona Mae Illut</h3>
+                    <p class="role">Assistant Researcher</p>
+                </div>
+
             </div>
-
-            <!-- Info -->
-            <div class="info-block">
-                <div class="role-badge">&#9679;&nbsp; Programmer</div>
-                <h2 class="dev-name">Jake Rodriguez</h2>
-                <p class="dev-title">Full-Stack Developer</p>
-                <div class="divider"></div>
-                <p class="dev-bio">
-                    Full-stack developer crafting seamless digital experiences — bridging elegant front-end design with robust back-end architecture to bring ideas to life.
-                </p>
-
-                <div class="stats-row">
-                    <div class="stat">
-                        <span class="stat-num">5+</span>
-                        <span class="stat-lbl">Yrs Exp.</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-num">20+</span>
-                        <span class="stat-lbl">Projects</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-num">∞</span>
-                        <span class="stat-lbl">Passion</span>
-                    </div>
-                </div>
-
-                <div class="skills">
-                    <span class="skill-chip">Laravel</span>
-                    <span class="skill-chip">Vue.js</span>
-                    <span class="skill-chip">Tailwind CSS</span>
-                    <span class="skill-chip">PHP</span>
-                    <span class="skill-chip">MySQL</span>
-                    <span class="skill-chip">REST APIs</span>
-                    <span class="skill-chip">Alpine.js</span>
-                </div>
-
-                <a href="https://www.facebook.com/kajake.rodriguez" target="_blank" class="cta-btn">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M24 12.073C24 5.406 18.627 0 12 0S0 5.406 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
-                    </svg>
-                    Connect on Facebook
-                </a>
-            </div>
-        </div>
 
     </main>
 
