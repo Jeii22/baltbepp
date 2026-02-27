@@ -553,6 +553,8 @@
             object-fit:contain;
             z-index:2;
             transition: .35s ease;
+            /* soft futuristic tint */
+    filter: brightness(0) saturate(100%) invert(78%) sepia(21%) saturate(700%) hue-rotate(165deg);
         }
 
         .socials a:hover::before{
