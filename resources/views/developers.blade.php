@@ -505,7 +505,11 @@
         }
 
         .socials img{
-            border: 1px solid red;
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+            transition: 0.3s ease;
+            pointer-events: none;
         }
 
         .socials a:hover img{
