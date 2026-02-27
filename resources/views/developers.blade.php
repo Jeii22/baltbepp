@@ -505,13 +505,8 @@
         }
 
         .socials img{
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
-            transition: 0.3s ease;
-            pointer-events: none;
-            filter: brightness(0) saturate(100%) invert(85%) sepia(30%) saturate(500%) hue-rotate(160deg);
-        }
+                 border: 1px solid red;
+            }
 
         .socials a:hover img{
             transform: scale(1.15);
@@ -558,7 +553,7 @@
 
                                 <div class="socials">
                                     <a href="https://www.facebook.com/jei.waizzu" target="_blank" class="fb">
-                                        <img src="{{ asset('public/images/icons/facebook.png') }}" alt="Facebook">
+                                        <img src="{{ asset('images/icons/facebook.png') }}" alt="Facebook">
                                     </a>
                                     <a href="https://www.instagram.com/jei.waizzu" target="_blank" class="ig">
                                         <img src="{{ asset('images/icons/instagram.png') }}" alt="Facebook">
