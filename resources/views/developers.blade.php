@@ -575,6 +575,11 @@
                                 </div>
                                 <h3>Kyle Gadiano</h3>
                                 <p class="role">Designer</p>
+                                <div class="socials">
+                                    <a href="https://www.facebook.com/kyle.gadiano.7" target="_blank" class="fb">
+                                        <img src="{{ asset('images/icons/facebook.png') }}" alt="Facebook">
+                                    </a>
+                                </div>
                             </div>
 
                             <div class="team-card">
@@ -583,6 +588,11 @@
                                 </div>
                                 <h3>Melchades Mansueto</h3>
                                 <p class="role">Designer</p>
+                                <div class="socials">
+                                    <a href="https://www.facebook.com/melchades.mansueto.10" target="_blank" class="fb">
+                                        <img src="{{ asset('images/icons/facebook.png') }}" alt="Facebook">
+                                    </a>
+                                </div>
                             </div>
 
                             <div class="team-card">
@@ -591,6 +601,11 @@
                                 </div>
                                 <h3>Rudelyn Illut</h3>
                                 <p class="role">Main Researcher</p>
+                                <div class="socials">
+                                    <a href="https://www.facebook.com/rudelyn.illut.7" target="_blank" class="fb">
+                                        <img src="{{ asset('images/icons/facebook.png') }}" alt="Facebook">
+                                    </a>
+                                </div>
                             </div>
 
                             <div class="team-card">
@@ -599,6 +614,11 @@
                                 </div>
                                 <h3>Jona Mae Illut</h3>
                                 <p class="role">Assistant Researcher</p>
+                                <div class="socials">
+                                    <a href="https://www.facebook.com/jhammyss" target="_blank" class="fb">
+                                        <img src="{{ asset('images/icons/facebook.png') }}" alt="Facebook">
+                                    </a>
+                                </div>
                             </div>
                          </div>
 
