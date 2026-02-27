@@ -20,30 +20,72 @@
         gap: 12px;
     }
 
-    .socials a {
-        width: 36px;
-        height: 36px;
+    .socials a{
+        position: relative;
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        color: #fff;
-        text-decoration: none;
-        font-size: 16px;
-        transition: 0.3s;
+
         background: rgba(255,255,255,0.05);
-        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+
+        transition: all .35s cubic-bezier(.77,0,.18,1);
+        overflow: hidden;
+    }
+
+    /* subtle inner glow */
+    .socials a::before{
+        content:'';
+        position:absolute;
+        inset:0;
+        border-radius:50%;
+        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 70%);
+        opacity:0;
+        transition:.35s;
     }
 
     /* Hover glow */
-    .socials .fb:hover { background: #1877f2; box-shadow: 0 0 12px #1877f2; }
-    .socials .ig:hover { background: linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7); box-shadow: 0 0 12px #ee2a7b; }
-    .socials .tt:hover { background: #000; box-shadow: 0 0 12px #fff; }
+        /* FACEBOOK */
+        .socials .fb:hover{
+            box-shadow:
+                0 0 18px #1877f2,
+                0 0 40px rgba(24,119,242,0.45);
+            border-color:#1877f2;
+        }
+
+        /* INSTAGRAM */
+        .socials .ig:hover{
+            box-shadow:
+                0 0 18px #ee2a7b,
+                0 0 40px rgba(238,42,123,0.45);
+            border-color:#ee2a7b;
+        }
+
+        /* TIKTOK (if you enable later) */
+        .socials .tt:hover{
+            box-shadow:
+                0 0 18px #ffffff,
+                0 0 40px rgba(255,255,255,0.35);
+            border-color:#fff;
+        }
 
         /* Hover effect */
+        /* HOVER BASE */
         .socials a:hover{
-            transform:translateY(-3px) scale(1.1);
-            box-shadow:0 5px 12px rgba(0,0,0,0.25);
+            transform: translateY(-6px) scale(1.12);
+            border-color: var(--blue);
+            box-shadow:
+                0 0 18px rgba(0,180,216,0.6),
+                0 0 40px rgba(0,180,216,0.35);
+        }
+
+        .socials a:hover img{
+            transform: scale(1.2);
+            filter: brightness(0) saturate(100%) invert(100%);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -504,17 +546,20 @@
             box-shadow: 0 0 12px rgba(0,180,216,0.35);
         }
 
+        /* ICON */
         .socials img{
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
-            transition: 0.3s ease;
-            pointer-events: none;
+            width:18px;
+            height:18px;
+            object-fit:contain;
+            z-index:2;
+            transition: .35s ease;
+
+            /* soft futuristic tint */
+            filter: brightness(0) saturate(100%) invert(78%) sepia(21%) saturate(700%) hue-rotate(165deg);
         }
 
-        .socials a:hover img{
-            transform: scale(1.15);
-            filter: brightness(0) saturate(100%) invert(100%);
+        .socials a:hover::before{
+            opacity:1;
         }
     </style>
 </head>
