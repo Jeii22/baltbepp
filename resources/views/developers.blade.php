@@ -73,7 +73,6 @@
             border-color:#fff;
         }
 
-        /* Hover effect */
         /* HOVER BASE */
         .socials a:hover{
             transform: translateY(-6px) scale(1.12);
@@ -86,6 +85,20 @@
         .socials a:hover img{
             transform: scale(1.2);
             filter: brightness(0) saturate(100%) invert(100%);
+        }
+
+        /* ICON */
+        .socials img{
+            width:18px;
+            height:18px;
+            object-fit:contain;
+            z-index:2;
+            transition: .35s ease;
+                       
+        }
+
+        .socials a:hover::before{
+            opacity:1;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -546,20 +559,7 @@
             box-shadow: 0 0 12px rgba(0,180,216,0.35);
         }
 
-        /* ICON */
-        .socials img{
-            width:18px;
-            height:18px;
-            object-fit:contain;
-            z-index:2;
-            transition: .35s ease;
-            
-            
-            }
-
-        .socials a:hover::before{
-            opacity:1;
-        }
+        
     </style>
 </head>
 <body>
