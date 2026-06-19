@@ -390,7 +390,7 @@
 
 
 
-    <!-- Stats Section 
+    <!-- Stats Section -->
     <section class="py-12 bg-white">
         <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
@@ -410,7 +410,7 @@
                 <p class="text-gray-600">Travel Time</p>
             </div>
         </div>
-    </section> -->
+    </section>
 
     <!-- Promos Section -->
     <section id="promos" class="py-12 sm:py-16 bg-blue-50">
@@ -419,7 +419,7 @@
                 <h2 class="text-2xl sm:text-3xl font-bold text-blue-700">Special Promos & Offers</h2>
                 <p class="text-sm sm:text-base text-gray-600 mt-2">Don't miss out on our amazing deals and discounts</p>
             </div>
-           <!-- <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-3 gap-8">
                 <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition border-l-4 border-blue-500">
                     <div class="flex items-center mb-4">
                         <div class="bg-blue-100 p-3 rounded-full">
@@ -462,7 +462,7 @@
                         <p class="text-sm text-purple-700 font-semibold">Valid ID required</p>
                     </div>
                 </div>
-            </div> -->
+            </div>
         </div>
     </section>
 
