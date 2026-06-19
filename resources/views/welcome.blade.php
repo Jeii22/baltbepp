@@ -572,7 +572,7 @@
                             <div class="text-xs sm:text-sm text-gray-600">Happy Passengers</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xl sm:text-2xl font-bold text-blue-600">12+</div>
+                            <div class="text-xl sm:text-2xl font-bold text-blue-600">1</div>
                             <div class="text-xs sm:text-sm text-gray-600">Daily Trips</div>
                         </div>
                         <div class="text-center">
@@ -580,7 +580,7 @@
                             <div class="text-xs sm:text-sm text-gray-600">Average Rating</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xl sm:text-2xl font-bold text-blue-600">5+</div>
+                            <div class="text-xl sm:text-2xl font-bold text-blue-600">10+</div>
                             <div class="text-xs sm:text-sm text-gray-600">Years Experience</div>
                         </div>
                     </div>
